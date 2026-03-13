@@ -1,0 +1,31 @@
+# Cyber Intelligence Gateway - Dependencies
+
+# Web Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# Database
+# sqlite3 is built-in
+
+# HTTP Client
+requests>=2.31.0
+
+# Async
+anyio>=4.0.0
+
+# CLI
+click>=8.1.0
+
+# Python 3.11+ features
+# No additional packages needed for dataclasses
+
+# Optional: For enhanced network analysis
+# scapy>=2.6.0  # Packet manipulation
+# pypcap>=1.0.0  # PCAP capture (requires libpcap)
+# tshark is external (from Wireshark)
+
+# Optional: For DNS parsing
+dnspython>=2.6.0
+
+# Optional: For notifications
+# aiohttp>=3.9.0  # For webhook notifications

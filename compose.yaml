@@ -1,6 +1,77 @@
 services:
-  code:
-    image: code
+  cig:
     build:
       context: .
       dockerfile: ./Dockerfile
+    image: cig:latest
+    container_name: cyber-intelligence-gateway
+    hostname: cig
+    privileged: true  # Required for packet capture
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      # Application
+      - APP_NAME=Cyber Intelligence Gateway
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      
+      # API Server
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      
+      # Database
+      - DATABASE_PATH=/data/cig.db
+      
+      # PCAP Configuration
+      - PCAP_DIR=/data/pcaps
+      - PCAP_ROTATION_SIZE=100M
+      - PCAP_MAX_FILES=100
+      - LAN_INTERFACE=eth0
+      - WAN_INTERFACE=eth1
+      
+      # MISP Configuration (optional)
+      - MISP_URL=${MISP_URL:-}
+      - MISP_API_KEY=${MISP_API_KEY:-}
+      - MISP_VERIFY_SSL=false
+      - MISP_UPDATE_INTERVAL=300
+      
+      # pfBlocker Configuration
+      - PFBLOCKER_FEEDS=${PFBLOCKER_FEEDS:-https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader}
+      - PFBLOCKER_UPDATE_INTERVAL=3600
+      - PFBLOCKER_LOCAL_BLOCKLIST=/config/pfblocker_local.txt
+      
+      # DNS Logging
+      - DNS_LOG_PATH=/data/logs/dns.log
+      - DNS_QUERY_LOG_ENABLED=true
+      
+      # Matching
+      - MATCH_DNS_QUERIES=true
+      - MATCH_PCAP_TRAFFIC=true
+      - ALERT_RETENTION_DAYS=30
+      
+      # Notifications (optional)
+      - WEBHOOK_URL=${WEBHOOK_URL:-}
+    volumes:
+      - cig-data:/data
+      - cig-config:/config
+    ports:
+      - "8000:8000"
+    networks:
+      - cig-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+volumes:
+  cig-data:
+    driver: local
+  cig-config:
+    driver: local
+
+networks:
+  cig-network:
+    driver: bridge
