@@ -353,3 +353,96 @@ async def check_ip(ip: str):
 @app.post("/api/capture/lan/start")
 async def start_lan_capture():
     """Start PCAP capture on LAN interface"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.start_lan_capture()
+    if result:
+        return {"status": "started", "pcap_id": result}
+    return {"status": "failed", "message": "Capture may already be running"}
+
+
+@app.post("/api/capture/lan/stop")
+async def stop_lan_capture():
+    """Stop PCAP capture on LAN interface"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.stop_lan_capture()
+    return {"status": "stopped" if result else "failed"}
+
+
+@app.post("/api/capture/wan/start")
+async def start_wan_capture():
+    """Start PCAP capture on WAN interface"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.start_wan_capture()
+    if result:
+        return {"status": "started", "pcap_id": result}
+    return {"status": "failed", "message": "Capture may already be running"}
+
+
+@app.post("/api/capture/wan/stop")
+async def stop_wan_capture():
+    """Stop PCAP capture on WAN interface"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.stop_wan_capture()
+    return {"status": "stopped" if result else "failed"}
+
+
+@app.get("/api/capture/status")
+async def get_capture_status():
+    """Get capture status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return {
+        "active": threat_matcher.pcap_capture.get_active_captures()
+    }
+
+
+# --- Feed Update Endpoints ---
+
+@app.post("/api/feeds/update/misp")
+async def update_misp_feed():
+    """Manually trigger MISP feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_misp()
+    return {"status": "updated", "indicators_count": count}
+
+
+@app.post("/api/feeds/update/pfblocker")
+async def update_pfblocker_feed():
+    """Manually trigger pfBlocker feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_pfblocker()
+    return {"status": "updated", "indicators_count": count}
+
+
+@app.post("/api/feeds/update/all")
+async def update_all_feeds():
+    """Manually trigger all feed updates"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    threat_matcher._update_feeds()
+    return {"status": "updated"}
+
+
+# --- System Endpoints ---
+
+@app.get("/api/status")
+async def get_system_status():
+    """Get full system status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return threat_matcher.get_status()
