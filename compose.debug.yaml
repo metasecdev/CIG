@@ -1,6 +1,32 @@
 services:
-  code:
-    image: code
+  cig:
     build:
       context: .
       dockerfile: ./Dockerfile
+    image: cig:debug
+    container_name: cig-debug
+    hostname: cig-debug
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - API_PORT=8000
+      - MISP_URL=
+      - MISP_API_KEY=
+      - PFBLOCKER_FEEDS=https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+    volumes:
+      - ./data:/data
+      - ./config:/config
+    ports:
+      - "8000:8000"
+    networks:
+      - cig-network
+    stdin_open: true
+    tty: true
+
+networks:
+  cig-network:
+    driver: bridge
