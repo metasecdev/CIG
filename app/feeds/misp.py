@@ -242,4 +242,3 @@ class MISPFeed:
             "indicators_count": self.indicators_count,
             "url": self.client.url if self.client else None
         }
-
