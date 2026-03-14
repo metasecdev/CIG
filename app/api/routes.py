@@ -463,3 +463,93 @@ async def get_system_status():
         raise HTTPException(status_code=503, detail="System not initialized")
 
     return threat_matcher.get_status()
+
+
+# --- Reporting Endpoints ---
+
+@app.get("/api/reports/security")
+async def generate_security_report(days: int = Query(7, ge=1, le=90)):
+    """Generate a comprehensive security report"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    try:
+        report = threat_matcher.generate_security_report(days)
+        return report
+    except Exception as e:
+        logger.error(f"Failed to generate security report: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate report")
+
+
+@app.get("/api/reports/html")
+async def generate_html_report(days: int = Query(7, ge=1, le=90)):
+    """Generate an HTML security report"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    try:
+        html_path = threat_matcher.generate_html_report(days)
+        return {"html_report_path": html_path, "message": "HTML report generated successfully"}
+    except Exception as e:
+        logger.error(f"Failed to generate HTML report: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate HTML report")
+
+
+# --- MITRE ATT&CK Endpoints ---
+
+@app.post("/api/mitre/analyze")
+async def analyze_alert_for_mitre(alert_data: Dict[str, Any]):
+    """Analyze an alert for MITRE ATT&CK TTP matches"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    try:
+        ttps = threat_matcher.analyze_alert_for_mitre(alert_data)
+        return {"ttps": ttps}
+    except Exception as e:
+        logger.error(f"Failed to analyze alert for MITRE: {e}")
+        raise HTTPException(status_code=500, detail="Failed to analyze alert")
+
+
+@app.get("/api/mitre/techniques")
+async def get_mitre_techniques():
+    """Get all MITRE ATT&CK techniques"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    try:
+        techniques = threat_matcher.get_mitre_techniques()
+        return {"techniques": techniques}
+    except Exception as e:
+        logger.error(f"Failed to get MITRE techniques: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get techniques")
+
+
+@app.get("/api/mitre/tactics")
+async def get_mitre_tactics():
+    """Get all MITRE ATT&CK tactics"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    try:
+        tactics = threat_matcher.get_mitre_tactics()
+        return {"tactics": tactics}
+    except Exception as e:
+        logger.error(f"Failed to get MITRE tactics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get tactics")
+
+
+# --- Feed Management Endpoints ---
+
+@app.post("/api/feeds/update/abuseipdb")
+async def update_abuseipdb_feed():
+    """Manually trigger AbuseIPDB feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    try:
+        count = threat_matcher._update_abuseipdb()
+        return {"status": "updated", "indicators_count": count}
+    except Exception as e:
+        logger.error(f"Failed to update AbuseIPDB: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update AbuseIPDB feed")

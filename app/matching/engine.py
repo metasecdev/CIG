@@ -12,7 +12,10 @@ from datetime import datetime
 from app.models.database import Database, Alert
 from app.feeds.misp import MISPFeed
 from app.feeds.pfblocker import PFBlockerFeed
+from app.feeds.abuseipdb import AbuseIPDBFeed
 from app.capture.pcap import PCAPCapture, DNSQueryMonitor, PacketAnalyzer
+from app.mitre.attack_mapper import MITREAttackMapper
+from app.reporting.security_report import SecurityReporter
 from app.core.config import settings
 import uuid
 
@@ -26,9 +29,12 @@ class ThreatMatcher:
         self.db = db
         self.misp_feed = MISPFeed(db)
         self.pfblocker_feed = PFBlockerFeed(db)
+        self.abuseipdb_feed = AbuseIPDBFeed(db)
         self.pcap_capture = PCAPCapture(db)
         self.dns_monitor = DNSQueryMonitor(db)
         self.packet_analyzer = PacketAnalyzer(db)
+        self.mitre_mapper = MITREAttackMapper(db)
+        self.reporter = SecurityReporter(db)
 
         self.running = False
         self.update_thread: Optional[threading.Thread] = None
@@ -37,9 +43,11 @@ class ThreatMatcher:
         self.stats = {
             "misp_indicators": 0,
             "pfblocker_indicators": 0,
+            "abuseipdb_indicators": 0,
             "total_alerts": 0,
             "last_misp_update": None,
-            "last_pfblocker_update": None
+            "last_pfblocker_update": None,
+            "last_abuseipdb_update": None
         }
 
     def configure(self) -> None:
@@ -58,6 +66,12 @@ class ThreatMatcher:
             self.pfblocker_feed.enabled = True
             logger.info(f"Configured pfBlocker with {len(settings.pfblocker_feeds)} feeds")
 
+        # Configure AbuseIPDB
+        abuseipdb_key = getattr(settings, 'abuseipdb_api_key', '')
+        if abuseipdb_key:
+            self.abuseipdb_feed.configure(abuseipdb_key)
+            logger.info("Configured AbuseIPDB feed")
+
     def start(self) -> None:
         """Start the threat matching engine"""
         if self.running:
@@ -67,15 +81,16 @@ class ThreatMatcher:
         self.running = True
         self.configure()
 
-        # Start initial feed updates
-        self._update_feeds()
+        # Start initial feed updates in background thread
+        update_thread = threading.Thread(target=self._update_feeds, daemon=True)
+        update_thread.start()
 
         # Start background feed update thread
         self.update_thread = threading.Thread(target=self._feed_update_loop, daemon=True)
         self.update_thread.start()
 
         # Start DNS monitoring
-        if settings.match_dns_queries:
+        if settings.match_dns_queries and not settings.skip_dns_monitoring:
             self.dns_monitor.start_monitoring()
 
         logger.info("Threat matching engine started")
@@ -107,13 +122,24 @@ class ThreatMatcher:
                     if not last or (datetime.utcnow() - last).total_seconds() > settings.pfblocker_update_interval:
                         self._update_pfblocker()
 
+                # Update AbuseIPDB if interval passed (daily)
+                if self.abuseipdb_feed.is_enabled():
+                    last = self.abuseipdb_feed.last_update
+                    if not last or (datetime.utcnow() - last).total_seconds() > 86400:  # 24 hours
+                        self._update_abuseipdb()
+
             except Exception as e:
                 logger.error(f"Error in feed update loop: {e}")
 
     def _update_feeds(self) -> None:
         """Update all feeds"""
+        if settings.skip_feed_updates:
+            logger.info("Skipping feed updates (SKIP_FEED_UPDATES=true)")
+            return
+
         self._update_misp()
         self._update_pfblocker()
+        self._update_abuseipdb()
         self._load_local_blocklist()
         self._cleanup_old_alerts()
 
@@ -145,6 +171,21 @@ class ThreatMatcher:
             return count
         except Exception as e:
             logger.error(f"Failed to update pfBlocker: {e}")
+            return 0
+
+    def _update_abuseipdb(self) -> int:
+        """Update AbuseIPDB indicators"""
+        if not self.abuseipdb_feed.is_enabled():
+            return 0
+
+        try:
+            count = self.abuseipdb_feed.fetch_blacklist(confidence_threshold=80)
+            self.stats["abuseipdb_indicators"] = count
+            self.stats["last_abuseipdb_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated AbuseIPDB: {count} indicators")
+            return count
+        except Exception as e:
+            logger.error(f"Failed to update AbuseIPDB: {e}")
             return 0
 
     def _load_local_blocklist(self) -> int:
@@ -218,7 +259,28 @@ class ThreatMatcher:
             "running": self.running,
             "misp": self.misp_feed.get_status(),
             "pfblocker": self.pfblocker_feed.get_status(),
+            "abuseipdb": self.abuseipdb_feed.get_status(),
             "active_captures": self.pcap_capture.get_active_captures(),
             "stats": self.stats,
             "indicator_counts": self.db.get_indicator_counts()
         }
+
+    def generate_security_report(self, days: int = 7) -> Dict[str, Any]:
+        """Generate a comprehensive security report"""
+        return self.reporter.generate_comprehensive_report(days)
+
+    def generate_html_report(self, days: int = 7) -> str:
+        """Generate an HTML security report"""
+        return self.reporter.generate_html_report(days)
+
+    def analyze_alert_for_mitre(self, alert_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Analyze an alert for MITRE ATT&CK TTP matches"""
+        return self.mitre_mapper.map_event_to_ttp(alert_data)
+
+    def get_mitre_techniques(self) -> Dict[str, Dict[str, Any]]:
+        """Get all loaded MITRE ATT&CK techniques"""
+        return self.mitre_mapper.get_all_techniques()
+
+    def get_mitre_tactics(self) -> Dict[str, Dict[str, Any]]:
+        """Get all loaded MITRE ATT&CK tactics"""
+        return self.mitre_mapper.get_all_tactics()

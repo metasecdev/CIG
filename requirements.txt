@@ -20,12 +20,48 @@ click>=8.1.0
 # No additional packages needed for dataclasses
 
 # Optional: For enhanced network analysis
-# scapy>=2.6.0  # Packet manipulation
-# pypcap>=1.0.0  # PCAP capture (requires libpcap)
-# tshark is external (from Wireshark)
+scapy>=2.6.0  # Packet manipulation and PCAP analysis
+# pypcap>=1.0.0  # PCAP capture (deprecated, use scapy instead)
+# Alternative: Use libpcap bindings via scapy or dpkt
+dpkt>=1.9.0  # Fast packet parsing library
 
 # Optional: For DNS parsing
 dnspython>=2.6.0
 
 # Optional: For notifications
-# aiohttp>=3.9.0  # For webhook notifications
+aiohttp>=3.9.0  # For webhook notifications
+
+# MITRE ATT&CK Integration
+mitreattack-python>=1.0.0  # MITRE ATT&CK framework data
+attackcti>=0.3.0  # ATT&CK CTI integration
+
+# Additional Intelligence Feeds
+stix2>=3.0.0  # STIX 2.x support
+taxii2-client>=2.3.0  # TAXII 2.x client
+pycti>=5.0.0  # OpenCTI integration
+
+# Log Analysis and Parsing
+elasticsearch>=8.0.0  # For log storage and analysis
+loguru>=0.7.0  # Enhanced logging
+python-json-logger>=2.0.0  # Structured logging
+
+# Machine Learning for Anomaly Detection
+scikit-learn>=1.3.0  # ML algorithms
+pandas>=2.0.0  # Data analysis
+numpy>=1.24.0  # Numerical computing
+
+# Reporting and Visualization
+matplotlib>=3.7.0  # Charts and graphs
+seaborn>=0.12.0  # Statistical visualization
+plotly>=5.0.0  # Interactive plots
+jinja2>=3.1.0  # Template rendering for reports
+
+# Additional Threat Intelligence
+threatbus>=2022.1.0  # Threat intelligence sharing
+cif-sdk>=3.0.0  # Collective Intelligence Framework
+abuseipdb>=0.6.0  # AbuseIPDB integration
+
+# Network Analysis
+netaddr>=0.8.0  # Network address manipulation
+ipaddress>=1.0.0  # IP address handling
+maxminddb>=2.4.0  # GeoIP database support

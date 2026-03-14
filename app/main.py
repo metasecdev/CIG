@@ -10,13 +10,19 @@ import logging
 import argparse
 from pathlib import Path
 
+# Determine project root (repo root)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+LOG_DIR = DATA_DIR / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler("/data/logs/cig.log")
+        logging.FileHandler(str(LOG_DIR / "cig.log"))
     ]
 )
 
@@ -33,10 +39,10 @@ import uvicorn
 
 def setup_directories():
     """Create necessary directories"""
-    Path("/data").mkdir(exist_ok=True)
-    Path("/data/pcaps").mkdir(exist_ok=True)
-    Path("/data/logs").mkdir(exist_ok=True)
-    Path("/config").mkdir(exist_ok=True)
+    Path("data").mkdir(exist_ok=True)
+    Path("data/pcaps").mkdir(exist_ok=True)
+    Path("data/logs").mkdir(exist_ok=True)
+    Path("config").mkdir(exist_ok=True)
 
 
 def signal_handler(signum, frame):

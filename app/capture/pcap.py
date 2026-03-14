@@ -258,9 +258,124 @@ class PacketAnalyzer:
 
     def __init__(self, db: Database):
         self.db = db
+        self.use_scapy = False
+        try:
+            import scapy.all as scapy
+            self.scapy = scapy
+            self.use_scapy = True
+            logger.info("Using Scapy for PCAP analysis")
+        except ImportError:
+            logger.info("Scapy not available, using tshark for PCAP analysis")
 
     def analyze_pcap(self, pcap_path: str) -> List[Alert]:
         """Analyze PCAP file for threat indicators"""
+        if self.use_scapy:
+            return self._analyze_with_scapy(pcap_path)
+        else:
+            return self._analyze_with_tshark(pcap_path)
+
+    def _analyze_with_scapy(self, pcap_path: str) -> List[Alert]:
+        """Analyze PCAP using Scapy"""
+        alerts = []
+
+        try:
+            packets = self.scapy.rdpcap(pcap_path)
+            logger.info(f"Loaded {len(packets)} packets from {pcap_path}")
+
+            for packet in packets:
+                # Extract IP information
+                if packet.haslayer(self.scapy.IP):
+                    src_ip = packet[self.scapy.IP].src
+                    dst_ip = packet[self.scapy.IP].dst
+
+                    # Check destination IP
+                    indicator = self.db.check_indicator(dst_ip, "ip")
+                    if indicator:
+                        alert = Alert(
+                            id=str(uuid.uuid4()),
+                            timestamp=datetime.utcnow().isoformat(),
+                            severity="high",
+                            source_ip=src_ip,
+                            destination_ip=dst_ip,
+                            indicator=dst_ip,
+                            indicator_type="ip",
+                            feed_source=indicator.source,
+                            rule_id=indicator.feed_id,
+                            message=f"Connection to blocked IP: {dst_ip}"
+                        )
+                        alerts.append(alert)
+                        self.db.insert_alert(alert)
+
+                # Check DNS queries
+                if packet.haslayer(self.scapy.DNS) and packet[self.scapy.DNS].qd:
+                    for query in packet[self.scapy.DNS].qd:
+                        if hasattr(query, 'qname'):
+                            domain = query.qname.decode('utf-8').rstrip('.')
+                            indicator = self.db.check_indicator(domain, "domain")
+                            if indicator:
+                                src_ip = packet[self.scapy.IP].src if packet.haslayer(self.scapy.IP) else ""
+                                dst_ip = packet[self.scapy.IP].dst if packet.haslayer(self.scapy.IP) else ""
+                                alert = Alert(
+                                    id=str(uuid.uuid4()),
+                                    timestamp=datetime.utcnow().isoformat(),
+                                    severity="high",
+                                    source_ip=src_ip,
+                                    destination_ip=dst_ip,
+                                    indicator=domain,
+                                    indicator_type="domain",
+                                    feed_source=indicator.source,
+                                    rule_id=indicator.feed_id,
+                                    message=f"DNS query to blocked domain: {domain}"
+                                )
+                                alerts.append(alert)
+                                self.db.insert_alert(alert)
+
+                # Check HTTP requests
+                if packet.haslayer(self.scapy.TCP) and packet.haslayer(self.scapy.Raw):
+                    try:
+                        payload = packet[self.scapy.Raw].load.decode('utf-8', errors='ignore')
+                        if payload.startswith('GET ') or payload.startswith('POST '):
+                            lines = payload.split('\n')
+                            if lines:
+                                request_line = lines[0].split()
+                                if len(request_line) >= 2:
+                                    url = request_line[1]
+                                    # Extract domain from URL
+                                    if url.startswith('http'):
+                                        from urllib.parse import urlparse
+                                        parsed = urlparse(url)
+                                        domain = parsed.netloc
+                                        if domain:
+                                            indicator = self.db.check_indicator(domain, "domain")
+                                            if indicator:
+                                                src_ip = packet[self.scapy.IP].src if packet.haslayer(self.scapy.IP) else ""
+                                                alert = Alert(
+                                                    id=str(uuid.uuid4()),
+                                                    timestamp=datetime.utcnow().isoformat(),
+                                                    severity="high",
+                                                    source_ip=src_ip,
+                                                    indicator=domain,
+                                                    indicator_type="domain",
+                                                    feed_source=indicator.source,
+                                                    rule_id=indicator.feed_id,
+                                                    message=f"HTTP request to blocked domain: {domain}"
+                                                )
+                                                alerts.append(alert)
+                                                self.db.insert_alert(alert)
+                    except:
+                        pass  # Skip malformed packets
+
+            logger.info(f"Analyzed {pcap_path} with Scapy: found {len(alerts)} alerts")
+
+        except Exception as e:
+            logger.error(f"Failed to analyze PCAP with Scapy: {e}")
+            # Fallback to tshark
+            return self._analyze_with_tshark(pcap_path)
+
+        return alerts
+
+    def _analyze_with_tshark(self, pcap_path: str) -> List[Alert]:
+        """Analyze PCAP using tshark (fallback method)"""
         alerts = []
 
         try:
