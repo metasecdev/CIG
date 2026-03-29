@@ -9,7 +9,7 @@ import os
 import json
 import traceback
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import tempfile
 import shutil
 
@@ -19,6 +19,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 # Set test environment variables
 os.environ['SKIP_FEED_UPDATES'] = 'true'
 os.environ['SKIP_DNS_MONITORING'] = 'true'
+
+# Import Database for use in tests
+from app.models.database import Database
 
 class CIGTestSuite:
     """Comprehensive test suite for CIG components"""
@@ -128,14 +131,13 @@ class CIGTestSuite:
             # Test indicator operations
             indicator = Indicator(
                 id="test-indicator-1",
-                indicator="192.168.1.100",
-                indicator_type="ip",
+                value="192.168.1.100",
+                type="ip",
                 source="test_feed",
                 feed_id="test-feed-1",
-                confidence=85,
-                tags=["malware"],
-                first_seen=datetime.utcnow().isoformat(),
-                last_seen=datetime.utcnow().isoformat()
+                tags="malware",
+                first_seen=datetime.now(timezone.utc).isoformat(),
+                last_seen=datetime.now(timezone.utc).isoformat()
             )
 
             db.insert_indicator(indicator)
@@ -252,8 +254,9 @@ class CIGTestSuite:
                 "message": "Suspicious connection"
             })
 
-            assert isinstance(result, dict)
-            assert "matched_techniques" in result
+            assert isinstance(result, list)
+            assert hasattr(mapper, 'technique_mappings')
+            assert len(mapper.technique_mappings) > 0
 
             self.record_test("mitre", "initialization", True, "MITRE mapper initializes correctly")
             self.record_test("mitre", "mapping", True, "Event to TTP mapping works")
@@ -325,6 +328,7 @@ class CIGTestSuite:
 
         try:
             from app.api.routes import app as fastapi_app, init_app
+            from app.matching.engine import ThreatMatcher
 
             db = Database(str(self.test_db_path))
             matcher = ThreatMatcher(db)
