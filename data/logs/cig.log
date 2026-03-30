@@ -638,3 +638,70 @@ TypeError: cannot use 'tuple' as a dict key (unhashable type: 'dict')
 2026-03-29 23:45:56,905 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
 2026-03-29 23:45:56,906 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
 2026-03-29 23:45:56,906 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-30 00:19:25,152 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-30 00:19:25,153 - __main__ - INFO - Initializing database...
+2026-03-30 00:19:25,154 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-30 00:19:25,154 - __main__ - INFO - Initializing threat matcher...
+2026-03-30 00:19:26,099 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-30 00:19:26,100 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-30 00:19:26,100 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-30 00:19:26,100 - __main__ - INFO - Threat matcher initialized
+2026-03-30 00:19:26,101 - __main__ - INFO - API routes initialized
+2026-03-30 00:19:26,101 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-30 00:19:26,101 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:19:26,103 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-30 00:19:26,103 - app.matching.engine - INFO - Threat matching engine started
+2026-03-30 00:19:26,103 - __main__ - INFO - Threat matching engine started
+2026-03-30 00:19:26,104 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-30 00:19:45,210 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-30 00:19:45,210 - __main__ - INFO - Initializing database...
+2026-03-30 00:19:45,212 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-30 00:19:45,212 - __main__ - INFO - Initializing threat matcher...
+2026-03-30 00:19:46,128 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-30 00:19:46,128 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-30 00:19:46,128 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-30 00:19:46,128 - __main__ - INFO - Threat matcher initialized
+2026-03-30 00:19:46,128 - __main__ - INFO - API routes initialized
+2026-03-30 00:19:46,129 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-30 00:19:46,132 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:19:46,135 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-30 00:19:46,136 - app.matching.engine - INFO - Threat matching engine started
+2026-03-30 00:19:46,136 - __main__ - INFO - Threat matching engine started
+2026-03-30 00:19:46,137 - __main__ - INFO - Starting API server on 0.0.0.0:8001
+2026-03-30 00:19:59,417 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-30 00:19:59,417 - __main__ - INFO - Initializing database...
+2026-03-30 00:19:59,419 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-30 00:19:59,419 - __main__ - INFO - Initializing threat matcher...
+2026-03-30 00:20:00,410 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-30 00:20:00,410 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-30 00:20:00,410 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-30 00:20:00,411 - __main__ - INFO - Threat matcher initialized
+2026-03-30 00:20:00,411 - __main__ - INFO - API routes initialized
+2026-03-30 00:20:00,411 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-30 00:20:00,411 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:20:00,416 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-30 00:20:00,416 - app.matching.engine - INFO - Threat matching engine started
+2026-03-30 00:20:00,416 - __main__ - INFO - Threat matching engine started
+2026-03-30 00:20:00,419 - __main__ - INFO - Starting API server on 0.0.0.0:8002
+2026-03-30 00:20:00,643 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:20:00,762 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:20:00,764 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 00:20:01,107 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 00:20:01,108 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-30 00:20:01,108 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-30 00:25:44,780 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 00:25:48,586 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_042548.json
+2026-03-30 00:25:59,671 - app.reporting.security_report - INFO - Generating comprehensive security report for last 7 days
+2026-03-30 00:26:00,189 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_042600.json
+2026-03-30 00:26:00,204 - app.reporting.security_report - INFO - HTML security report saved to data/reports/security_report_20260330_042600.html
+2026-03-30 00:26:31,397 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 00:26:32,095 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_042632.json
+2026-03-30 00:26:39,107 - app.reporting.security_report - INFO - Generating comprehensive security report for last 7 days
+2026-03-30 00:26:39,776 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_042639.json
+2026-03-30 00:26:39,799 - app.reporting.security_report - INFO - HTML security report saved to data/reports/security_report_20260330_042639.html
+2026-03-30 00:46:05,736 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:46:05,881 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:46:05,973 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 00:46:05,977 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 00:46:06,350 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 00:46:06,351 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
