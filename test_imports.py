@@ -11,34 +11,57 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Set environment variables for testing
-os.environ['SKIP_FEED_UPDATES'] = 'true'
-os.environ['SKIP_DNS_MONITORING'] = 'true'
+os.environ["SKIP_FEED_UPDATES"] = "true"
+os.environ["SKIP_DNS_MONITORING"] = "true"
 
 try:
     # Test core imports
     from app.core.config import settings
+
     print("✓ Config imported successfully")
     print(f"  App name: {settings.app_name}")
     print(f"  Database path: {settings.database_path}")
     print(f"  Skip feed updates: {settings.skip_feed_updates}")
 
     from app.models.database import Database
+
     print("✓ Database imported successfully")
 
     from app.matching.engine import ThreatMatcher
+
     print("✓ ThreatMatcher imported successfully")
 
     from app.api.routes import app as fastapi_app
+
     print("✓ API app imported successfully")
 
     # Test new modules
-    from app.mitre.attack_mapper import AttackMapper
+    from app.mitre.attack_mapper import MITREAttackMapper
+
     print("✓ MITRE AttackMapper imported successfully")
 
     from app.feeds.abuseipdb import AbuseIPDBFeed
+
     print("✓ AbuseIPDB feed imported successfully")
 
+    from app.integrations.arkime import ArkimeConnector, CIGArkimeBridge
+
+    print("✓ Arkime integration imported successfully")
+
+    from app.feeds.custom import CustomFeedManager
+
+    print("✓ Custom feeds imported successfully")
+
+    from app.alerts.webhook import WebhookAlertManager
+
+    print("✓ Webhook alerts imported successfully")
+
+    from app.capture.deep_inspect import DeepPacketInspector
+
+    print("✓ Deep packet inspection imported successfully")
+
     from app.reporting.security_report import SecurityReporter
+
     print("✓ Security reporter imported successfully")
 
     print("\n🎉 All imports successful! CIG system components are ready.")
@@ -56,10 +79,12 @@ try:
 except ImportError as e:
     print(f"❌ Import error: {e}")
     import traceback
+
     traceback.print_exc()
     sys.exit(1)
 except Exception as e:
     print(f"❌ Error: {e}")
     import traceback
+
     traceback.print_exc()
     sys.exit(1)

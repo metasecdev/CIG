@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  cig:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cig
+    image: cig:latest
+    environment:
+      - MISP_URL=${MISP_URL:-https://misp.example.com}
+      - MISP_API_KEY=${MISP_API_KEY:-your-api-key}
+      - MISP_VERIFY_SSL=false
+      - PFBLOCKER_URL=${PFBLOCKER_URL:-http://pfsense:443}
+      - DATABASE_PATH=/data/cig.db
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - LAN_INTERFACE=eth0
+      - WAN_INTERFACE=eth1
+      - PCAP_DIR=/data/pcaps
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ARKIME_URL=http://arkime:8005
+      - ARKIME_SECRET=${ARKIME_SECRET:-secret}
+    volumes:
+      - cig-data:/data
+      - cig-pcaps:/data/pcaps
+      - cig-logs:/data/logs
+    networks:
+      - cig-network
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - arkime
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+
+  arkime-capture:
+    image: arkime/arkime:latest
+    container_name: arkime-capture
+    hostname: arkime-capture
+    environment:
+      - ARKIME_PASSWORD=${ARKIME_PASSWORD:-secret}
+      - ARKIME_ELASTICSEARCH=http://opensearch:9200
+      - ARKIME_INTERFACES=eth0
+    volumes:
+      - arkime-pcap:/opt/arkime/pcap
+      - arkime-data:/opt/arkime/data
+    networks:
+      - cig-network
+    cap_add:
+      - NET_ADMIN
+    command: /opt/arkime/bin/capture --config /opt/arkime/etc/config.ini
+
+  arkime-viewer:
+    image: arkime/arkime:latest
+    container_name: arkime-viewer
+    hostname: arkime-viewer
+    environment:
+      - ARKIME_PASSWORD=${ARKIME_PASSWORD:-secret}
+      - ARKIME_ELASTICSEARCH=http://opensearch:9200
+    volumes:
+      - arkime-pcap:/opt/arkime/pcap
+      - arkime-data:/opt/arkime/data
+    networks:
+      - cig-network
+    ports:
+      - "8005:8005"
+    depends_on:
+      - arkime-capture
+      - opensearch
+    restart: unless-stopped
+    command: /opt/arkime/bin/viewer --config /opt/arkime/etc/config.ini
+
+  arkime-wise:
+    image: arkime/arkime:latest
+    container_name: arkime-wise
+    hostname: arkime-wise
+    environment:
+      - ARKIME_PASSWORD=${ARKIME_PASSWORD:-secret}
+      - ARKIME_ELASTICSEARCH=http://opensearch:9200
+      - ARKIMEWISE_HOST=0.0.0.0
+      - ARKIMEWISE_PORT=8080
+    volumes:
+      - arkime-data:/opt/arkime/data
+    networks:
+      - cig-network
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-admin}
+      - OPENSEARCH_USERNAME=admin
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD:-admin}
+      - plugins.security.disabled=false
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - cig-network
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    restart: unless-stopped
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - cig-network
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+volumes:
+  cig-data:
+  cig-pcaps:
+  cig-logs:
+  arkime-pcap:
+  arkime-data:
+  opensearch-data:
+  redis-data:
+
+networks:
+  cig-network:
+    driver: bridge
