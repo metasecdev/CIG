@@ -1,0 +1,298 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-03-30T03:36:38.235486",
+    "period_start": "2026-03-29T03:36:38.235486",
+    "period_end": "2026-03-30T03:36:38.235486",
+    "days_covered": 1
+  },
+  "executive_summary": {
+    "total_alerts": 0,
+    "total_indicators": 868,
+    "total_pcaps": 0,
+    "severity_breakdown": {},
+    "indicator_type_breakdown": {
+      "ip": 20,
+      "domain": 848
+    },
+    "source_breakdown": {
+      "pfblocker": 868
+    },
+    "risk_level": "Low",
+    "period_summary": "Detected 0 security events from 868 threat indicators across 0 network captures"
+  },
+  "threat_intelligence": {
+    "sources": {
+      "pfblocker": {
+        "total_indicators": 868,
+        "types": {
+          "ip": 20,
+          "domain": 848
+        },
+        "top_indicators": [
+          {
+            "id": "c1a314a0-3fd0-4f24-aaa9-e2a6fff95c38",
+            "value": "! Title: ph00lt0 - Blocklist",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "3c977cce-8a97-40cc-8e1d-0e3340ea20e0",
+            "value": "! Expires: 1 day",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "24a1011e-4094-43f3-bbb6-da1457bd6a7d",
+            "value": "! Issue tracker: https:",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "4b33bd8a-7dcf-4fe5-8aa5-3e8cf5d25ac9",
+            "value": "! Homepage: https:",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "45e968b4-eb10-4ea8-9600-52d25ac6b394",
+            "value": "! Description: Blocklist for Stats and any analytics, lottery, bug trackers, ads, data brokers, font content delivery networks and consent management",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "74735619-3c48-4235-a060-9e557b7b0d76",
+            "value": "about.facebook.com",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "d1ab9132-6cea-45a5-a35b-a2873337bf10",
+            "value": "actie.hetvergetenkind.nl",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "2796829c-adf8-4c0e-acd1-5aa9c62e6430",
+            "value": "actie.thepollinators.org",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "278d6a43-efaf-4390-b8e8-510743f1b536",
+            "value": "acties.lymph-co.com",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "b4cf1c9d-d37d-4daa-b6ed-46567c020e5a",
+            "value": "actievoorrodekruisijsselland.nl",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-30T03:35:05.555037",
+            "last_seen": "2026-03-30T03:35:05.555037",
+            "tags": "blocklist",
+            "count": 1
+          }
+        ]
+      }
+    },
+    "total_unique_indicators": 217,
+    "most_active_feeds": [
+      [
+        "pfblocker",
+        {
+          "total_indicators": 868,
+          "types": {
+            "ip": 20,
+            "domain": 848
+          },
+          "top_indicators": [
+            {
+              "id": "c1a314a0-3fd0-4f24-aaa9-e2a6fff95c38",
+              "value": "! Title: ph00lt0 - Blocklist",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "3c977cce-8a97-40cc-8e1d-0e3340ea20e0",
+              "value": "! Expires: 1 day",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "24a1011e-4094-43f3-bbb6-da1457bd6a7d",
+              "value": "! Issue tracker: https:",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "4b33bd8a-7dcf-4fe5-8aa5-3e8cf5d25ac9",
+              "value": "! Homepage: https:",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "45e968b4-eb10-4ea8-9600-52d25ac6b394",
+              "value": "! Description: Blocklist for Stats and any analytics, lottery, bug trackers, ads, data brokers, font content delivery networks and consent management",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "74735619-3c48-4235-a060-9e557b7b0d76",
+              "value": "about.facebook.com",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "d1ab9132-6cea-45a5-a35b-a2873337bf10",
+              "value": "actie.hetvergetenkind.nl",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "2796829c-adf8-4c0e-acd1-5aa9c62e6430",
+              "value": "actie.thepollinators.org",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "278d6a43-efaf-4390-b8e8-510743f1b536",
+              "value": "acties.lymph-co.com",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "b4cf1c9d-d37d-4daa-b6ed-46567c020e5a",
+              "value": "actievoorrodekruisijsselland.nl",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-30T03:35:05.555037",
+              "last_seen": "2026-03-30T03:35:05.555037",
+              "tags": "blocklist",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "network_activity": {
+    "protocols": {},
+    "top_ports": [],
+    "top_source_ips": [],
+    "top_destination_ips": [],
+    "pcap_statistics": {
+      "total_captures": 0,
+      "total_packets": 0,
+      "total_size_bytes": 0,
+      "average_packets_per_capture": 0
+    }
+  },
+  "mitre_attack_analysis": {
+    "total_ttp_matches": 0,
+    "techniques_detected": {},
+    "tactics_detected": {},
+    "high_confidence_matches": [],
+    "sample_matches": []
+  },
+  "recommendations": [
+    "Continue monitoring with current security controls",
+    "Regular review of security policies and procedures",
+    "Keep threat intelligence feeds updated"
+  ],
+  "charts": {
+    "indicator_sources": "data/reports/indicator_sources_20260330_033644.png"
+  }
+}

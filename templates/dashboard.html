@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Intelligence Gateway - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> Cyber Intelligence Gateway
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <small>Last updated: {{ timestamp }}</small>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Navigation</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="/" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="/dashboard/status" class="list-group-item list-group-item-action">
+                            <i class="fas fa-info-circle"></i> System Status
+                        </a>
+                        <a href="/dashboard/health" class="list-group-item list-group-item-action">
+                            <i class="fas fa-heartbeat"></i> Health Check
+                        </a>
+                        <a href="/dashboard/events" class="list-group-item list-group-item-action">
+                            <i class="fas fa-bell"></i> Events & Alerts
+                        </a>
+                        <a href="/dashboard/reports" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <!-- System Overview Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-exclamation-triangle"></i> Alerts
+                                </h5>
+                                <h2>{{ stats.alerts.total|default(0) }}</h2>
+                                <small>Active threats detected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-database"></i> Indicators
+                                </h5>
+                                <h2>{{ stats.indicators.values()|sum|default(0) }}</h2>
+                                <small>Threat intelligence items</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-rss"></i> Feeds
+                                </h5>
+                                <h2>{{ stats.feeds|length }}</h2>
+                                <small>Active intelligence feeds</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-network-wired"></i> Captures
+                                </h5>
+                                <h2>{{ stats.captures|length }}</h2>
+                                <small>Active PCAP captures</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-server"></i> System Status</h5>
+                            </div>
+                            <div class="card-body">
+                        <div class="mb-2">
+                                    <strong>Status:</strong>
+                                    <span class="badge bg-{{ 'success' if stats.system.running else 'warning' }}">
+                                        {{ 'running' if stats.system.running else 'stopped' }}
+                                    </span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Version:</strong> 1.0.0
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Uptime:</strong> Operational
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-rss"></i> Feed Status</h5>
+                            </div>
+                            <div class="card-body">
+                                {% for feed_name, feed_info in stats.feeds.items() %}
+                                <div class="mb-2">
+                                    <strong>{{ feed_name|upper }}:</strong>
+                                    <span class="badge bg-{{ 'success' if feed_info.enabled else 'secondary' }}">
+                                        {{ 'enabled' if feed_info.enabled else 'disabled' }}
+                                    </span>
+                                    {% if feed_info.last_update %}
+                                    <small class="text-muted">({{ feed_info.last_update }})</small>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="fas fa-bell"></i> Recent Alerts</h5>
+                                <a href="/dashboard/events" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                {% if recent_alerts %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Severity</th>
+                                                <th>Source</th>
+                                                <th>Indicator</th>
+                                                <th>Feed</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for alert in recent_alerts[:5] %}
+                                            <tr>
+                                                <td>{{ alert.timestamp }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ 'danger' if alert.severity == 'high' else 'warning' if alert.severity == 'medium' else 'info' }}">
+                                                        {{ alert.severity }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ alert.source_ip }}:{{ alert.source_port }}</td>
+                                                <td>{{ alert.indicator }}</td>
+                                                <td>{{ alert.feed_source }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <p class="text-muted">No recent alerts</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/dashboard.js"></script>
+</body>
+</html>

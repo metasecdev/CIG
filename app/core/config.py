@@ -44,6 +44,8 @@ class Settings:
     # pfBlocker Configuration
     pfblocker_feeds: List[str] = field(default_factory=lambda: [
         "https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader",
+        # ph00lt0/blocklist feeds - blocklist of ads, analytics, trackers, malware, phishing
+        "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
     ])
     pfblocker_update_interval: int = 3600  # seconds
     pfblocker_local_blocklist: str = "config/pfblocker_local.txt"
@@ -112,6 +114,7 @@ class Settings:
             # pfBlocker
             pfblocker_feeds=os.getenv("PFBLOCKER_FEEDS", "").split(",") if os.getenv("PFBLOCKER_FEEDS") else [
                 "https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader",
+                "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
             ],
             pfblocker_update_interval=int(os.getenv("PFBLOCKER_UPDATE_INTERVAL", "3600")),
             pfblocker_local_blocklist=os.getenv("PFBLOCKER_LOCAL_BLOCKLIST", "/config/pfblocker_local.txt"),

@@ -8,9 +8,12 @@ from typing import Optional, List
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
 
 from app.models.database import Database, Alert, PcapFile, Indicator
 from app.matching.engine import ThreatMatcher
@@ -34,9 +37,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Templates and static files
+templates = Jinja2Templates(directory=Path(__file__).parent.parent.parent / "templates")
+app.mount("/static", StaticFiles(directory=Path(__file__).parent.parent.parent / "static"), name="static")
+
 # Global instances (will be initialized in main.py)
 _db: Optional[Database] = None
 _threat_matcher: Optional[ThreatMatcher] = None
+threat_matcher: Optional[ThreatMatcher] = None
 
 
 def get_db() -> Database:
@@ -55,9 +63,10 @@ def get_threat_matcher() -> ThreatMatcher:
 
 def init_app(database: Database, matcher: ThreatMatcher):
     """Initialize global instances"""
-    global _db, _threat_matcher
+    global _db, _threat_matcher, threat_matcher
     _db = database
     _threat_matcher = matcher
+    threat_matcher = matcher
 
 
 # --- Pydantic Models ---
@@ -465,6 +474,215 @@ async def get_system_status():
     return threat_matcher.get_status()
 
 
+# --- Dashboard Endpoints ---
+
+@app.get("/test")
+async def test_route():
+    """Simple test route"""
+    return {"message": "Server is working", "timestamp": datetime.utcnow().isoformat()}
+
+
+@app.get("/")
+async def dashboard(request: Request):
+    """Main dashboard page"""
+    try:
+        # Check if system is initialized
+        if _db is None or _threat_matcher is None:
+            return templates.TemplateResponse("error.html", {
+                "request": request,
+                "error": "System not initialized. Please ensure the database and threat matcher are properly configured."
+            })
+
+        database = _db
+        matcher = _threat_matcher
+
+        # Get system stats
+        stats = {
+            "alerts": database.get_alert_stats(),
+            "indicators": database.get_indicator_counts(),
+            "feeds": {
+                "misp": matcher.misp_feed.get_status(),
+                "pfblocker": matcher.pfblocker_feed.get_status(),
+                "abuseipdb": matcher.abuseipdb_feed.get_status()
+            },
+            "captures": matcher.pcap_capture.get_active_captures(),
+            "system": matcher.get_status()
+        }
+
+        # Get recent alerts
+        recent_alerts = database.get_alerts(limit=10, offset=0)
+        alerts_data = [AlertResponse(**a.to_dict()) for a in recent_alerts]
+
+        return templates.TemplateResponse("dashboard.html", {
+            "request": request,
+            "stats": stats,
+            "recent_alerts": alerts_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Dashboard error: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": str(e)
+        })
+
+
+@app.get("/dashboard/status")
+async def status_dashboard(request: Request):
+    """System status dashboard"""
+    try:
+        if _threat_matcher is None:
+            return templates.TemplateResponse("error.html", {
+                "request": request,
+                "error": "System not initialized."
+            })
+
+        matcher = _threat_matcher
+
+        status_data = {
+            "system": matcher.get_status(),
+            "feeds": {
+                "misp": matcher.misp_feed.get_status(),
+                "pfblocker": matcher.pfblocker_feed.get_status(),
+                "abuseipdb": matcher.abuseipdb_feed.get_status() if hasattr(matcher, 'abuseipdb_feed') else {"status": "not_configured"}
+            },
+            "captures": matcher.pcap_capture.get_active_captures()
+        }
+
+        return templates.TemplateResponse("status.html", {
+            "request": request,
+            "status": status_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Status dashboard error: {e}")
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": str(e)
+        })
+
+
+@app.get("/dashboard/health")
+async def health_dashboard(request: Request):
+    """System health dashboard"""
+    try:
+        if _db is None or _threat_matcher is None:
+            return templates.TemplateResponse("error.html", {
+                "request": request,
+                "error": "System not initialized."
+            })
+
+        database = _db
+        matcher = _threat_matcher
+
+        health_data = {
+            "database": {
+                "status": "healthy",
+                "alerts_count": database.get_alert_stats().get("total", 0),
+                "indicators_count": sum(database.get_indicator_counts().values())
+            },
+            "feeds": {
+                "misp": matcher.misp_feed.get_status(),
+                "pfblocker": matcher.pfblocker_feed.get_status(),
+                "abuseipdb": matcher.abuseipdb_feed.get_status() if hasattr(matcher, 'abuseipdb_feed') else {"status": "not_configured"}
+            },
+            "capture": {
+                "active_captures": len(matcher.pcap_capture.get_active_captures()),
+                "status": "operational"
+            },
+            "system": matcher.get_status()
+        }
+
+        return templates.TemplateResponse("health.html", {
+            "request": request,
+            "health": health_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Health dashboard error: {e}")
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": str(e)
+        })
+
+
+@app.get("/dashboard/events")
+async def events_dashboard(request: Request):
+    """Events/Alerts dashboard"""
+    try:
+        if _db is None:
+            return templates.TemplateResponse("error.html", {
+                "request": request,
+                "error": "Database not initialized."
+            })
+
+        database = _db
+
+        # Get alerts with pagination
+        alerts = database.get_alerts(limit=50, offset=0)
+        alerts_data = [AlertResponse(**a.to_dict()) for a in alerts]
+        stats = database.get_alert_stats()
+
+        return templates.TemplateResponse("events.html", {
+            "request": request,
+            "alerts": alerts_data,
+            "stats": stats,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Events dashboard error: {e}")
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": str(e)
+        })
+
+
+@app.get("/dashboard/reports")
+async def reports_dashboard(request: Request):
+    """Reports dashboard"""
+    try:
+        if _threat_matcher is None:
+            return templates.TemplateResponse("error.html", {
+                "request": request,
+                "error": "System not initialized."
+            })
+
+        matcher = _threat_matcher
+
+        # Generate quick report data
+        report_data = {
+            "summary": {
+                "total_alerts": 0,
+                "active_feeds": 0,
+                "system_status": "operational"
+            },
+            "recent_reports": []
+        }
+
+        # Try to get basic stats
+        try:
+            if _db:
+                database = _db
+                alert_stats = database.get_alert_stats()
+                report_data["summary"]["total_alerts"] = alert_stats.get("total", 0)
+        except:
+            pass
+
+        return templates.TemplateResponse("reports.html", {
+            "request": request,
+            "report_data": report_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Reports dashboard error: {e}")
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": str(e)
+        })
+
+
 # --- Reporting Endpoints ---
 
 @app.get("/api/reports/security")
@@ -498,7 +716,7 @@ async def generate_html_report(days: int = Query(7, ge=1, le=90)):
 # --- MITRE ATT&CK Endpoints ---
 
 @app.post("/api/mitre/analyze")
-async def analyze_alert_for_mitre(alert_data: Dict[str, Any]):
+async def analyze_alert_for_mitre(alert_data: dict):
     """Analyze an alert for MITRE ATT&CK TTP matches"""
     if not threat_matcher:
         raise HTTPException(status_code=503, detail="System not initialized")

@@ -37,6 +37,21 @@ from app.matching.engine import ThreatMatcher
 import uvicorn
 
 
+# Global instances (for uvicorn direct run and tests)
+database: Database = None
+threat_matcher: ThreatMatcher = None
+
+# Uvicorn imports at module load
+from app.api.routes import app as fastapi_app
+
+# Export the FastAPI app for uvicorn (without initialization)
+app = fastapi_app
+
+# Global instances (initialized later)
+database: Database = None
+threat_matcher: ThreatMatcher = None
+
+
 def setup_directories():
     """Create necessary directories"""
     Path("data").mkdir(exist_ok=True)
@@ -54,9 +69,7 @@ def signal_handler(signum, frame):
     sys.exit(0)
 
 
-# Global instances
-database: Database = None
-threat_matcher: ThreatMatcher = None
+# Global instances are initialized above
 
 
 def main():
@@ -75,20 +88,23 @@ def main():
     setup_directories()
     logger.info("Starting Cyber Intelligence Gateway...")
 
-    # Initialize database
+    # Initialize database and threat matcher
+    logger.info("Initializing database...")
     database = Database(settings.database_path)
     logger.info(f"Database initialized: {settings.database_path}")
 
-    # Initialize threat matcher
-    matcher = ThreatMatcher(database)
-    threat_matcher = matcher
+    logger.info("Initializing threat matcher...")
+    threat_matcher = ThreatMatcher(database)
+    logger.info("Threat matcher initialized")
 
-    # Make matcher and db available to routes by importing and calling init_app
-    from app.api import routes
-    routes.init_app(database, matcher)
+    # Initialize the API routes with the instances
+    from app.api.routes import init_app
+    init_app(database, threat_matcher)
+    logger.info("API routes initialized")
 
     # Start threat matching engine
-    matcher.start()
+    threat_matcher.start()
+    logger.info("Threat matching engine started")
 
     # Register signal handlers
     signal.signal(signal.SIGINT, signal_handler)
@@ -96,12 +112,9 @@ def main():
 
     # Start API server
     logger.info(f"Starting API server on {args.host}:{args.port}")
-    
-    # Import app here after initialization
-    from app.api.routes import app as fastapi_app
-    
+
     uvicorn.run(
-        fastapi_app,
+        app,
         host=args.host,
         port=args.port,
         log_level="info" if not args.debug else "debug"

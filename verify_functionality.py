@@ -47,7 +47,7 @@ def main():
     for name, import_path, attrs in components:
         success, message = check_component(name, import_path, attrs)
         status = "✅" if success else "❌"
-        print("15")
+        print(f"{status} {name}: {message}")
         results.append((name, success, message))
 
     print("\n" + "=" * 40)

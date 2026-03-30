@@ -1,1 +1,620 @@
 2026-03-14 16:11:44,013 - matplotlib.font_manager - WARNING - Matplotlib is building the font cache; this may take a moment.
+2026-03-29 20:06:36,871 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:06:36,872 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:06:36,873 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:09:56,027 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:09:56,028 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:09:56,029 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:10:08,186 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:10:08,187 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:10:08,187 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:10:56,068 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:10:56,068 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:10:56,069 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:11:06,292 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:11:06,292 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:11:06,292 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:40:37,524 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:40:37,525 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:40:37,525 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:42:32,429 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:42:32,430 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:42:32,430 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:43:10,220 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:43:10,221 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:43:10,221 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:50:24,650 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:50:24,651 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:50:24,651 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:50:44,913 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:50:44,913 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:50:44,914 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:50:53,315 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:50:53,315 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:50:53,316 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:53:58,167 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:53:58,168 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:53:58,168 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:54:02,021 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 20:54:02,021 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 20:54:02,022 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:36:54,522 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 21:36:54,522 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:36:54,522 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:37:06,727 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 21:37:06,727 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:37:06,728 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:37:09,509 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 21:37:09,514 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:37:09,515 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:39:14,152 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:39:20,086 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:39:48,811 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:40:36,604 - app.api.routes - ERROR - Status dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:42:01,479 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 21:42:01,479 - __main__ - INFO - Initializing database...
+2026-03-29 21:42:01,481 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 21:42:01,481 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 21:42:01,481 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 21:42:01,481 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:42:01,481 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:42:01,482 - __main__ - INFO - Threat matcher initialized
+2026-03-29 21:42:01,482 - __main__ - INFO - API routes initialized
+2026-03-29 21:42:01,482 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-29 21:42:01,482 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:42:01,483 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 21:42:01,483 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 21:42:01,483 - __main__ - INFO - Threat matching engine started
+2026-03-29 21:42:01,483 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 21:42:01,698 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:42:01,753 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:42:01,755 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:42:01,756 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 21:42:20,640 - app.api.routes - ERROR - Status dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:42:29,540 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:43:01,486 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:43:01,570 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:43:01,762 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:43:01,765 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:44:01,768 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:44:01,932 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:44:02,024 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:44:02,027 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:44:39,794 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:45:01,871 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-29 21:45:02,240 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-29 21:45:02,241 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-29 21:47:19,385 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 21:47:19,385 - __main__ - INFO - Initializing database...
+2026-03-29 21:47:19,387 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 21:47:19,387 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 21:47:19,387 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 21:47:19,387 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:47:19,387 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 21:47:19,388 - __main__ - INFO - Threat matcher initialized
+2026-03-29 21:47:19,388 - __main__ - INFO - API routes initialized
+2026-03-29 21:47:19,388 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-29 21:47:19,388 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:47:19,389 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 21:47:19,389 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 21:47:19,389 - __main__ - INFO - Threat matching engine started
+2026-03-29 21:47:19,389 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 21:47:19,498 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:47:19,580 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:47:19,583 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:47:19,583 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 21:47:28,824 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:47:28,829 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 516, in dashboard
+    return templates.TemplateResponse("dashboard.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        "timestamp": datetime.utcnow().isoformat()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 148, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 115, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 964, in _load_template
+    template = self.cache.get(cache_key)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 477, in get
+    return self[key]
+           ~~~~^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 515, in __getitem__
+    rv = self._mapping[key]
+         ~~~~~~~~~~~~~^^^^^
+TypeError: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+
+2026-03-29 21:48:10,669 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:48:10,672 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 516, in dashboard
+    return templates.TemplateResponse("dashboard.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        "timestamp": datetime.utcnow().isoformat()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 148, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 115, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 964, in _load_template
+    template = self.cache.get(cache_key)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 477, in get
+    return self[key]
+           ~~~~^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 515, in __getitem__
+    rv = self._mapping[key]
+         ~~~~~~~~~~~~~^^^^^
+TypeError: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+
+2026-03-29 21:48:19,392 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:48:19,468 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:48:19,570 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:48:19,571 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:49:19,577 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:49:19,668 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:49:19,805 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:49:19,810 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:50:19,816 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:50:19,932 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:50:20,010 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:50:20,014 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:51:20,021 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:51:20,131 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:51:20,228 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:51:20,232 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:52:20,238 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:52:20,314 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:52:20,379 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:52:20,382 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:52:22,819 - app.api.routes - ERROR - Status dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 21:53:20,389 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:53:20,492 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:53:20,550 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:53:20,553 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:54:20,557 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:54:20,683 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:54:20,760 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:54:20,764 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:55:20,766 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:55:20,856 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:55:20,937 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:55:20,942 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:56:20,948 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:56:21,043 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:56:21,118 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:56:21,122 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:57:21,125 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:57:21,203 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:57:21,279 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:57:21,281 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:58:21,288 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:58:21,394 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:58:21,461 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:58:21,465 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 21:59:21,474 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:59:21,566 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:59:21,703 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 21:59:21,710 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:00:21,719 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:00:21,806 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:00:21,887 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:00:21,889 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:01:21,899 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:01:21,985 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:01:22,069 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:01:22,072 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:02:22,079 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:02:22,158 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:02:22,220 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:02:22,223 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:03:22,227 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:03:22,339 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:03:22,420 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:03:22,423 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:04:22,429 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:04:22,522 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:04:22,601 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:04:22,604 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:05:22,592 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:05:22,699 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:05:22,771 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:05:22,775 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:06:22,780 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:06:22,863 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:06:22,951 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:06:22,954 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:06:33,259 - app.api.routes - ERROR - Events dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 22:07:22,958 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:07:23,081 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:07:23,170 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:07:23,173 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:07:23,764 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-29 22:07:24,665 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-29 22:07:24,665 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-29 22:25:09,112 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 22:25:09,115 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 491, in dashboard
+    return templates.TemplateResponse("error.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+        "error": "System not initialized. Please ensure the database and threat matcher are properly configured."
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 148, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 115, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 964, in _load_template
+    template = self.cache.get(cache_key)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 477, in get
+    return self[key]
+           ~~~~^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 515, in __getitem__
+    rv = self._mapping[key]
+         ~~~~~~~~~~~~~^^^^^
+TypeError: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+
+2026-03-29 22:26:50,608 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 22:26:50,609 - __main__ - INFO - Initializing database...
+2026-03-29 22:26:50,612 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 22:26:50,613 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 22:26:50,616 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 22:26:50,623 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 22:26:50,624 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 22:26:50,624 - __main__ - INFO - Threat matcher initialized
+2026-03-29 22:26:50,624 - __main__ - INFO - API routes initialized
+2026-03-29 22:26:50,625 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-29 22:26:50,641 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:26:50,658 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 22:26:50,658 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 22:26:50,659 - __main__ - INFO - Threat matching engine started
+2026-03-29 22:26:50,663 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 22:28:44,079 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 22:28:44,079 - __main__ - INFO - Initializing database...
+2026-03-29 22:28:44,081 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 22:28:44,081 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 22:28:44,081 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 22:28:44,082 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 22:28:44,083 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 22:28:44,084 - __main__ - INFO - Threat matcher initialized
+2026-03-29 22:28:44,084 - __main__ - INFO - API routes initialized
+2026-03-29 22:28:44,085 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-29 22:28:44,086 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:28:44,087 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 22:28:44,088 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 22:28:44,088 - __main__ - INFO - Threat matching engine started
+2026-03-29 22:28:44,089 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 22:28:44,220 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:28:44,286 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:28:44,288 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:28:44,288 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 22:29:44,091 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:29:44,178 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:29:44,259 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:29:44,262 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:30:44,268 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:30:44,436 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:30:44,565 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:30:44,576 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:31:44,642 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:31:44,766 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:31:44,840 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:31:44,843 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:32:44,846 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:32:44,948 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:32:45,065 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:32:45,067 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:33:45,069 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:33:45,196 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:33:45,275 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:33:45,279 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:34:45,282 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:34:45,394 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:34:45,559 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:34:45,562 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:35:45,569 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:35:45,686 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:35:45,757 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:35:45,760 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:36:45,767 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:36:45,894 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:36:45,966 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:36:45,969 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:37:45,976 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:37:46,109 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:37:46,211 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:37:46,213 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:38:46,223 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:38:46,373 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:38:46,492 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:38:46,496 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:39:46,501 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:39:46,674 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:39:46,749 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:39:46,752 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:40:46,754 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:40:46,890 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:40:47,012 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:40:47,016 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:41:47,021 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:41:47,119 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:41:47,200 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:41:47,203 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:42:47,216 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:42:47,355 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:42:47,445 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:42:47,449 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:43:47,459 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:43:47,592 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:43:47,693 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:43:47,697 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:44:47,706 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:44:47,827 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:44:47,908 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:44:47,911 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:45:47,923 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:45:48,017 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:45:48,080 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:45:48,082 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:46:48,087 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:46:48,188 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:46:48,261 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:46:48,263 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:47:48,272 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:47:48,352 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:47:48,409 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:47:48,412 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:48:48,424 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:48:48,563 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:48:48,622 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:48:48,625 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:49:48,625 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:49:48,735 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:49:48,813 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:49:48,831 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:50:48,832 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:50:48,908 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:50:48,970 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:50:48,975 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:51:48,983 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:51:49,060 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:51:49,129 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:51:49,132 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:52:49,143 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:52:49,229 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:52:49,294 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:52:49,298 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:53:49,306 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:53:49,385 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:53:49,472 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:53:49,475 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:54:49,481 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:54:49,597 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:54:49,696 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:54:49,698 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:55:49,710 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:55:49,829 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:55:49,932 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:55:49,935 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:56:49,943 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:56:50,028 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:56:50,094 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:56:50,096 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:57:50,103 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:57:50,262 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:57:50,375 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:57:50,380 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:58:50,393 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:58:50,555 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:58:50,674 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:58:50,678 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 22:59:50,687 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:59:50,814 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:59:50,927 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 22:59:50,931 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:00:50,940 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:00:51,068 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:00:51,148 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:00:51,151 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:01:51,161 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:01:51,277 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:01:51,348 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:01:51,350 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:02:51,361 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:02:51,471 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:02:51,612 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:02:51,615 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:03:51,622 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:03:51,757 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:03:51,879 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:03:51,885 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:04:51,895 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:04:52,009 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:04:52,133 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:04:52,146 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:05:52,157 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:05:52,258 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:05:52,329 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:05:52,336 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:06:52,347 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:06:52,444 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:06:52,581 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:06:52,587 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:07:52,598 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:07:52,687 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:07:52,803 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:07:52,809 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:08:52,821 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:08:52,963 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:08:53,068 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:08:53,073 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:09:53,079 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:09:53,167 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:09:53,245 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:09:53,248 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:10:53,254 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:10:53,347 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:10:53,428 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:10:53,430 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:11:53,436 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:11:53,515 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:11:53,591 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:11:53,593 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:12:53,599 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:12:53,701 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:12:53,763 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:12:53,765 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:13:53,770 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:13:53,887 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:13:53,995 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:13:53,997 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:14:54,002 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:14:54,202 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:14:54,265 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:14:54,266 - app.matching.engine - INFO - Updated pfBlocker: 0 indicators
+2026-03-29 23:15:09,275 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-29 23:15:09,725 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-29 23:15:09,726 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-29 23:15:14,809 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 23:15:14,810 - __main__ - INFO - Initializing database...
+2026-03-29 23:15:14,811 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 23:15:14,811 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 23:15:14,811 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 23:15:14,811 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 23:15:14,811 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 23:15:14,812 - __main__ - INFO - Threat matcher initialized
+2026-03-29 23:15:14,812 - __main__ - INFO - API routes initialized
+2026-03-29 23:15:14,812 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-29 23:15:14,812 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:15:14,813 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 23:15:14,813 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 23:15:14,813 - __main__ - INFO - Threat matching engine started
+2026-03-29 23:15:14,813 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 23:15:14,902 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:15:14,963 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:15:14,967 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-29 23:15:15,297 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-29 23:15:15,298 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-29 23:15:15,298 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 23:18:23,080 - app.api.routes - ERROR - Dashboard error: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+2026-03-29 23:18:23,084 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 516, in dashboard
+    return templates.TemplateResponse("dashboard.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        "timestamp": datetime.utcnow().isoformat()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 148, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 115, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 964, in _load_template
+    template = self.cache.get(cache_key)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 477, in get
+    return self[key]
+           ~~~~^^^^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/utils.py", line 515, in __getitem__
+    rv = self._mapping[key]
+         ~~~~~~~~~~~~~^^^^^
+TypeError: cannot use 'tuple' as a dict key (unhashable type: 'dict')
+
+2026-03-29 23:19:24,687 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-29 23:19:25,164 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-29 23:19:25,165 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-29 23:19:36,005 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 23:19:36,006 - __main__ - INFO - Initializing database...
+2026-03-29 23:19:36,011 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 23:19:36,011 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 23:19:36,012 - app.capture.pcap - INFO - Scapy not available, using tshark for PCAP analysis
+2026-03-29 23:19:36,012 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 23:19:36,012 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: cannot import name 'attackToExcel' from 'mitreattack.attackToExcel.attackToExcel' (/Users/wo/code/cig_venv/lib/python3.14/site-packages/mitreattack/attackToExcel/attackToExcel.py)
+2026-03-29 23:19:36,013 - __main__ - INFO - Threat matcher initialized
+2026-03-29 23:19:36,013 - __main__ - INFO - API routes initialized
+2026-03-29 23:19:36,013 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-29 23:19:36,013 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:19:36,014 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 23:19:36,016 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 23:19:36,018 - __main__ - INFO - Threat matching engine started
+2026-03-29 23:19:36,019 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 23:19:36,168 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:19:36,255 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:19:36,260 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-29 23:19:36,567 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-29 23:19:36,569 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-29 23:19:36,570 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 23:34:27,325 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 23:34:27,327 - __main__ - INFO - Initializing database...
+2026-03-29 23:34:27,378 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 23:34:27,378 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 23:34:30,167 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-29 23:34:30,167 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-29 23:34:30,167 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-29 23:34:30,168 - __main__ - INFO - Threat matcher initialized
+2026-03-29 23:34:30,168 - __main__ - INFO - API routes initialized
+2026-03-29 23:34:30,168 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-29 23:34:30,169 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:34:30,206 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 23:34:30,207 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 23:34:30,207 - __main__ - INFO - Threat matching engine started
+2026-03-29 23:34:30,207 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-29 23:34:30,491 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:34:30,605 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:34:30,610 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-29 23:34:31,160 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-29 23:34:31,212 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-29 23:34:31,235 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 23:34:50,959 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-29 23:35:01,447 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-29 23:35:01,447 - __main__ - INFO - Initializing database...
+2026-03-29 23:35:01,449 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-29 23:35:01,449 - __main__ - INFO - Initializing threat matcher...
+2026-03-29 23:35:05,553 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-29 23:35:05,554 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-29 23:35:05,554 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK library not available
+2026-03-29 23:35:05,554 - __main__ - INFO - Threat matcher initialized
+2026-03-29 23:35:05,554 - __main__ - INFO - API routes initialized
+2026-03-29 23:35:05,554 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-29 23:35:05,555 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:35:05,556 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-29 23:35:05,560 - app.matching.engine - INFO - Threat matching engine started
+2026-03-29 23:35:05,560 - __main__ - INFO - Threat matching engine started
+2026-03-29 23:35:05,560 - __main__ - INFO - Starting API server on 0.0.0.0:8001
+2026-03-29 23:35:05,994 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:35:06,109 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-29 23:35:06,113 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-29 23:35:06,782 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-29 23:35:06,783 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-29 23:35:06,783 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-29 23:36:38,233 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-29 23:36:45,015 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_033645.json
