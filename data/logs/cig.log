@@ -705,3 +705,40 @@ TypeError: cannot use 'tuple' as a dict key (unhashable type: 'dict')
 2026-03-30 00:46:05,977 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
 2026-03-30 00:46:06,350 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
 2026-03-30 00:46:06,351 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-30 00:57:20,612 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 00:57:21,054 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_045721.json
+2026-03-30 01:16:59,497 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-30 01:17:00,165 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-30 01:17:00,165 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-30 01:19:34,104 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-30 01:19:34,104 - __main__ - INFO - Initializing database...
+2026-03-30 01:19:34,105 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-30 01:19:34,106 - __main__ - INFO - Initializing threat matcher...
+2026-03-30 01:19:35,229 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-30 01:19:35,308 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 01:19:35,311 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 01:19:35,312 - __main__ - INFO - Threat matcher initialized
+2026-03-30 01:19:35,312 - __main__ - INFO - API routes initialized
+2026-03-30 01:19:35,312 - app.matching.engine - INFO - Configured pfBlocker with 2 feeds
+2026-03-30 01:19:35,312 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 01:19:35,313 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-30 01:19:35,313 - app.matching.engine - INFO - Threat matching engine started
+2026-03-30 01:19:35,313 - __main__ - INFO - Threat matching engine started
+2026-03-30 01:19:35,314 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-30 01:19:35,543 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 01:19:35,595 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 01:19:35,596 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 01:19:36,091 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 01:19:36,092 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-30 01:19:36,092 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-30 01:21:10,776 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 01:21:29,123 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_052129.json
+2026-03-30 01:21:38,634 - app.reporting.security_report - INFO - Generating comprehensive security report for last 7 days
+2026-03-30 01:21:39,796 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260330_052139.json
+2026-03-30 01:21:39,812 - app.reporting.security_report - INFO - HTML security report saved to data/reports/security_report_20260330_052139.html
+2026-03-30 01:46:07,064 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 01:46:07,467 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 01:46:08,093 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 01:46:08,096 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 01:46:10,497 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 01:46:10,500 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators

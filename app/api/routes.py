@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Cyber Intelligence Gateway API",
     description="Threat intelligence and network monitoring API",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS middleware
@@ -39,7 +39,11 @@ app.add_middleware(
 
 # Templates and static files
 templates = Jinja2Templates(directory=Path(__file__).parent.parent.parent / "templates")
-app.mount("/static", StaticFiles(directory=Path(__file__).parent.parent.parent / "static"), name="static")
+app.mount(
+    "/static",
+    StaticFiles(directory=Path(__file__).parent.parent.parent / "static"),
+    name="static",
+)
 
 # Global instances (will be initialized in main.py)
 _db: Optional[Database] = None
@@ -70,6 +74,7 @@ def init_app(database: Database, matcher: ThreatMatcher):
 
 
 # --- Pydantic Models ---
+
 
 class AlertResponse(BaseModel):
     id: str
@@ -150,13 +155,12 @@ class DomainCheckResponse(BaseModel):
 
 # --- Health Endpoints ---
 
+
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
     """Health check endpoint"""
     return HealthResponse(
-        status="healthy",
-        version="1.0.0",
-        timestamp=datetime.utcnow().isoformat()
+        status="healthy", version="1.0.0", timestamp=datetime.utcnow().isoformat()
     )
 
 
@@ -171,30 +175,32 @@ async def get_stats():
         indicators=database.get_indicator_counts(),
         feeds={
             "misp": matcher.misp_feed.get_status(),
-            "pfblocker": matcher.pfblocker_feed.get_status()
+            "pfblocker": matcher.pfblocker_feed.get_status(),
         },
-        captures=matcher.pcap_capture.get_active_captures()
+        captures=matcher.pcap_capture.get_active_captures(),
     )
 
 
 # --- Alert Endpoints ---
+
 
 @app.get("/api/alerts", response_model=AlertListResponse)
 async def get_alerts(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     severity: Optional[str] = Query(None),
-    indicator_type: Optional[str] = Query(None)
+    indicator_type: Optional[str] = Query(None),
 ):
     """Get alerts with optional filtering"""
     database = get_db()
 
-    alerts = database.get_alerts(limit=limit, offset=offset, severity=severity, indicator_type=indicator_type)
+    alerts = database.get_alerts(
+        limit=limit, offset=offset, severity=severity, indicator_type=indicator_type
+    )
     stats = database.get_alert_stats()
 
     return AlertListResponse(
-        total=stats["total"],
-        alerts=[AlertResponse(**a.to_dict()) for a in alerts]
+        total=stats["total"], alerts=[AlertResponse(**a.to_dict()) for a in alerts]
     )
 
 
@@ -219,19 +225,15 @@ async def get_alert_stats():
 
 # --- PCAP Endpoints ---
 
+
 @app.get("/api/pcaps")
-async def get_pcaps(
-    limit: int = Query(50, ge=1, le=200),
-    offset: int = Query(0, ge=0)
-):
+async def get_pcaps(limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
     """Get PCAP file list"""
     if not db:
         raise HTTPException(status_code=503, detail="Database not initialized")
 
     pcaps = db.get_pcaps(limit=limit, offset=offset)
-    return {
-        "pcaps": [PcapResponse(**p.to_dict()).dict() for p in pcaps]
-    }
+    return {"pcaps": [PcapResponse(**p.to_dict()).dict() for p in pcaps]}
 
 
 @app.get("/api/pcaps/{pcap_id}/download")
@@ -242,6 +244,7 @@ async def download_pcap(pcap_id: str):
 
     conn = db.db_path
     import sqlite3
+
     conn = sqlite3.connect(db.db_path)
     cursor = conn.cursor()
     cursor.execute("SELECT filepath, filename FROM pcap_files WHERE id = ?", (pcap_id,))
@@ -266,7 +269,7 @@ async def download_pcap(pcap_id: str):
     return Response(
         content=content,
         media_type="application/octet-stream",
-        headers={"Content-Disposition": f"attachment; filename={filename}"}
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
 
 
@@ -280,11 +283,15 @@ async def get_pcap_alerts(pcap_id: str):
     # This is a simplified implementation
     conn = db.db_path
     import sqlite3
+
     conn = sqlite3.connect(db.db_path)
     cursor = conn.cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT start_time FROM pcap_files WHERE id = ?
-    """, (pcap_id,))
+    """,
+        (pcap_id,),
+    )
     row = cursor.fetchone()
     conn.close()
 
@@ -295,6 +302,7 @@ async def get_pcap_alerts(pcap_id: str):
 
 
 # --- Intelligence Endpoints ---
+
 
 @app.get("/api/intel/misp")
 async def get_misp_status():
@@ -317,16 +325,14 @@ async def get_pfblocker_status():
 @app.get("/api/intel/indicators")
 async def get_indicators(
     limit: int = Query(1000, ge=1, le=10000),
-    indicator_type: Optional[str] = Query(None)
+    indicator_type: Optional[str] = Query(None),
 ):
     """Get threat indicators"""
     if not db:
         raise HTTPException(status_code=503, detail="Database not initialized")
 
     indicators = db.get_indicators(limit=limit, indicator_type=indicator_type)
-    return {
-        "indicators": [IndicatorResponse(**i.to_dict()).dict() for i in indicators]
-    }
+    return {"indicators": [IndicatorResponse(**i.to_dict()).dict() for i in indicators]}
 
 
 @app.post("/api/intel/check/domain", response_model=DomainCheckResponse)
@@ -343,14 +349,11 @@ async def check_domain(request: DomainCheckRequest):
             indicator={
                 "indicator": alert.indicator,
                 "type": alert.indicator_type,
-                "source": alert.feed_source
-            }
+                "source": alert.feed_source,
+            },
         )
 
-    return DomainCheckResponse(
-        domain=request.domain,
-        matched=False
-    )
+    return DomainCheckResponse(domain=request.domain, matched=False)
 
 
 @app.post("/api/intel/check/ip")
@@ -367,14 +370,15 @@ async def check_ip(ip: str):
             "indicator": {
                 "indicator": alert.indicator,
                 "type": alert.indicator_type,
-                "source": alert.feed_source
-            }
+                "source": alert.feed_source,
+            },
         }
 
     return {"ip": ip, "matched": False}
 
 
 # --- Capture Control Endpoints ---
+
 
 @app.post("/api/capture/lan/start")
 async def start_lan_capture():
@@ -426,12 +430,11 @@ async def get_capture_status():
     if not threat_matcher:
         raise HTTPException(status_code=503, detail="System not initialized")
 
-    return {
-        "active": threat_matcher.pcap_capture.get_active_captures()
-    }
+    return {"active": threat_matcher.pcap_capture.get_active_captures()}
 
 
 # --- Feed Update Endpoints ---
+
 
 @app.post("/api/feeds/update/misp")
 async def update_misp_feed():
@@ -463,7 +466,120 @@ async def update_all_feeds():
     return {"status": "updated"}
 
 
+@app.get("/api/feeds/status")
+async def get_all_feeds_status():
+    """Get status of all feeds"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return {
+        "misp": {
+            "enabled": settings.enable_misp,
+            "configured": bool(settings.misp_url and settings.misp_api_key),
+            "status": "configured" if settings.enable_misp else "disabled",
+        },
+        "pfblocker": {
+            "enabled": settings.enable_pfblocker,
+            "configured": bool(settings.pfblocker_feeds),
+            "status": "configured" if settings.enable_pfblocker else "disabled",
+        },
+        "abuseipdb": {
+            "enabled": settings.enable_abuseipdb,
+            "configured": bool(settings.abuseipdb_api_key),
+            "status": "configured" if settings.enable_abuseipdb else "disabled",
+        },
+        "urlhaus": {
+            "enabled": settings.enable_urlhaus,
+            "configured": True,
+            "status": "configured" if settings.enable_urlhaus else "disabled",
+        },
+        "threatfox": {
+            "enabled": settings.enable_threatfox,
+            "configured": True,
+            "status": "configured" if settings.enable_threatfox else "disabled",
+        },
+    }
+
+
+class FeedToggleRequest(BaseModel):
+    feed: str
+    enabled: bool
+
+
+@app.post("/api/feeds/toggle")
+async def toggle_feed(request: FeedToggleRequest):
+    """Enable or disable a feed"""
+    feed = request.feed.lower()
+    enabled = request.enabled
+
+    if feed == "misp":
+        settings.enable_misp = enabled
+    elif feed == "pfblocker":
+        settings.enable_pfblocker = enabled
+    elif feed == "abuseipdb":
+        settings.enable_abuseipdb = enabled
+    elif feed == "urlhaus":
+        settings.enable_urlhaus = enabled
+    elif feed == "threatfox":
+        settings.enable_threatfox = enabled
+    else:
+        raise HTTPException(status_code=400, detail=f"Unknown feed: {feed}")
+
+    return {"feed": feed, "enabled": enabled, "status": "ok"}
+
+
+@app.get("/api/intel/urlhaus")
+async def get_urlhaus_status():
+    """Get URLhaus feed status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    if not hasattr(threat_matcher, "abusech_feeds"):
+        return {"enabled": settings.enable_urlhaus, "status": "not_configured"}
+
+    return threat_matcher.abusech_feeds.get_status().get("urlhaus", {})
+
+
+@app.get("/api/intel/threatfox")
+async def get_threatfox_status():
+    """Get ThreatFox feed status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    if not hasattr(threat_matcher, "abusech_feeds"):
+        return {"enabled": settings.enable_threatfox, "status": "not_configured"}
+
+    return threat_matcher.abusech_feeds.get_status().get("threatfox", {})
+
+
+@app.post("/api/feeds/update/urlhaus")
+async def update_urlhaus_feed():
+    """Manually trigger URLhaus feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    if not hasattr(threat_matcher, "abusech_feeds"):
+        return {"status": "error", "message": "Abuse.ch feeds not configured"}
+
+    count = threat_matcher.abusech_feeds.urlhaus.fetch_urls()
+    return {"status": "updated", "indicators_count": count}
+
+
+@app.post("/api/feeds/update/threatfox")
+async def update_threatfox_feed():
+    """Manually trigger ThreatFox feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    if not hasattr(threat_matcher, "abusech_feeds"):
+        return {"status": "error", "message": "Abuse.ch feeds not configured"}
+
+    count = threat_matcher.abusech_feeds.threatfox.fetch_indicators()
+    return {"status": "updated", "indicators_count": count}
+
+
 # --- System Endpoints ---
+
 
 @app.get("/api/status")
 async def get_system_status():
@@ -475,6 +591,7 @@ async def get_system_status():
 
 
 # --- Dashboard Endpoints ---
+
 
 @app.get("/test")
 async def test_route():
@@ -488,10 +605,13 @@ async def dashboard(request: Request):
     try:
         # Check if system is initialized
         if _db is None or _threat_matcher is None:
-            return templates.TemplateResponse("error.html", {
-                "request": request,
-                "error": "System not initialized. Please ensure the database and threat matcher are properly configured."
-            })
+            return templates.TemplateResponse(
+                "error.html",
+                {
+                    "request": request,
+                    "error": "System not initialized. Please ensure the database and threat matcher are properly configured.",
+                },
+            )
 
         database = _db
         matcher = _threat_matcher
@@ -503,30 +623,33 @@ async def dashboard(request: Request):
             "feeds": {
                 "misp": matcher.misp_feed.get_status(),
                 "pfblocker": matcher.pfblocker_feed.get_status(),
-                "abuseipdb": matcher.abuseipdb_feed.get_status()
+                "abuseipdb": matcher.abuseipdb_feed.get_status(),
             },
             "captures": matcher.pcap_capture.get_active_captures(),
-            "system": matcher.get_status()
+            "system": matcher.get_status(),
         }
 
         # Get recent alerts
         recent_alerts = database.get_alerts(limit=10, offset=0)
         alerts_data = [AlertResponse(**a.to_dict()) for a in recent_alerts]
 
-        return templates.TemplateResponse("dashboard.html", {
-            "request": request,
-            "stats": stats,
-            "recent_alerts": alerts_data,
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        return templates.TemplateResponse(
+            "dashboard.html",
+            {
+                "request": request,
+                "stats": stats,
+                "recent_alerts": alerts_data,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
     except Exception as e:
         logger.error(f"Dashboard error: {e}")
         import traceback
+
         logger.error(f"Traceback: {traceback.format_exc()}")
-        return templates.TemplateResponse("error.html", {
-            "request": request,
-            "error": str(e)
-        })
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
 
 
 @app.get("/dashboard/status")
@@ -534,10 +657,9 @@ async def status_dashboard(request: Request):
     """System status dashboard"""
     try:
         if _threat_matcher is None:
-            return templates.TemplateResponse("error.html", {
-                "request": request,
-                "error": "System not initialized."
-            })
+            return templates.TemplateResponse(
+                "error.html", {"request": request, "error": "System not initialized."}
+            )
 
         matcher = _threat_matcher
 
@@ -546,22 +668,26 @@ async def status_dashboard(request: Request):
             "feeds": {
                 "misp": matcher.misp_feed.get_status(),
                 "pfblocker": matcher.pfblocker_feed.get_status(),
-                "abuseipdb": matcher.abuseipdb_feed.get_status() if hasattr(matcher, 'abuseipdb_feed') else {"status": "not_configured"}
+                "abuseipdb": matcher.abuseipdb_feed.get_status()
+                if hasattr(matcher, "abuseipdb_feed")
+                else {"status": "not_configured"},
             },
-            "captures": matcher.pcap_capture.get_active_captures()
+            "captures": matcher.pcap_capture.get_active_captures(),
         }
 
-        return templates.TemplateResponse("status.html", {
-            "request": request,
-            "status": status_data,
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        return templates.TemplateResponse(
+            "status.html",
+            {
+                "request": request,
+                "status": status_data,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
     except Exception as e:
         logger.error(f"Status dashboard error: {e}")
-        return templates.TemplateResponse("error.html", {
-            "request": request,
-            "error": str(e)
-        })
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
 
 
 @app.get("/dashboard/health")
@@ -569,10 +695,9 @@ async def health_dashboard(request: Request):
     """System health dashboard"""
     try:
         if _db is None or _threat_matcher is None:
-            return templates.TemplateResponse("error.html", {
-                "request": request,
-                "error": "System not initialized."
-            })
+            return templates.TemplateResponse(
+                "error.html", {"request": request, "error": "System not initialized."}
+            )
 
         database = _db
         matcher = _threat_matcher
@@ -581,31 +706,35 @@ async def health_dashboard(request: Request):
             "database": {
                 "status": "healthy",
                 "alerts_count": database.get_alert_stats().get("total", 0),
-                "indicators_count": sum(database.get_indicator_counts().values())
+                "indicators_count": sum(database.get_indicator_counts().values()),
             },
             "feeds": {
                 "misp": matcher.misp_feed.get_status(),
                 "pfblocker": matcher.pfblocker_feed.get_status(),
-                "abuseipdb": matcher.abuseipdb_feed.get_status() if hasattr(matcher, 'abuseipdb_feed') else {"status": "not_configured"}
+                "abuseipdb": matcher.abuseipdb_feed.get_status()
+                if hasattr(matcher, "abuseipdb_feed")
+                else {"status": "not_configured"},
             },
             "capture": {
                 "active_captures": len(matcher.pcap_capture.get_active_captures()),
-                "status": "operational"
+                "status": "operational",
             },
-            "system": matcher.get_status()
+            "system": matcher.get_status(),
         }
 
-        return templates.TemplateResponse("health.html", {
-            "request": request,
-            "health": health_data,
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        return templates.TemplateResponse(
+            "health.html",
+            {
+                "request": request,
+                "health": health_data,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
     except Exception as e:
         logger.error(f"Health dashboard error: {e}")
-        return templates.TemplateResponse("error.html", {
-            "request": request,
-            "error": str(e)
-        })
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
 
 
 @app.get("/dashboard/events")
@@ -613,10 +742,9 @@ async def events_dashboard(request: Request):
     """Events/Alerts dashboard"""
     try:
         if _db is None:
-            return templates.TemplateResponse("error.html", {
-                "request": request,
-                "error": "Database not initialized."
-            })
+            return templates.TemplateResponse(
+                "error.html", {"request": request, "error": "Database not initialized."}
+            )
 
         database = _db
 
@@ -625,18 +753,20 @@ async def events_dashboard(request: Request):
         alerts_data = [AlertResponse(**a.to_dict()) for a in alerts]
         stats = database.get_alert_stats()
 
-        return templates.TemplateResponse("events.html", {
-            "request": request,
-            "alerts": alerts_data,
-            "stats": stats,
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        return templates.TemplateResponse(
+            "events.html",
+            {
+                "request": request,
+                "alerts": alerts_data,
+                "stats": stats,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
     except Exception as e:
         logger.error(f"Events dashboard error: {e}")
-        return templates.TemplateResponse("error.html", {
-            "request": request,
-            "error": str(e)
-        })
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
 
 
 @app.get("/dashboard/reports")
@@ -644,10 +774,9 @@ async def reports_dashboard(request: Request):
     """Reports dashboard"""
     try:
         if _threat_matcher is None:
-            return templates.TemplateResponse("error.html", {
-                "request": request,
-                "error": "System not initialized."
-            })
+            return templates.TemplateResponse(
+                "error.html", {"request": request, "error": "System not initialized."}
+            )
 
         matcher = _threat_matcher
 
@@ -656,9 +785,9 @@ async def reports_dashboard(request: Request):
             "summary": {
                 "total_alerts": 0,
                 "active_feeds": 0,
-                "system_status": "operational"
+                "system_status": "operational",
             },
-            "recent_reports": []
+            "recent_reports": [],
         }
 
         # Try to get basic stats
@@ -670,20 +799,23 @@ async def reports_dashboard(request: Request):
         except:
             pass
 
-        return templates.TemplateResponse("reports.html", {
-            "request": request,
-            "report_data": report_data,
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        return templates.TemplateResponse(
+            "reports.html",
+            {
+                "request": request,
+                "report_data": report_data,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
     except Exception as e:
         logger.error(f"Reports dashboard error: {e}")
-        return templates.TemplateResponse("error.html", {
-            "request": request,
-            "error": str(e)
-        })
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
 
 
 # --- Reporting Endpoints ---
+
 
 @app.get("/api/reports/security")
 async def generate_security_report(days: int = Query(7, ge=1, le=90)):
@@ -707,13 +839,17 @@ async def generate_html_report(days: int = Query(7, ge=1, le=90)):
 
     try:
         html_path = threat_matcher.generate_html_report(days)
-        return {"html_report_path": html_path, "message": "HTML report generated successfully"}
+        return {
+            "html_report_path": html_path,
+            "message": "HTML report generated successfully",
+        }
     except Exception as e:
         logger.error(f"Failed to generate HTML report: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate HTML report")
 
 
 # --- MITRE ATT&CK Endpoints ---
+
 
 @app.post("/api/mitre/analyze")
 async def analyze_alert_for_mitre(alert_data: dict):
@@ -758,6 +894,7 @@ async def get_mitre_tactics():
 
 
 # --- Feed Management Endpoints ---
+
 
 @app.post("/api/feeds/update/abuseipdb")
 async def update_abuseipdb_feed():
