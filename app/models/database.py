@@ -14,6 +14,7 @@ import uuid
 @dataclass
 class Alert:
     """Threat alert model"""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     severity: str = "info"  # critical, high, medium, low, info
@@ -40,6 +41,7 @@ class Alert:
 @dataclass
 class PcapFile:
     """PCAP file metadata"""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     filename: str = ""
     filepath: str = ""
@@ -57,6 +59,7 @@ class PcapFile:
 @dataclass
 class Indicator:
     """Threat indicator model"""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     value: str = ""
     type: str = ""  # ip, domain, hash, url, email
@@ -135,10 +138,18 @@ class Database:
         """)
 
         # Create indexes for fast lookups
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_indicator_value ON indicators(value)")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_indicator_type ON indicators(type)")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_alert_timestamp ON alerts(timestamp)")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_alert_indicator ON alerts(indicator)")
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_indicator_value ON indicators(value)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_indicator_type ON indicators(type)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_alert_timestamp ON alerts(timestamp)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_alert_indicator ON alerts(indicator)"
+        )
 
         conn.commit()
         conn.close()
@@ -147,23 +158,40 @@ class Database:
         """Insert a new alert"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO alerts (id, timestamp, severity, source_ip, destination_ip,
                 source_port, destination_port, protocol, indicator, indicator_type,
                 feed_source, rule_id, message, raw_log)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            alert.id, alert.timestamp, alert.severity, alert.source_ip,
-            alert.destination_ip, alert.source_port, alert.destination_port,
-            alert.protocol, alert.indicator, alert.indicator_type,
-            alert.feed_source, alert.rule_id, alert.message, alert.raw_log
-        ))
+        """,
+            (
+                alert.id,
+                alert.timestamp,
+                alert.severity,
+                alert.source_ip,
+                alert.destination_ip,
+                alert.source_port,
+                alert.destination_port,
+                alert.protocol,
+                alert.indicator,
+                alert.indicator_type,
+                alert.feed_source,
+                alert.rule_id,
+                alert.message,
+                alert.raw_log,
+            ),
+        )
         conn.commit()
         conn.close()
 
-    def get_alerts(self, limit: int = 100, offset: int = 0,
-                   severity: Optional[str] = None,
-                   indicator_type: Optional[str] = None) -> List[Alert]:
+    def get_alerts(
+        self,
+        limit: int = 100,
+        offset: int = 0,
+        severity: Optional[str] = None,
+        indicator_type: Optional[str] = None,
+    ) -> List[Alert]:
         """Get alerts with optional filtering"""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
@@ -186,22 +214,25 @@ class Database:
         rows = cursor.fetchall()
         conn.close()
 
-        return [Alert(
-            id=row["id"],
-            timestamp=row["timestamp"],
-            severity=row["severity"],
-            source_ip=row["source_ip"],
-            destination_ip=row["destination_ip"],
-            source_port=row["source_port"],
-            destination_port=row["destination_port"],
-            protocol=row["protocol"],
-            indicator=row["indicator"],
-            indicator_type=row["indicator_type"],
-            feed_source=row["feed_source"],
-            rule_id=row["rule_id"],
-            message=row["message"],
-            raw_log=row["raw_log"]
-        ) for row in rows]
+        return [
+            Alert(
+                id=row["id"],
+                timestamp=row["timestamp"],
+                severity=row["severity"],
+                source_ip=row["source_ip"],
+                destination_ip=row["destination_ip"],
+                source_port=row["source_port"],
+                destination_port=row["destination_port"],
+                protocol=row["protocol"],
+                indicator=row["indicator"],
+                indicator_type=row["indicator_type"],
+                feed_source=row["feed_source"],
+                rule_id=row["rule_id"],
+                message=row["message"],
+                raw_log=row["raw_log"],
+            )
+            for row in rows
+        ]
 
     def get_alert(self, alert_id: str) -> Optional[Alert]:
         """Get a single alert by ID"""
@@ -229,7 +260,7 @@ class Database:
             feed_source=row["feed_source"],
             rule_id=row["rule_id"],
             message=row["message"],
-            raw_log=row["raw_log"]
+            raw_log=row["raw_log"],
         )
 
     def get_alert_stats(self) -> Dict[str, Any]:
@@ -242,15 +273,21 @@ class Database:
         total = cursor.fetchone()[0]
 
         # By severity
-        cursor.execute("SELECT severity, COUNT(*) as count FROM alerts GROUP BY severity")
+        cursor.execute(
+            "SELECT severity, COUNT(*) as count FROM alerts GROUP BY severity"
+        )
         by_severity = {row[0]: row[1] for row in cursor.fetchall()}
 
         # By indicator type
-        cursor.execute("SELECT indicator_type, COUNT(*) as count FROM alerts GROUP BY indicator_type")
+        cursor.execute(
+            "SELECT indicator_type, COUNT(*) as count FROM alerts GROUP BY indicator_type"
+        )
         by_type = {row[0]: row[1] for row in cursor.fetchall()}
 
         # By feed source
-        cursor.execute("SELECT feed_source, COUNT(*) as count FROM alerts GROUP BY feed_source")
+        cursor.execute(
+            "SELECT feed_source, COUNT(*) as count FROM alerts GROUP BY feed_source"
+        )
         by_source = {row[0]: row[1] for row in cursor.fetchall()}
 
         # Last 24 hours
@@ -267,7 +304,7 @@ class Database:
             "by_severity": by_severity,
             "by_type": by_type,
             "by_source": by_source,
-            "last_24h": last_24h
+            "last_24h": last_24h,
         }
 
     def insert_indicator(self, indicator: Indicator) -> None:
@@ -276,26 +313,45 @@ class Database:
         cursor = conn.cursor()
 
         # Check if exists
-        cursor.execute("SELECT id, count FROM indicators WHERE value = ? AND type = ? AND source = ?",
-                      (indicator.value, indicator.type, indicator.source))
+        cursor.execute(
+            "SELECT id, count FROM indicators WHERE value = ? AND type = ? AND source = ?",
+            (indicator.value, indicator.type, indicator.source),
+        )
         existing = cursor.fetchone()
 
         if existing:
             # Update
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE indicators SET last_seen = ?, count = count + 1
                 WHERE value = ? AND type = ? AND source = ?
-            """, (indicator.last_seen, indicator.value, indicator.type, indicator.source))
+            """,
+                (
+                    indicator.last_seen,
+                    indicator.value,
+                    indicator.type,
+                    indicator.source,
+                ),
+            )
         else:
             # Insert
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO indicators (id, value, type, source, feed_id, first_seen, last_seen, tags, count)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                indicator.id, indicator.value, indicator.type, indicator.source,
-                indicator.feed_id, indicator.first_seen, indicator.last_seen,
-                indicator.tags, indicator.count
-            ))
+            """,
+                (
+                    indicator.id,
+                    indicator.value,
+                    indicator.type,
+                    indicator.source,
+                    indicator.feed_id,
+                    indicator.first_seen,
+                    indicator.last_seen,
+                    indicator.tags,
+                    indicator.count,
+                ),
+            )
 
         conn.commit()
         conn.close()
@@ -307,56 +363,87 @@ class Database:
 
         data = []
         for ind in indicators:
-            data.append((
-                ind.id, ind.value, ind.type, ind.source, ind.feed_id,
-                ind.first_seen, ind.last_seen, ind.tags, ind.count
-            ))
+            data.append(
+                (
+                    ind.id,
+                    ind.value,
+                    ind.type,
+                    ind.source,
+                    ind.feed_id,
+                    ind.first_seen,
+                    ind.last_seen,
+                    ind.tags,
+                    ind.count,
+                )
+            )
 
-        cursor.executemany("""
+        cursor.executemany(
+            """
             INSERT OR REPLACE INTO indicators
             (id, value, type, source, feed_id, first_seen, last_seen, tags, count)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, data)
+        """,
+            data,
+        )
 
         conn.commit()
         conn.close()
 
-    def get_indicators(self, limit: int = 1000, indicator_type: Optional[str] = None) -> List[Indicator]:
+    def get_indicators(
+        self,
+        limit: int = 1000,
+        indicator_type: Optional[str] = None,
+        feed_source: Optional[str] = None,
+    ) -> List[Indicator]:
         """Get indicators"""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        query = "SELECT * FROM indicators"
+        query = "SELECT * FROM indicators WHERE 1=1"
+        params = []
+
         if indicator_type:
-            query += " WHERE type = ?"
-            cursor.execute(query + " ORDER BY last_seen DESC LIMIT ?", (indicator_type, limit))
-        else:
-            cursor.execute(query + " ORDER BY last_seen DESC LIMIT ?", (limit,))
+            query += " AND type = ?"
+            params.append(indicator_type)
+        if feed_source:
+            query += " AND source = ?"
+            params.append(feed_source)
+
+        query += " ORDER BY last_seen DESC LIMIT ?"
+        params.append(limit)
+
+        cursor.execute(query, params)
 
         rows = cursor.fetchall()
         conn.close()
 
-        return [Indicator(
-            id=row["id"],
-            value=row["value"],
-            type=row["type"],
-            source=row["source"],
-            feed_id=row["feed_id"],
-            first_seen=row["first_seen"],
-            last_seen=row["last_seen"],
-            tags=row["tags"],
-            count=row["count"]
-        ) for row in rows]
+        return [
+            Indicator(
+                id=row["id"],
+                value=row["value"],
+                type=row["type"],
+                source=row["source"],
+                feed_id=row["feed_id"],
+                first_seen=row["first_seen"],
+                last_seen=row["last_seen"],
+                tags=row["tags"],
+                count=row["count"],
+            )
+            for row in rows
+        ]
 
     def check_indicator(self, value: str, indicator_type: str) -> Optional[Indicator]:
         """Check if an indicator exists in the database"""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT * FROM indicators WHERE value = ? AND type = ?
-        """, (value, indicator_type))
+        """,
+            (value, indicator_type),
+        )
         row = cursor.fetchone()
         conn.close()
 
@@ -372,21 +459,31 @@ class Database:
             first_seen=row["first_seen"],
             last_seen=row["last_seen"],
             tags=row["tags"],
-            count=row["count"]
+            count=row["count"],
         )
 
     def insert_pcap(self, pcap: PcapFile) -> None:
         """Insert PCAP metadata"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO pcap_files (id, filename, filepath, start_time, end_time,
                 size_bytes, packets_count, interface, alerts_count)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            pcap.id, pcap.filename, pcap.filepath, pcap.start_time, pcap.end_time,
-            pcap.size_bytes, pcap.packets_count, pcap.interface, pcap.alerts_count
-        ))
+        """,
+            (
+                pcap.id,
+                pcap.filename,
+                pcap.filepath,
+                pcap.start_time,
+                pcap.end_time,
+                pcap.size_bytes,
+                pcap.packets_count,
+                pcap.interface,
+                pcap.alerts_count,
+            ),
+        )
         conn.commit()
         conn.close()
 
@@ -395,32 +492,41 @@ class Database:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT * FROM pcap_files ORDER BY start_time DESC LIMIT ? OFFSET ?
-        """, (limit, offset))
+        """,
+            (limit, offset),
+        )
         rows = cursor.fetchall()
         conn.close()
 
-        return [PcapFile(
-            id=row["id"],
-            filename=row["filename"],
-            filepath=row["filepath"],
-            start_time=row["start_time"],
-            end_time=row["end_time"],
-            size_bytes=row["size_bytes"],
-            packets_count=row["packets_count"],
-            interface=row["interface"],
-            alerts_count=row["alerts_count"]
-        ) for row in rows]
+        return [
+            PcapFile(
+                id=row["id"],
+                filename=row["filename"],
+                filepath=row["filepath"],
+                start_time=row["start_time"],
+                end_time=row["end_time"],
+                size_bytes=row["size_bytes"],
+                packets_count=row["packets_count"],
+                interface=row["interface"],
+                alerts_count=row["alerts_count"],
+            )
+            for row in rows
+        ]
 
     def delete_old_alerts(self, retention_days: int) -> int:
         """Delete alerts older than retention period"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute(
+            """
             DELETE FROM alerts
             WHERE timestamp < datetime('now', '-' || ? || ' days')
-        """, (retention_days,))
+        """,
+            (retention_days,),
+        )
         deleted = cursor.rowcount
         conn.commit()
         conn.close()

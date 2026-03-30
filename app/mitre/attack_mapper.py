@@ -12,6 +12,7 @@ import re
 try:
     from mitreattack.attackToExcel import attackToExcel
     from mitreattack.navlayers import Layer
+
     HAS_MITRE = True
 except ImportError:
     HAS_MITRE = False
@@ -31,10 +32,12 @@ class MITREAttackMapper:
         self.technique_mappings = {}
         self.tactic_mappings = {}
 
-        if HAS_MITRE:
+        try:
             self._load_attack_data()
-        else:
-            logger.warning("MITRE ATT&CK library not available")
+        except Exception as e:
+            logger.warning(f"Could not load MITRE library data: {e}")
+            logger.info("Loading simplified TTP mappings as fallback")
+            self._load_simplified_mappings()
 
     def _load_attack_data(self):
         """Load MITRE ATT&CK framework data"""
@@ -60,122 +63,146 @@ class MITREAttackMapper:
             "T1595": {  # Active Scanning
                 "indicators": ["port_scan", "network_scan", "vulnerability_scan"],
                 "tactic": "TA0043",
-                "name": "Active Scanning"
+                "name": "Active Scanning",
             },
             "T1046": {  # Network Service Discovery
                 "indicators": ["service_enumeration", "banner_grabbing"],
                 "tactic": "TA0043",
-                "name": "Network Service Discovery"
+                "name": "Network Service Discovery",
             },
-
+            "T1592": {  # Gather Victim Host Information
+                "indicators": ["host_discovery", "system_info"],
+                "tactic": "TA0043",
+                "name": "Gather Victim Host Information",
+            },
             # Initial Access
             "T1190": {  # Exploit Public-Facing Application
                 "indicators": ["web_exploit", "sql_injection", "xss"],
                 "tactic": "TA0001",
-                "name": "Exploit Public-Facing Application"
+                "name": "Exploit Public-Facing Application",
             },
             "T1078": {  # Valid Accounts
                 "indicators": ["brute_force", "credential_stuffing"],
                 "tactic": "TA0001",
-                "name": "Valid Accounts"
+                "name": "Valid Accounts",
             },
-
+            "T1566": {  # Phishing
+                "indicators": [
+                    "phishing",
+                    "malicious_attachment",
+                    "spear_phishing",
+                    "email",
+                ],
+                "tactic": "TA0001",
+                "name": "Phishing",
+            },
+            "T1133": {  # External Remote Services
+                "indicators": ["vpn", "remote_access", "ssh"],
+                "tactic": "TA0001",
+                "name": "External Remote Services",
+            },
+            "T1046": {  # Network Service Discovery
+                "indicators": ["service_enumeration", "banner_grabbing"],
+                "tactic": "TA0043",
+                "name": "Network Service Discovery",
+            },
+            # Initial Access
+            "T1190": {  # Exploit Public-Facing Application
+                "indicators": ["web_exploit", "sql_injection", "xss"],
+                "tactic": "TA0001",
+                "name": "Exploit Public-Facing Application",
+            },
+            "T1078": {  # Valid Accounts
+                "indicators": ["brute_force", "credential_stuffing"],
+                "tactic": "TA0001",
+                "name": "Valid Accounts",
+            },
             # Execution
             "T1059": {  # Command and Scripting Interpreter
                 "indicators": ["powershell", "cmd_execution", "script_execution"],
                 "tactic": "TA0002",
-                "name": "Command and Scripting Interpreter"
+                "name": "Command and Scripting Interpreter",
             },
             "T1204": {  # User Execution
                 "indicators": ["malicious_attachment", "drive_by_download"],
                 "tactic": "TA0002",
-                "name": "User Execution"
+                "name": "User Execution",
             },
-
             # Persistence
             "T1098": {  # Account Manipulation
                 "indicators": ["account_modification", "privilege_escalation"],
                 "tactic": "TA0003",
-                "name": "Account Manipulation"
+                "name": "Account Manipulation",
             },
-
             # Privilege Escalation
             "T1068": {  # Exploitation for Privilege Escalation
                 "indicators": ["local_exploit", "kernel_exploit"],
                 "tactic": "TA0004",
-                "name": "Exploitation for Privilege Escalation"
+                "name": "Exploitation for Privilege Escalation",
             },
-
             # Defense Evasion
             "T1070": {  # Indicator Removal
                 "indicators": ["log_deletion", "evidence_removal"],
                 "tactic": "TA0005",
-                "name": "Indicator Removal"
+                "name": "Indicator Removal",
             },
             "T1027": {  # Obfuscated Files or Information
                 "indicators": ["encoded_payload", "encrypted_traffic"],
                 "tactic": "TA0005",
-                "name": "Obfuscated Files or Information"
+                "name": "Obfuscated Files or Information",
             },
-
             # Credential Access
             "T1003": {  # OS Credential Dumping
                 "indicators": ["credential_dump", "mimikatz"],
                 "tactic": "TA0006",
-                "name": "OS Credential Dumping"
+                "name": "OS Credential Dumping",
             },
-
             # Discovery
             "T1082": {  # System Information Discovery
                 "indicators": ["system_enumeration", "recon_commands"],
                 "tactic": "TA0007",
-                "name": "System Information Discovery"
+                "name": "System Information Discovery",
             },
             "T1016": {  # System Network Configuration Discovery
                 "indicators": ["network_config", "ipconfig", "ifconfig"],
                 "tactic": "TA0007",
-                "name": "System Network Configuration Discovery"
+                "name": "System Network Configuration Discovery",
             },
-
             # Lateral Movement
             "T1021": {  # Remote Services
                 "indicators": ["rdp_connection", "ssh_brute_force", "lateral_movement"],
                 "tactic": "TA0008",
-                "name": "Remote Services"
+                "name": "Remote Services",
             },
-
             # Collection
             "T1115": {  # Clipboard Data
                 "indicators": ["clipboard_access"],
                 "tactic": "TA0009",
-                "name": "Clipboard Data"
+                "name": "Clipboard Data",
             },
-
             # Command and Control
             "T1071": {  # Application Layer Protocol
                 "indicators": ["c2_traffic", "beaconing"],
                 "tactic": "TA0011",
-                "name": "Application Layer Protocol"
+                "name": "Application Layer Protocol",
             },
             "T1573": {  # Encrypted Channel
                 "indicators": ["encrypted_c2", "dns_tunneling"],
                 "tactic": "TA0011",
-                "name": "Encrypted Channel"
+                "name": "Encrypted Channel",
             },
-
             # Exfiltration
             "T1041": {  # Exfiltration Over C2 Channel
                 "indicators": ["data_exfil", "c2_exfil"],
                 "tactic": "TA0010",
-                "name": "Exfiltration Over C2 Channel"
+                "name": "Exfiltration Over C2 Channel",
             },
-
             # Impact
             "T1486": {  # Data Encrypted for Impact
                 "indicators": ["ransomware", "data_encryption"],
                 "tactic": "TA0040",
-                "name": "Data Encrypted for Impact"
-            }
+                "name": "Data Encrypted for Impact",
+            },
         }
 
         # Tactic mappings
@@ -192,7 +219,7 @@ class MITREAttackMapper:
             "TA0009": {"name": "Collection", "short": "collection"},
             "TA0010": {"name": "Exfiltration", "short": "exfiltration"},
             "TA0011": {"name": "Command and Control", "short": "command-and-control"},
-            "TA0040": {"name": "Impact", "short": "impact"}
+            "TA0040": {"name": "Impact", "short": "impact"},
         }
 
     def map_event_to_ttp(self, event_data: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -214,13 +241,18 @@ class MITREAttackMapper:
 
             # Check indicator patterns
             for indicator_pattern in technique_data["indicators"]:
-                if indicator_pattern.lower() in message or indicator_pattern.lower() in indicator.lower():
+                if (
+                    indicator_pattern.lower() in message
+                    or indicator_pattern.lower() in indicator.lower()
+                ):
                     confidence += 30
                     matched_indicators.append(indicator_pattern)
 
             # Network-specific checks
             if technique_id == "T1595":  # Active Scanning
-                if protocol in ["tcp", "udp"] and self._is_scan_pattern(source_ip, destination_ip):
+                if protocol in ["tcp", "udp"] and self._is_scan_pattern(
+                    source_ip, destination_ip
+                ):
                     confidence += 40
                     matched_indicators.append("network_scan")
 
@@ -249,15 +281,17 @@ class MITREAttackMapper:
                 tactic_id = technique_data["tactic"]
                 tactic_info = self.tactic_mappings.get(tactic_id, {})
 
-                ttps.append({
-                    "technique_id": technique_id,
-                    "technique_name": technique_data["name"],
-                    "tactic_id": tactic_id,
-                    "tactic_name": tactic_info.get("name", ""),
-                    "confidence": min(confidence, 100),
-                    "matched_indicators": matched_indicators,
-                    "event_data": event_data
-                })
+                ttps.append(
+                    {
+                        "technique_id": technique_id,
+                        "technique_name": technique_data["name"],
+                        "tactic_id": tactic_id,
+                        "tactic_name": tactic_info.get("name", ""),
+                        "confidence": min(confidence, 100),
+                        "matched_indicators": matched_indicators,
+                        "event_data": event_data,
+                    }
+                )
 
         return ttps
 

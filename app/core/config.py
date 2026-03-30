@@ -42,18 +42,31 @@ class Settings:
     misp_update_interval: int = 300  # seconds
 
     # pfBlocker Configuration
-    pfblocker_feeds: List[str] = field(default_factory=lambda: [
-        "https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader",
-        # ph00lt0/blocklist feeds - blocklist of ads, analytics, trackers, malware, phishing
-        "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
-    ])
+    pfblocker_feeds: List[str] = field(
+        default_factory=lambda: [
+            # ph00lt0/blocklist - ads, analytics, trackers, malware, phishing
+            "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+        ]
+    )
     pfblocker_update_interval: int = 3600  # seconds
     pfblocker_local_blocklist: str = "config/pfblocker_local.txt"
 
     # AbuseIPDB Configuration
-    abuseipdb_api_key: str = ""
+    abuseipdb_api_key: str = "15b61bb636b0a9f080cb9cecc7774b6eab1368f07edc73895a8367ab4e963d5cd84dff7b56e03a60"
     abuseipdb_update_interval: int = 3600  # seconds
     abuseipdb_confidence_threshold: int = 75  # minimum confidence score
+
+    # Abuse.ch Configuration (URLhaus + ThreatFox)
+    abusech_api_key: str = "d39bf4b6b6deaf1c4adac4fc7c5b27c88f3771583fe8534a"
+    abusech_enabled: bool = True
+    abusech_update_interval: int = 3600  # seconds
+
+    # Feed enable/disable flags
+    enable_misp: bool = True
+    enable_pfblocker: bool = True
+    enable_abuseipdb: bool = True
+    enable_urlhaus: bool = True
+    enable_threatfox: bool = True
 
     # Feed Update Configuration
     skip_feed_updates: bool = False  # Skip all feed updates for testing
@@ -89,55 +102,59 @@ class Settings:
             app_name=os.getenv("APP_NAME", "Cyber Intelligence Gateway"),
             debug=os.getenv("DEBUG", "false").lower() == "true",
             log_level=os.getenv("LOG_LEVEL", "INFO"),
-
             # API
             api_host=os.getenv("API_HOST", "0.0.0.0"),
             api_port=int(os.getenv("API_PORT", "8000")),
-
             # Database
             database_path=os.getenv("DATABASE_PATH", "data/cig.db"),
-
             # PCAP
             pcap_dir=os.getenv("PCAP_DIR", "data/pcaps"),
-
             pcap_rotation_size=os.getenv("PCAP_ROTATION_SIZE", "100M"),
             pcap_max_files=int(os.getenv("PCAP_MAX_FILES", "100")),
             lan_interface=os.getenv("LAN_INTERFACE", "eth0"),
             wan_interface=os.getenv("WAN_INTERFACE", "eth1"),
-
             # MISP
             misp_url=os.getenv("MISP_URL", ""),
             misp_api_key=os.getenv("MISP_API_KEY", ""),
             misp_verify_ssl=os.getenv("MISP_VERIFY_SSL", "false").lower() == "true",
             misp_update_interval=int(os.getenv("MISP_UPDATE_INTERVAL", "300")),
-
             # pfBlocker
-            pfblocker_feeds=os.getenv("PFBLOCKER_FEEDS", "").split(",") if os.getenv("PFBLOCKER_FEEDS") else [
-                "https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader",
+            pfblocker_feeds=os.getenv("PFBLOCKER_FEEDS", "").split(",")
+            if os.getenv("PFBLOCKER_FEEDS")
+            else [
+                # ph00lt0/blocklist - ads, analytics, trackers, malware, phishing
                 "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
             ],
-            pfblocker_update_interval=int(os.getenv("PFBLOCKER_UPDATE_INTERVAL", "3600")),
-            pfblocker_local_blocklist=os.getenv("PFBLOCKER_LOCAL_BLOCKLIST", "/config/pfblocker_local.txt"),
-
+            pfblocker_update_interval=int(
+                os.getenv("PFBLOCKER_UPDATE_INTERVAL", "3600")
+            ),
+            pfblocker_local_blocklist=os.getenv(
+                "PFBLOCKER_LOCAL_BLOCKLIST", "/config/pfblocker_local.txt"
+            ),
             # AbuseIPDB
-            abuseipdb_api_key=os.getenv("ABUSEIPDB_API_KEY", ""),
-            abuseipdb_update_interval=int(os.getenv("ABUSEIPDB_UPDATE_INTERVAL", "3600")),
-            abuseipdb_confidence_threshold=int(os.getenv("ABUSEIPDB_CONFIDENCE_THRESHOLD", "75")),
-
+            abuseipdb_api_key=os.getenv(
+                "ABUSEIPDB_API_KEY",
+                "15b61bb636b0a9f080cb9cecc7774b6eab1368f07edc73895a8367ab4e963d5cd84dff7b56e03a60",
+            ),
+            abuseipdb_update_interval=int(
+                os.getenv("ABUSEIPDB_UPDATE_INTERVAL", "3600")
+            ),
+            abuseipdb_confidence_threshold=int(
+                os.getenv("ABUSEIPDB_CONFIDENCE_THRESHOLD", "75")
+            ),
             # Feed Updates
             skip_feed_updates=os.getenv("SKIP_FEED_UPDATES", "false").lower() == "true",
-
             # DNS
             dns_log_path=os.getenv("DNS_LOG_PATH", "data/logs/dns.log"),
-
-            dns_query_log_enabled=os.getenv("DNS_QUERY_LOG_ENABLED", "true").lower() == "true",
-            skip_dns_monitoring=os.getenv("SKIP_DNS_MONITORING", "false").lower() == "true",
-
+            dns_query_log_enabled=os.getenv("DNS_QUERY_LOG_ENABLED", "true").lower()
+            == "true",
+            skip_dns_monitoring=os.getenv("SKIP_DNS_MONITORING", "false").lower()
+            == "true",
             # Matching
             match_dns_queries=os.getenv("MATCH_DNS_QUERIES", "true").lower() == "true",
-            match_pcap_traffic=os.getenv("MATCH_PCAP_TRAFFIC", "true").lower() == "true",
+            match_pcap_traffic=os.getenv("MATCH_PCAP_TRAFFIC", "true").lower()
+            == "true",
             alert_retention_days=int(os.getenv("ALERT_RETENTION_DAYS", "30")),
-
             # Notification
             webhook_url=os.getenv("WEBHOOK_URL"),
         )
