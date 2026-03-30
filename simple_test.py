@@ -48,8 +48,28 @@ try:
     print("   ✅ Threat matcher imported")
 
     print("8. Testing API routes...")
-    from app.api.routes import app as fastapi_app
+    from app.api.routes import app as fastapi_app, init_app
+    from app.models.database import Database
+    from app.matching.engine import ThreatMatcher
+
     print("   ✅ API routes imported")
+
+    print("   🚧 Initializing API app objects")
+    db = Database(settings.database_path)
+    matcher = ThreatMatcher(db)
+    init_app(db, matcher)
+
+    # Direct call of endpoint handler (no http client dependency)
+    from app.api.routes import get_system_status
+    system_status_response = get_system_status()
+    assert system_status_response["running"] is False
+    print("   ✅ /api/status handler returns data")
+
+    # OpenAPI generation
+    openapi_schema = fastapi_app.openapi()
+    assert "/api/status" in openapi_schema["paths"]
+    assert "/openapi.json" not in openapi_schema["paths"]
+    print("   ✅ openapi schema generated and includes /api/status")
 
     print("9. Testing main application...")
     import app.main

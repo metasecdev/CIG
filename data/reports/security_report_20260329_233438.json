@@ -1,0 +1,119 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-03-29T23:34:36.218109",
+    "period_start": "2026-03-28T23:34:36.218109",
+    "period_end": "2026-03-29T23:34:36.218109",
+    "days_covered": 1
+  },
+  "executive_summary": {
+    "total_alerts": 1,
+    "total_indicators": 1,
+    "total_pcaps": 1,
+    "severity_breakdown": {
+      "high": 1
+    },
+    "indicator_type_breakdown": {
+      "ip": 1
+    },
+    "source_breakdown": {
+      "test_feed": 1
+    },
+    "risk_level": "Medium",
+    "period_summary": "Detected 1 security events from 1 threat indicators across 1 network captures"
+  },
+  "threat_intelligence": {
+    "sources": {
+      "test_feed": {
+        "total_indicators": 1,
+        "types": {
+          "ip": 1
+        },
+        "top_indicators": [
+          {
+            "id": "test-indicator-1",
+            "value": "192.168.1.100",
+            "type": "ip",
+            "source": "test_feed",
+            "feed_id": "test-feed-1",
+            "first_seen": "2026-03-29T23:34:34.611763+00:00",
+            "last_seen": "2026-03-29T23:34:34.611798+00:00",
+            "tags": "malware",
+            "count": 1
+          }
+        ]
+      }
+    },
+    "total_unique_indicators": 1,
+    "most_active_feeds": [
+      [
+        "test_feed",
+        {
+          "total_indicators": 1,
+          "types": {
+            "ip": 1
+          },
+          "top_indicators": [
+            {
+              "id": "test-indicator-1",
+              "value": "192.168.1.100",
+              "type": "ip",
+              "source": "test_feed",
+              "feed_id": "test-feed-1",
+              "first_seen": "2026-03-29T23:34:34.611763+00:00",
+              "last_seen": "2026-03-29T23:34:34.611798+00:00",
+              "tags": "malware",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "network_activity": {
+    "protocols": {
+      "tcp": 1
+    },
+    "top_ports": [
+      [
+        80,
+        1
+      ]
+    ],
+    "top_source_ips": [
+      [
+        "192.168.1.100",
+        1
+      ]
+    ],
+    "top_destination_ips": [
+      [
+        "10.0.0.1",
+        1
+      ]
+    ],
+    "pcap_statistics": {
+      "total_captures": 1,
+      "total_packets": 0,
+      "total_size_bytes": 0,
+      "average_packets_per_capture": 0.0
+    }
+  },
+  "mitre_attack_analysis": {
+    "total_ttp_matches": 0,
+    "techniques_detected": {},
+    "tactics_detected": {},
+    "high_confidence_matches": [],
+    "sample_matches": []
+  },
+  "recommendations": [
+    "Monitor high-severity alerts closely",
+    "Update threat intelligence feeds and signatures",
+    "Review access controls and authentication mechanisms",
+    "Implement additional logging for suspicious activities"
+  ],
+  "charts": {
+    "alerts_over_time": "data/reports/alerts_over_time_20260329_233437.png",
+    "severity_distribution": "data/reports/severity_distribution_20260329_233438.png",
+    "indicator_sources": "data/reports/indicator_sources_20260329_233438.png"
+  }
+}

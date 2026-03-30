@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIG - Events & Alerts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> Cyber Intelligence Gateway - Events
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <small>Last updated: {{ timestamp }}</small>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Navigation</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="/" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="/dashboard/status" class="list-group-item list-group-item-action">
+                            <i class="fas fa-info-circle"></i> System Status
+                        </a>
+                        <a href="/dashboard/health" class="list-group-item list-group-item-action">
+                            <i class="fas fa-heartbeat"></i> Health Check
+                        </a>
+                        <a href="/dashboard/events" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-bell"></i> Events & Alerts
+                        </a>
+                        <a href="/dashboard/reports" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-bell"></i> Events & Alerts</h2>
+                    <button class="btn btn-primary" onclick="refreshAlerts()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+
+                <!-- Alert Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">High Severity</h5>
+                                <h2>{{ stats.high|default(0) }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Medium Severity</h5>
+                                <h2>{{ stats.medium|default(0) }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Low Severity</h5>
+                                <h2>{{ stats.low|default(0) }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Alerts</h5>
+                                <h2>{{ stats.total|default(0) }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Recent Alerts</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if alerts %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="alertsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Severity</th>
+                                        <th>Source IP</th>
+                                        <th>Destination IP</th>
+                                        <th>Protocol</th>
+                                        <th>Indicator</th>
+                                        <th>Type</th>
+                                        <th>Feed Source</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for alert in alerts %}
+                                    <tr class="alert-row" data-alert-id="{{ alert.id }}">
+                                        <td>{{ alert.timestamp }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'danger' if alert.severity == 'high' else 'warning' if alert.severity == 'medium' else 'info' }}">
+                                                {{ alert.severity|upper }}
+                                            </span>
+                                        </td>
+                                        <td>{{ alert.source_ip }}</td>
+                                        <td>{{ alert.destination_ip }}</td>
+                                        <td>{{ alert.protocol }}</td>
+                                        <td><code>{{ alert.indicator }}</code></td>
+                                        <td>{{ alert.indicator_type }}</td>
+                                        <td>{{ alert.feed_source }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewAlertDetails('{{ alert.id }}')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav aria-label="Alert pagination" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No alerts found</h5>
+                            <p class="text-muted">The system is currently monitoring for threats.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Details Modal -->
+    <div class="modal fade" id="alertDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alert Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="alertDetailsContent">
+                    <!-- Alert details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/dashboard.js"></script>
+    <script>
+        function refreshAlerts() {
+            location.reload();
+        }
+
+        function viewAlertDetails(alertId) {
+            // Fetch alert details via API
+            fetch(`/api/alerts/${alertId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const content = document.getElementById('alertDetailsContent');
+                    content.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Basic Information</h6>
+                                <p><strong>ID:</strong> ${data.id}</p>
+                                <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+                                <p><strong>Severity:</strong>
+                                    <span class="badge bg-${data.severity === 'high' ? 'danger' : data.severity === 'medium' ? 'warning' : 'info'}">
+                                        ${data.severity.toUpperCase()}
+                                    </span>
+                                </p>
+                                <p><strong>Protocol:</strong> ${data.protocol}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Network Information</h6>
+                                <p><strong>Source:</strong> ${data.source_ip}:${data.source_port}</p>
+                                <p><strong>Destination:</strong> ${data.destination_ip}:${data.destination_port}</p>
+                                <p><strong>Indicator:</strong> <code>${data.indicator}</code></p>
+                                <p><strong>Type:</strong> ${data.indicator_type}</p>
+                                <p><strong>Feed Source:</strong> ${data.feed_source}</p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>Message</h6>
+                                <p>${data.message}</p>
+                            </div>
+                        </div>
+                    `;
+                    new bootstrap.Modal(document.getElementById('alertDetailsModal')).show();
+                })
+                .catch(error => {
+                    console.error('Error fetching alert details:', error);
+                    alert('Error loading alert details');
+                });
+        }
+    </script>
+</body>
+</html>

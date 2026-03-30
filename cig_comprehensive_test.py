@@ -29,7 +29,7 @@ class CIGTestSuite:
     def __init__(self):
         self.results = {
             "test_run": {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "python_version": sys.version,
                 "working_directory": os.getcwd()
             },
@@ -109,7 +109,7 @@ class CIGTestSuite:
             # Test alert operations
             alert = Alert(
                 id="test-alert-1",
-                timestamp=datetime.utcnow().isoformat(),
+                timestamp=datetime.now(timezone.utc).isoformat(),
                 severity="high",
                 source_ip="192.168.1.100",
                 destination_ip="10.0.0.1",
@@ -149,7 +149,7 @@ class CIGTestSuite:
                 id="test-pcap-1",
                 filename="test.pcap",
                 filepath="/tmp/test.pcap",
-                start_time=datetime.utcnow().isoformat(),
+                start_time=datetime.now(timezone.utc).isoformat(),
                 interface="eth0"
             )
 
@@ -382,7 +382,7 @@ class CIGTestSuite:
         self.results["components"][component][test_name] = {
             "passed": passed,
             "message": message,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
         self.results["summary"]["total_tests"] += 1
@@ -435,7 +435,7 @@ class CIGTestSuite:
         with open(summary_file, 'w') as f:
             f.write("CIG COMPREHENSIVE TEST REPORT\n")
             f.write("=" * 50 + "\n\n")
-            f.write(f"Generated: {datetime.utcnow().isoformat()}\n")
+f.write(f"Generated: {datetime.now(timezone.utc).isoformat()}\n")
             f.write(f"Python Version: {sys.version}\n\n")
 
             summary = self.results["summary"]
