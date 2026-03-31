@@ -17,6 +17,8 @@ from app.feeds.abusech import AbuseChFeedManager
 from app.feeds.cvedetails import CVEDetailsFeedManager
 from app.feeds.cisa_kev import CISAKevFeedManager
 from app.feeds.shadowserver import ShadowserverFeedManager
+from app.feeds.cve_news import CVENewsFeed
+from app.feeds.sans_isc import SANSISCFeedManager
 from app.capture.pcap import PCAPCapture, DNSQueryMonitor, PacketAnalyzer
 from app.mitre.attack_mapper import MITREAttackMapper
 from app.reporting.security_report import SecurityReporter
@@ -38,6 +40,8 @@ class ThreatMatcher:
         self.cvedetails_feed = CVEDetailsFeedManager(db)
         self.cisa_kev_feed = CISAKevFeedManager(db)
         self.shadowserver_feed = ShadowserverFeedManager(db)
+        self.cve_news_feed = CVENewsFeed(db)
+        self.sans_isc_feed = SANSISCFeedManager(db)
         self.pcap_capture = PCAPCapture(db)
         self.dns_monitor = DNSQueryMonitor(db)
         self.packet_analyzer = PacketAnalyzer(db)
@@ -57,6 +61,8 @@ class ThreatMatcher:
             "cvedetails_indicators": 0,
             "cisa_kev_indicators": 0,
             "shadowserver_indicators": 0,
+            "cve_news_count": 0,
+            "sans_isc_indicators": 0,
             "total_alerts": 0,
             "last_misp_update": None,
             "last_pfblocker_update": None,
@@ -66,6 +72,8 @@ class ThreatMatcher:
             "last_cvedetails_update": None,
             "last_cisa_kev_update": None,
             "last_shadowserver_update": None,
+            "last_cve_news_update": None,
+            "last_sans_isc_update": None,
         }
 
     def configure(self) -> None:
@@ -125,6 +133,18 @@ class ThreatMatcher:
                 ),
             )
             logger.info("Configured Shadowserver feed")
+
+        # Configure CVE News
+        self.cve_news_feed = CVENewsFeed(self.db)
+        logger.info("Configured CVE News feed (10-minute updates)")
+
+        # Configure SANS ISC
+        self.sans_isc_feed.configure(
+            enabled=getattr(settings, "enable_sans_isc", True),
+            update_interval=getattr(settings, "sans_isc_update_interval", 3600),
+            api_key=getattr(settings, "sans_api_key", ""),
+        )
+        logger.info("Configured SANS ISC feed")
 
     def start(self) -> None:
         """Start the threat matching engine"""
@@ -209,6 +229,8 @@ class ThreatMatcher:
         self._update_cvedetails()
         self._update_cisa_kev()
         self._update_shadowserver()
+        self._update_cve_news()
+        self._update_sans_isc()
         self._load_local_blocklist()
         self._cleanup_old_alerts()
 
@@ -303,6 +325,34 @@ class ThreatMatcher:
             return count
         except Exception as e:
             logger.error(f"Failed to update Shadowserver: {e}")
+            return 0
+
+    def _update_cve_news(self) -> int:
+        """Update CVE News feed"""
+        try:
+            count = self.cve_news_feed.fetch_high_level_cves(days=7, limit=50)
+            self.stats["cve_news_count"] = count
+            self.stats["last_cve_news_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated CVE News: {count} high-level CVEs")
+            return count
+        except Exception as e:
+            logger.error(f"Failed to update CVE News: {e}")
+            return 0
+
+    def _update_sans_isc(self) -> int:
+        """Update SANS ISC indicators"""
+        if not self.sans_isc_feed.is_enabled():
+            return 0
+
+        try:
+            results = self.sans_isc_feed.update_all()
+            count = results.get("sans_isc", 0)
+            self.stats["sans_isc_indicators"] = count
+            self.stats["last_sans_isc_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated SANS ISC: {count} indicators")
+            return count
+        except Exception as e:
+            logger.error(f"Failed to update SANS ISC: {e}")
             return 0
 
     def _load_local_blocklist(self) -> int:

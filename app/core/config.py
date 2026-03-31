@@ -74,6 +74,11 @@ class Settings:
     enable_shadowserver: bool = False  # Requires API key
     shadowserver_api_key: str = ""
     shadowserver_update_interval: int = 86400  # seconds
+    enable_cve_news: bool = True
+    cve_news_update_interval: int = 600  # 10 minutes
+    enable_sans_isc: bool = True
+    sans_isc_update_interval: int = 3600  # 1 hour
+    sans_api_key: str = ""
 
     # Feed Update Configuration
     skip_feed_updates: bool = False  # Skip all feed updates for testing
@@ -168,6 +173,13 @@ class Settings:
             shadowserver_update_interval=int(
                 os.getenv("SHADOWSERVER_UPDATE_INTERVAL", "86400")
             ),
+            # CVE News
+            enable_cve_news=os.getenv("ENABLE_CVE_NEWS", "true").lower() == "true",
+            cve_news_update_interval=int(os.getenv("CVE_NEWS_UPDATE_INTERVAL", "600")),
+            # SANS ISC
+            enable_sans_isc=os.getenv("ENABLE_SANS_ISC", "true").lower() == "true",
+            sans_isc_update_interval=int(os.getenv("SANS_ISC_UPDATE_INTERVAL", "3600")),
+            sans_api_key=os.getenv("SANS_API_KEY", ""),
             # DNS
             dns_log_path=os.getenv("DNS_LOG_PATH", "data/logs/dns.log"),
             dns_query_log_enabled=os.getenv("DNS_QUERY_LOG_ENABLED", "true").lower()

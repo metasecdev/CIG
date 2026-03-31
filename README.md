@@ -12,6 +12,8 @@ A real-time cyber threat intelligence platform that aggregates multiple threat f
 - **CVE Details** - Vulnerability data from cvedetails.com
 - **CISA KEV** - Known Exploited Vulnerabilities catalog
 - **Shadowserver** - Network vulnerability reports (requires API key)
+- **CVE News** - High-level CVEs with IOCs, signatures & MITRE T-codes (every 10 min)
+- **SANS ISC** - Internet Storm Center threat feeds (SSH/Web honeypots, scanners)
 
 ### Network Capture
 - **PCAP Capture** - Packet capture on LAN/WAN interfaces
