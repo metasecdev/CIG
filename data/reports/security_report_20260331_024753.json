@@ -1,0 +1,564 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-03-31T02:47:36.834767",
+    "period_start": "2026-03-30T02:47:36.834767",
+    "period_end": "2026-03-31T02:47:36.834767",
+    "days_covered": 1
+  },
+  "executive_summary": {
+    "total_alerts": 0,
+    "total_indicators": 71935,
+    "total_pcaps": 1,
+    "severity_breakdown": {},
+    "indicator_type_breakdown": {
+      "ip": 60275,
+      "domain": 11660
+    },
+    "source_breakdown": {
+      "abuseipdb": 60000,
+      "pfblocker": 11935
+    },
+    "risk_level": "Low",
+    "period_summary": "Detected 0 security events from 71935 threat indicators across 1 network captures"
+  },
+  "threat_intelligence": {
+    "sources": {
+      "abuseipdb": {
+        "total_indicators": 60000,
+        "types": {
+          "ip": 60000
+        },
+        "top_indicators": [
+          {
+            "id": "b5b82254-d1bc-4121-87fd-a2b1ec03fa9f",
+            "value": "64.62.197.21",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "0b1782b2-26ad-4842-ac4b-ba2e77587522",
+            "value": "92.118.39.63",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "9367925f-842a-4d50-9404-10011447b0de",
+            "value": "80.94.92.167",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "badd2f48-8ea5-4b54-aa90-845a39e03f97",
+            "value": "92.118.39.92",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "c943fc68-6848-4780-b9d0-ea0fcffabd24",
+            "value": "176.120.22.13",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "ea3c58be-33b1-462e-b3b8-57f43397d1bc",
+            "value": "103.191.14.210",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "0889f5b5-b376-4437-9040-d1f1e0ddbb4e",
+            "value": "103.154.77.48",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "e0a31326-3d7c-4cd0-b98c-a51ee0f6daab",
+            "value": "182.95.223.50",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "0957e179-afea-41b7-9687-c79699196acd",
+            "value": "201.49.108.245",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          },
+          {
+            "id": "ad79fb11-2c8b-4958-8574-6a2607fd8313",
+            "value": "80.94.92.187",
+            "type": "ip",
+            "source": "abuseipdb",
+            "feed_id": "abuseipdb_100",
+            "first_seen": "2026-03-31T02:44:21.754078",
+            "last_seen": "2026-03-31T02:44:21.754078",
+            "tags": "confidence:100,category:",
+            "count": 1
+          }
+        ]
+      },
+      "pfblocker": {
+        "total_indicators": 11935,
+        "types": {
+          "ip": 275,
+          "domain": 11660
+        },
+        "top_indicators": [
+          {
+            "id": "3e6323a0-e0a9-481a-b765-e81b0b4586a0",
+            "value": "! Title: ph00lt0 - Blocklist",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "6d36b3b9-88c9-4dcd-85b3-a2d1bb781b9c",
+            "value": "! Expires: 1 day",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "b3ee0c51-61b6-45e3-9c49-cc8db053287b",
+            "value": "! Issue tracker: https:",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "09d4123e-981f-40fb-85ef-2a161c8b0e9e",
+            "value": "! Homepage: https:",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "d9bfa1ee-d287-49a8-9c3b-58d6b0c46c0c",
+            "value": "! Description: Blocklist for Stats and any analytics, lottery, bug trackers, ads, data brokers, font content delivery networks and consent management",
+            "type": "ip",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "bb9cdc12-9e0c-44d7-8e59-9805dfa2ca27",
+            "value": "about.facebook.com",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "825f0650-8cb0-4656-b3a6-cd46de5b3a46",
+            "value": "actie.hetvergetenkind.nl",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "beb1d154-6052-4bf3-893f-e0b5caceddb4",
+            "value": "actie.thepollinators.org",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "fd13138b-e4fa-4c99-9050-a27b86d3e92b",
+            "value": "acties.lymph-co.com",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          },
+          {
+            "id": "7ff9216c-4166-42ad-b287-fc3de8d946f5",
+            "value": "actievoorrodekruisijsselland.nl",
+            "type": "domain",
+            "source": "pfblocker",
+            "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+            "first_seen": "2026-03-31T02:44:20.226227",
+            "last_seen": "2026-03-31T02:44:20.226227",
+            "tags": "blocklist",
+            "count": 1
+          }
+        ]
+      }
+    },
+    "total_unique_indicators": 21159,
+    "most_active_feeds": [
+      [
+        "abuseipdb",
+        {
+          "total_indicators": 60000,
+          "types": {
+            "ip": 60000
+          },
+          "top_indicators": [
+            {
+              "id": "b5b82254-d1bc-4121-87fd-a2b1ec03fa9f",
+              "value": "64.62.197.21",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "0b1782b2-26ad-4842-ac4b-ba2e77587522",
+              "value": "92.118.39.63",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "9367925f-842a-4d50-9404-10011447b0de",
+              "value": "80.94.92.167",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "badd2f48-8ea5-4b54-aa90-845a39e03f97",
+              "value": "92.118.39.92",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "c943fc68-6848-4780-b9d0-ea0fcffabd24",
+              "value": "176.120.22.13",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "ea3c58be-33b1-462e-b3b8-57f43397d1bc",
+              "value": "103.191.14.210",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "0889f5b5-b376-4437-9040-d1f1e0ddbb4e",
+              "value": "103.154.77.48",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "e0a31326-3d7c-4cd0-b98c-a51ee0f6daab",
+              "value": "182.95.223.50",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "0957e179-afea-41b7-9687-c79699196acd",
+              "value": "201.49.108.245",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            },
+            {
+              "id": "ad79fb11-2c8b-4958-8574-6a2607fd8313",
+              "value": "80.94.92.187",
+              "type": "ip",
+              "source": "abuseipdb",
+              "feed_id": "abuseipdb_100",
+              "first_seen": "2026-03-31T02:44:21.754078",
+              "last_seen": "2026-03-31T02:44:21.754078",
+              "tags": "confidence:100,category:",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      [
+        "pfblocker",
+        {
+          "total_indicators": 11935,
+          "types": {
+            "ip": 275,
+            "domain": 11660
+          },
+          "top_indicators": [
+            {
+              "id": "3e6323a0-e0a9-481a-b765-e81b0b4586a0",
+              "value": "! Title: ph00lt0 - Blocklist",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "6d36b3b9-88c9-4dcd-85b3-a2d1bb781b9c",
+              "value": "! Expires: 1 day",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "b3ee0c51-61b6-45e3-9c49-cc8db053287b",
+              "value": "! Issue tracker: https:",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "09d4123e-981f-40fb-85ef-2a161c8b0e9e",
+              "value": "! Homepage: https:",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "d9bfa1ee-d287-49a8-9c3b-58d6b0c46c0c",
+              "value": "! Description: Blocklist for Stats and any analytics, lottery, bug trackers, ads, data brokers, font content delivery networks and consent management",
+              "type": "ip",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "bb9cdc12-9e0c-44d7-8e59-9805dfa2ca27",
+              "value": "about.facebook.com",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "825f0650-8cb0-4656-b3a6-cd46de5b3a46",
+              "value": "actie.hetvergetenkind.nl",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "beb1d154-6052-4bf3-893f-e0b5caceddb4",
+              "value": "actie.thepollinators.org",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "fd13138b-e4fa-4c99-9050-a27b86d3e92b",
+              "value": "acties.lymph-co.com",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            },
+            {
+              "id": "7ff9216c-4166-42ad-b287-fc3de8d946f5",
+              "value": "actievoorrodekruisijsselland.nl",
+              "type": "domain",
+              "source": "pfblocker",
+              "feed_id": "https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt",
+              "first_seen": "2026-03-31T02:44:20.226227",
+              "last_seen": "2026-03-31T02:44:20.226227",
+              "tags": "blocklist",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "network_activity": {
+    "protocols": {},
+    "top_ports": [],
+    "top_source_ips": [],
+    "top_destination_ips": [],
+    "pcap_statistics": {
+      "total_captures": 1,
+      "total_packets": 0,
+      "total_size_bytes": 0,
+      "average_packets_per_capture": 0.0
+    }
+  },
+  "mitre_attack_analysis": {
+    "total_ttp_matches": 0,
+    "techniques_detected": {},
+    "tactics_detected": {},
+    "high_confidence_matches": [],
+    "sample_matches": []
+  },
+  "recommendations": [
+    "Continue monitoring with current security controls",
+    "Regular review of security policies and procedures",
+    "Keep threat intelligence feeds updated"
+  ],
+  "charts": {
+    "indicator_sources": "data/reports/indicator_sources_20260331_024753.png"
+  },
+  "event_table": [
+    {
+      "id": "none",
+      "timestamp": "2026-03-31T02:47:42.912386",
+      "severity": "none",
+      "source_ip": "N/A",
+      "destination_ip": "N/A",
+      "source_port": 0,
+      "destination_port": 0,
+      "protocol": "N/A",
+      "indicator": "No events detected",
+      "indicator_type": "N/A",
+      "feed_source": "N/A",
+      "rule_id": "N/A",
+      "message": "No alerts were generated during this period."
+    }
+  ],
+  "tunnels": {
+    "detected": false,
+    "details": [],
+    "deencapsulated_pcaps": []
+  },
+  "carved_artifacts": {
+    "carved": false,
+    "artifacts": []
+  }
+}

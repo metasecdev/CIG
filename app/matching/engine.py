@@ -247,6 +247,42 @@ class ThreatMatcher:
             return None
         return self.pcap_capture.start_capture(settings.wan_interface)
 
+    def pause(self) -> None:
+        """Pause the engine and capture activity"""
+        if not self.running:
+            logger.warning("Threat matcher already paused or stopped")
+            return
+
+        self.running = False
+        self.dns_monitor.stop_monitoring()
+        self.pcap_capture.pause_all_captures()
+        logger.info("Threat matcher paused")
+
+    def resume(self) -> None:
+        """Resume the engine from pause"""
+        if self.running:
+            logger.warning("Threat matcher already running")
+            return
+
+        self.running = True
+        self.dns_monitor.start_monitoring()
+        self.pcap_capture.resume_all_captures()
+        # restart feed loop thread if not alive
+        if not self.update_thread or not self.update_thread.is_alive():
+            self.update_thread = threading.Thread(
+                target=self._feed_update_loop,
+                daemon=True
+            )
+            self.update_thread.start()
+
+        logger.info("Threat matcher resumed")
+
+    def restart(self) -> None:
+        """Restart the threat matcher cleanly"""
+        self.stop()
+        self.start()
+        logger.info("Threat matcher restarted")
+
     def stop_lan_capture(self) -> bool:
         """Stop LAN PCAP capture"""
         return self.pcap_capture.stop_capture(settings.lan_interface)

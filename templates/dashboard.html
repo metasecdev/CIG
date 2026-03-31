@@ -65,7 +65,10 @@
                 <div class="alert alert-info mb-4" role="alert">
                     <i class="fas fa-info-circle"></i> <strong>System Status:</strong>
                     {% set healthy_checks = health_checks|selectattr('status', 'equalto', 'healthy')|list %}
-                    {{ healthy_checks|length }}/{{ health_checks|length }} components healthy
+                    {% set degraded_checks = health_checks|selectattr('status', 'equalto', 'degraded')|list %}
+                    {% set unhealthy_checks = health_checks|selectattr('status', 'equalto', 'unhealthy')|list %}
+                    {% set unavailable_checks = health_checks|selectattr('status', 'equalto', 'unavailable')|list %}
+                    Healthy: {{ healthy_checks|length }}, Degraded: {{ degraded_checks|length }}, Unhealthy: {{ unhealthy_checks|length }}, Unavailable: {{ unavailable_checks|length }}
                     | <a href="/dashboard/health">View Details</a>
                 </div>
 
@@ -126,12 +129,15 @@
                             </div>
                             <div class="card-body">
                                 <div class="list-group">
-                                    {% for check in health_checks|slice(3) %}
+                                    {% for check in health_checks %}
                                     <div class="list-group-item d-flex justify-content-between">
                                         <span>{{ check.component|replace('_', ' ')|title }}</span>
                                         <span class="badge bg-{{ 'success' if check.status == 'healthy' else 'warning' if check.status in ['degraded', 'configured'] else 'danger' }}">
                                             {{ check.status }}
                                         </span>
+                                        {% if check.message %}
+                                        <small class="text-muted ms-2">{{ check.message }}</small>
+                                        {% endif %}
                                     </div>
                                     {% endfor %}
                                 </div>
