@@ -1526,3 +1526,4 @@ RuntimeError: dictionary changed size during iteration
 2026-03-31 00:14:00,951 - app.feeds.cisa_kev - INFO - CISA KEV feed updated: 0 vulnerabilities (version: 2026.03.30)
 2026-03-31 00:14:00,953 - app.matching.engine - INFO - Updated CISA KEV: 0 vulnerabilities
 2026-03-31 00:14:00,954 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-31 00:14:17,039 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
