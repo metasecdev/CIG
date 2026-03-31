@@ -1251,3 +1251,22 @@ RuntimeError: dictionary changed size during iteration
 2026-03-30 23:09:22,852 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
 2026-03-30 23:09:22,856 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
 2026-03-30 23:09:39,075 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:10:09,596 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:10:23,012 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:10:23,014 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:10:40,358 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:11:11,656 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:11:23,157 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:11:23,160 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:11:42,475 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:12:13,223 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:12:23,285 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:12:23,288 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:12:44,525 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:13:15,562 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:13:23,435 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:13:23,438 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:13:46,413 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:14:17,498 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:14:23,570 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:14:23,573 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
