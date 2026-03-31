@@ -1527,3 +1527,544 @@ RuntimeError: dictionary changed size during iteration
 2026-03-31 00:14:00,953 - app.matching.engine - INFO - Updated CISA KEV: 0 vulnerabilities
 2026-03-31 00:14:00,954 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
 2026-03-31 00:14:17,039 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:14:49,062 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:15:00,010 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:15:00,015 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:15:36,352 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:16:00,164 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:16:00,195 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:16:28,584 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:17:00,329 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:17:00,340 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:17:02,462 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:17:33,101 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:18:00,488 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:18:00,492 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:18:03,861 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:18:34,824 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:19:00,629 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:19:00,631 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:19:05,684 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:19:37,080 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:20:00,783 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:20:00,785 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:20:08,295 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:20:39,118 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:21:00,903 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:21:00,908 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:21:02,210 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:22:01,070 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:22:01,073 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:22:03,699 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:22:34,203 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:23:01,194 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:23:01,198 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:23:04,743 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:23:35,226 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:24:01,330 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:24:01,332 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:24:05,774 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:24:36,232 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:25:01,522 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:25:01,526 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:25:06,770 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:25:37,221 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:26:01,692 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:26:01,695 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:26:08,686 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:26:39,619 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:01,942 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:27:01,951 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:27:04,842 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:07,921 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:20,741 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:34,135 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:37,479 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:44,501 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:48,016 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:55,467 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:58,826 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:27:59,094 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:27:59,115 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    return templates.TemplateResponse(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        "dashboard.html",
+        ^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        },
+        ^^
+    )
+    ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:02,115 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:28:02,120 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:28:03,961 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:04,077 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:04,092 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    return templates.TemplateResponse(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        "dashboard.html",
+        ^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        },
+        ^^
+    )
+    ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:07,340 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:07,527 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:07,533 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    ...<10 lines>...
+        },
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:10,159 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:10,454 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:10,458 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    ...<10 lines>...
+        },
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:11,047 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:11,310 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:11,315 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    ...<10 lines>...
+        },
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:34,125 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:34,404 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:34,437 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:36,486 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:36,678 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:36,681 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:46,420 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:46,620 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:46,622 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:50,130 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:50,166 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:50,173 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:28:53,830 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:28:53,940 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:28:53,944 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:29:02,270 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:29:02,274 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:29:23,018 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:23,117 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:29:23,121 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:29:26,345 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:26,372 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:29:26,379 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:29:28,401 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:28,483 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:29:28,485 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:29:30,196 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:30,315 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:29:30,317 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:29:30,636 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:30,710 - app.api.routes - ERROR - Dashboard error: 'health_components' is undefined
+2026-03-31 00:29:30,715 - app.api.routes - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/wo/code/app/api/routes.py", line 898, in dashboard
+    
+    
+    ...<10 lines>...
+            "timestamp": datetime.utcnow().isoformat(),
+            ^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+        template,
+    ...<4 lines>...
+        background=background,
+    )
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/wo/code/templates/dashboard.html", line 132, in top-level template code
+    {% for component, check in health_components.items() %}
+    
+  File "/Users/wo/code/cig_venv/lib/python3.14/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'health_components' is undefined
+
+2026-03-31 00:29:37,811 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-31 00:29:38,380 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-31 00:29:38,380 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-31 00:29:43,421 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-31 00:29:43,422 - __main__ - INFO - Initializing database...
+2026-03-31 00:29:43,423 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-31 00:29:43,424 - __main__ - INFO - Initializing threat matcher...
+2026-03-31 00:29:43,425 - app.capture.pcap - INFO - PacketAnalyzer initialized; lazy Scapy import handler
+2026-03-31 00:29:43,478 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:43,486 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:29:43,487 - __main__ - INFO - Threat matcher initialized
+2026-03-31 00:29:43,487 - __main__ - INFO - API routes initialized
+2026-03-31 00:29:43,487 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-31 00:29:43,487 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-31 00:29:43,488 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-31 00:29:43,488 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-31 00:29:43,488 - app.feeds.cvedetails - INFO - CVE Details feed configured: enabled=True
+2026-03-31 00:29:43,488 - app.matching.engine - INFO - Configured CVE Details feed
+2026-03-31 00:29:43,488 - app.feeds.cisa_kev - INFO - CISA KEV feed configured: enabled=True
+2026-03-31 00:29:43,489 - app.matching.engine - INFO - Configured CISA KEV feed
+2026-03-31 00:29:43,490 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-31 00:29:43,491 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-31 00:29:43,505 - app.matching.engine - INFO - Threat matching engine started
+2026-03-31 00:29:43,505 - __main__ - INFO - Threat matching engine started
+2026-03-31 00:29:43,505 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-31 00:29:44,002 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-31 00:29:44,002 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-31 00:29:44,135 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:29:44,137 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:29:44,276 - app.feeds.cvedetails - ERROR - Failed to fetch CVE Details feed: 403 Client Error: Forbidden for url: https://www.cvedetails.com/vulnerability-list.php?vendor_id=0&product_id=0&page=1
+2026-03-31 00:29:44,280 - app.matching.engine - INFO - Updated CVE Details: 0 vulnerabilities
+2026-03-31 00:29:44,568 - app.feeds.cisa_kev - INFO - CISA KEV feed updated: 0 vulnerabilities (version: 2026.03.30)
+2026-03-31 00:29:44,572 - app.matching.engine - INFO - Updated CISA KEV: 0 vulnerabilities
+2026-03-31 00:29:44,572 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-31 00:29:57,990 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:30:28,983 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:30:43,638 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:30:43,640 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:30:59,922 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:31:05,497 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:31:22,830 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:31:43,920 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:31:43,922 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:31:53,298 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
