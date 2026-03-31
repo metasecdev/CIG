@@ -5,6 +5,7 @@ Generates comprehensive security reports based on network findings
 
 import logging
 import json
+import subprocess
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -70,6 +71,15 @@ class SecurityReporter:
 
         # MITRE ATT&CK Analysis
         report["mitre_attack_analysis"] = self._analyze_mitre_attack(alerts)
+
+        # Event table for forensics and sessions
+        report["event_table"] = self._generate_event_table(alerts)
+
+        # Tunnels and de-encapsulation hints
+        report["tunnels"] = self._analyze_tunnels(pcaps)
+
+        # Carve content from PCAPs and prepare sandbox exports
+        report["carved_artifacts"] = self._carve_content(pcaps)
 
         # Recommendations
         report["recommendations"] = self._generate_recommendations(report)
@@ -332,6 +342,168 @@ class SecurityReporter:
             "sample_matches": ttp_matches[:50]  # First 50 matches
         }
 
+    def _generate_event_table(self, alerts: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Create an event table for the report, even when no alerts exist"""
+        if not alerts:
+            return [{
+                "id": "none",
+                "timestamp": datetime.utcnow().isoformat(),
+                "severity": "none",
+                "source_ip": "N/A",
+                "destination_ip": "N/A",
+                "source_port": 0,
+                "destination_port": 0,
+                "protocol": "N/A",
+                "indicator": "No events detected",
+                "indicator_type": "N/A",
+                "feed_source": "N/A",
+                "rule_id": "N/A",
+                "message": "No alerts were generated during this period."
+            }]
+
+        event_rows = []
+        for alert in alerts:
+            event_rows.append({
+                "id": alert.get("id"),
+                "timestamp": alert.get("timestamp"),
+                "severity": alert.get("severity"),
+                "source_ip": alert.get("source_ip"),
+                "destination_ip": alert.get("destination_ip"),
+                "source_port": alert.get("source_port"),
+                "destination_port": alert.get("destination_port"),
+                "protocol": alert.get("protocol"),
+                "indicator": alert.get("indicator"),
+                "indicator_type": alert.get("indicator_type"),
+                "feed_source": alert.get("feed_source"),
+                "rule_id": alert.get("rule_id"),
+                "message": alert.get("message"),
+            })
+
+        return event_rows
+
+    def _analyze_tunnels(self, pcaps: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Detect tunnel or encapsulation protocols in PCAP files and provide de-encapsulation hints"""
+        if not pcaps:
+            return {
+                "detected": False,
+                "details": [],
+                "deencapsulated_pcaps": []
+            }
+
+        tunnels = []
+        deencap_files = []
+
+        for pcap in pcaps:
+            pcap_path = pcap.get("filepath")
+            if not pcap_path or not Path(pcap_path).exists():
+                continue
+
+            try:
+                # Check for tunnel protocols via tshark if available
+                proc = subprocess.run(
+                    ["tshark", "-r", pcap_path, "-Y", "gre || esp || vxl || ipencap", "-T", "fields", "-e", "frame.number"],
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                )
+                frame_ids = [line for line in proc.stdout.splitlines() if line.strip()]
+
+                if frame_ids:
+                    tunnels.append({
+                        "pcap_id": pcap.get("id"),
+                        "pcap_file": pcap_path,
+                        "frames_with_tunnels": len(frame_ids),
+                        "sample_frame_numbers": frame_ids[:10],
+                    })
+
+                    # Attempt simple de-encapsulation output file
+                    deencap_path = self.reports_dir / f"deencapsulated_{Path(pcap_path).stem}.pcap"
+                    try:
+                        subprocess.run(
+                            ["tshark", "-r", pcap_path, "-Y", "gre || esp || vxl || ipencap", "-w", str(deencap_path)],
+                            capture_output=True,
+                            text=True,
+                            timeout=120,
+                        )
+                        if deencap_path.exists():
+                            deencap_files.append(str(deencap_path))
+                    except Exception as exc:
+                        logger.warning(f"Failed to de-encapsulate {pcap_path}: {exc}")
+
+            except FileNotFoundError:
+                logger.info("tshark not found; skipping tunnel detection")
+                break
+            except Exception as e:
+                logger.warning(f"Tunnel analysis failed for {pcap_path}: {e}")
+
+        return {
+            "detected": bool(tunnels),
+            "details": tunnels,
+            "deencapsulated_pcaps": deencap_files,
+        }
+
+    def _carve_content(self, pcaps: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Carve potential payloads and suspicious artifacts from PCAP files for sandbox analysis"""
+        artifact_root = self.reports_dir / "artifacts"
+        artifact_root.mkdir(parents=True, exist_ok=True)
+
+        artifacts_output = []
+
+        if not pcaps:
+            return {
+                "carved": False,
+                "artifacts": [],
+                "message": "No pcap captures available for carving"
+            }
+
+        for pcap in pcaps:
+            pcap_path = pcap.get("filepath")
+            if not pcap_path or not Path(pcap_path).exists():
+                continue
+
+            pcap_artifact_dir = artifact_root / f"{pcap.get('id', 'unknown')}"
+            pcap_artifact_dir.mkdir(parents=True, exist_ok=True)
+
+            extracted = []
+
+            # Attempt to extract objects via tshark
+            try:
+                tshark_export_cmds = [
+                    ["tshark", "-r", pcap_path, "--export-objects", f"http,{pcap_artifact_dir}"]
+                ]
+
+                for cmd in tshark_export_cmds:
+                    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+                    if proc.returncode == 0:
+                        extracted += [str(p) for p in pcap_artifact_dir.iterdir() if p.is_file()]
+            except FileNotFoundError:
+                logger.info("tshark not found; skipping object export carving")
+            except Exception as e:
+                logger.warning(f"PCAP carving failed for {pcap_path}: {e}")
+
+            # Fallback: simple strings scan on raw bytes for suspicious patterns
+            try:
+                with open(pcap_path, "rb") as f:
+                    content = f.read()
+                    if b"MZ" in content or b"\x7fELF" in content:
+                        indicator_file = pcap_artifact_dir / "binary_object_detected.txt"
+                        indicator_file.write_text("Potential binary payload detected in pcap data")
+                        extracted.append(str(indicator_file))
+            except Exception as e:
+                logger.warning(f"Failed to scan pcap bytes for carving: {e}")
+
+            artifacts_output.append({
+                "pcap_id": pcap.get("id"),
+                "source_pcap": pcap_path,
+                "extracted_artifacts": extracted,
+                "artifact_directory": str(pcap_artifact_dir),
+            })
+
+        return {
+            "carved": bool(artifacts_output and any(item["extracted_artifacts"] for item in artifacts_output)),
+            "artifacts": artifacts_output,
+        }
+
     def _generate_recommendations(self, report: Dict[str, Any]) -> List[str]:
         """Generate security recommendations based on findings"""
         recommendations = []
@@ -523,6 +695,65 @@ class SecurityReporter:
                     <tr><td>{{ tech_id }}</td><td>{{ count }}</td></tr>
                     {% endfor %}
                 </table>
+            </div>
+
+            <div class="section">
+                <h2>Event Table</h2>
+                <table>
+                    <tr>
+                        <th>ID</th><th>Timestamp</th><th>Severity</th><th>Source IP</th><th>Destination IP</th><th>Protocol</th><th>Message</th>
+                    </tr>
+                    {% for evt in event_table %}
+                    <tr>
+                        <td>{{ evt.id }}</td>
+                        <td>{{ evt.timestamp }}</td>
+                        <td>{{ evt.severity }}</td>
+                        <td>{{ evt.source_ip }}</td>
+                        <td>{{ evt.destination_ip }}</td>
+                        <td>{{ evt.protocol }}</td>
+                        <td>{{ evt.message }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Tunnel Detection and De-Encapsulation</h2>
+                <p>Detected tunnel traffic: {{ 'Yes' if tunnels.detected else 'No' }}</p>
+                {% if tunnels.details %}
+                <ul>
+                {% for t in tunnels.details %}
+                    <li>{{ t.pcap_file }} - {{ t.frames_with_tunnels }} encapsulated frames</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+                {% if tunnels.deencapsulated_pcaps %}
+                <p>Generated de-encapsulated PCAP files:</p>
+                <ul>
+                {% for f in tunnels.deencapsulated_pcaps %}
+                    <li>{{ f }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <h2>Carved Artifacts for Sandbox Analysis</h2>
+                {% if carved_artifacts.carved %}
+                <ul>
+                {% for item in carved_artifacts.artifacts %}
+                    <li>PCAP: {{ item.source_pcap }}
+                        <ul>
+                        {% for artifact in item.extracted_artifacts %}
+                            <li>{{ artifact }}</li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                <p>No artifacts carved from PCAP captures.</p>
+                {% endif %}
             </div>
 
             <div class="section">

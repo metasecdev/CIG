@@ -1133,3 +1133,121 @@ RuntimeError: dictionary changed size during iteration
 2026-03-30 22:27:22,681 - app.reporting.security_report - INFO - Generating comprehensive security report for last 7 days
 2026-03-30 22:27:27,071 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260331_022727.json
 2026-03-30 22:27:27,129 - app.reporting.security_report - INFO - HTML security report saved to data/reports/security_report_20260331_022727.html
+2026-03-30 22:29:41,538 - app.reporting.security_report - INFO - Generating comprehensive security report for last 7 days
+2026-03-30 22:29:48,285 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260331_022948.json
+2026-03-30 22:29:48,466 - app.reporting.security_report - INFO - HTML security report saved to data/reports/security_report_20260331_022948.html
+2026-03-30 22:29:55,437 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 22:30:01,276 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260331_023001.json
+2026-03-30 22:41:36,209 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:42:06,892 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:42:37,745 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 22:42:40,669 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260331_024240.json
+2026-03-30 22:43:26,823 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:43:58,278 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-30 22:43:58,748 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-30 22:43:58,748 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-30 22:44:16,145 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-30 22:44:16,146 - __main__ - INFO - Initializing database...
+2026-03-30 22:44:16,179 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-30 22:44:16,184 - __main__ - INFO - Initializing threat matcher...
+2026-03-30 22:44:19,816 - app.capture.pcap - INFO - Using Scapy for PCAP analysis
+2026-03-30 22:44:20,214 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:44:20,221 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:44:20,222 - __main__ - INFO - Threat matcher initialized
+2026-03-30 22:44:20,222 - __main__ - INFO - API routes initialized
+2026-03-30 22:44:20,224 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-30 22:44:20,224 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-30 22:44:20,225 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-30 22:44:20,225 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-30 22:44:20,226 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 22:44:20,227 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-30 22:44:20,229 - app.matching.engine - INFO - Threat matching engine started
+2026-03-30 22:44:20,229 - __main__ - INFO - Threat matching engine started
+2026-03-30 22:44:20,229 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-30 22:44:20,993 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 22:44:20,994 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-30 22:44:22,760 - app.feeds.abuseipdb - INFO - Stored 10000 AbuseIPDB indicators
+2026-03-30 22:44:22,771 - app.matching.engine - INFO - Updated AbuseIPDB: 10000 indicators
+2026-03-30 22:44:22,771 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-30 22:46:30,625 - app.feeds.abuseipdb - ERROR - AbuseIPDB connection test failed: HTTPSConnectionPool(host='api.abuseipdb.com', port=443): Read timed out. (read timeout=10)
+2026-03-30 22:46:30,959 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:46:59,410 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:47:36,831 - app.reporting.security_report - INFO - Generating comprehensive security report for last 1 days
+2026-03-30 22:47:48,299 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 22:47:48,536 - app.feeds.pfblocker - ERROR - Failed to parse pfBlocker feed URL https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 22:47:48,685 - app.feeds.pfblocker - ERROR - Failed to fetch blocklist from https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader: 404 Client Error: Not Found for url: https://raw.githubusercontent.com/pfBlockerNG/devel/master/etc/rc.d/aliasloader
+2026-03-30 22:47:48,693 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 22:47:49,780 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 22:47:49,782 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-30 22:47:53,655 - app.reporting.security_report - INFO - Security report saved to data/reports/security_report_20260331_024753.json
+2026-03-30 22:48:10,146 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:48:18,518 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:48:55,340 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:49:07,455 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:49:27,433 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:49:33,209 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:50:04,819 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:50:35,517 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:51:06,029 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:51:36,647 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:51:59,782 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:52:16,230 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:56:06,977 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:56:34,247 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:57:04,875 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:57:35,280 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:58:05,785 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:58:36,323 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:59:06,875 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 22:59:37,364 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:00:09,946 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:00:22,747 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:00:29,467 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:00:50,724 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:00:57,948 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:01:58,774 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:02:14,514 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-30 23:02:15,462 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-30 23:02:15,462 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-30 23:02:21,685 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-30 23:02:21,685 - __main__ - INFO - Initializing database...
+2026-03-30 23:02:21,686 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-30 23:02:21,686 - __main__ - INFO - Initializing threat matcher...
+2026-03-30 23:02:21,687 - app.capture.pcap - INFO - PacketAnalyzer initialized; lazy Scapy import handler
+2026-03-30 23:02:21,724 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:02:21,727 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:02:21,727 - __main__ - INFO - Threat matcher initialized
+2026-03-30 23:02:21,728 - __main__ - INFO - API routes initialized
+2026-03-30 23:02:21,728 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-30 23:02:21,728 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-30 23:02:21,728 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-30 23:02:21,728 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-30 23:02:21,728 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-30 23:02:21,729 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-30 23:02:21,729 - app.matching.engine - INFO - Threat matching engine started
+2026-03-30 23:02:21,730 - __main__ - INFO - Threat matching engine started
+2026-03-30 23:02:21,730 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-30 23:02:22,202 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-30 23:02:22,203 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-30 23:02:22,321 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:02:22,325 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:02:22,325 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-30 23:02:29,304 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:02:46,169 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:03:10,997 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:03:21,859 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:03:21,883 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:04:22,027 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:04:22,031 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:05:22,186 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:05:22,195 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:06:22,324 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:06:22,329 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:07:22,464 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:07:22,469 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:08:22,638 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:08:22,642 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:09:08,283 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-30 23:09:22,852 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-30 23:09:22,856 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-30 23:09:39,075 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package

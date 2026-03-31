@@ -9,7 +9,9 @@ from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, Response, Request
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from urllib.parse import urlparse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -17,6 +19,7 @@ from typing import Optional, List, Dict, Any
 
 from app.models.database import Database, Alert, PcapFile, Indicator
 from app.matching.engine import ThreatMatcher
+from app.reporting.security_report import SecurityReporter
 from app.core.config import settings
 from app.health import get_health_status
 from app.feeds.news_feed import get_feed
@@ -450,6 +453,46 @@ async def stop_wan_capture():
     return {"status": "stopped" if result else "failed"}
 
 
+@app.post("/api/capture/lan/pause")
+async def pause_lan_capture():
+    """Pause LAN PCAP capture"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.pcap_capture.pause_capture(settings.lan_interface)
+    return {"status": "paused" if result else "failed"}
+
+
+@app.post("/api/capture/wan/pause")
+async def pause_wan_capture():
+    """Pause WAN PCAP capture"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.pcap_capture.pause_capture(settings.wan_interface)
+    return {"status": "paused" if result else "failed"}
+
+
+@app.post("/api/capture/lan/resume")
+async def resume_lan_capture():
+    """Resume LAN capture"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.pcap_capture.resume_capture(settings.lan_interface)
+    return {"status": "resumed" if result else "failed"}
+
+
+@app.post("/api/capture/wan/resume")
+async def resume_wan_capture():
+    """Resume WAN capture"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    result = threat_matcher.pcap_capture.resume_capture(settings.wan_interface)
+    return {"status": "resumed" if result else "failed"}
+
+
 @app.get("/api/capture/status")
 async def get_capture_status():
     """Get capture status"""
@@ -614,6 +657,86 @@ async def get_system_status():
         raise HTTPException(status_code=503, detail="System not initialized")
 
     return threat_matcher.get_status()
+
+
+@app.post("/api/system/start")
+async def api_system_start():
+    """Start the threat matcher"""
+    if not _db or not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    threat_matcher.start()
+    return {"status": "started"}
+
+
+@app.post("/api/system/pause")
+async def api_system_pause():
+    """Pause the threat matcher"""
+    if not _db or not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    threat_matcher.pause()
+    return {"status": "paused"}
+
+
+@app.post("/api/system/resume")
+async def api_system_resume():
+    """Resume the threat matcher"""
+    if not _db or not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    threat_matcher.resume()
+    return {"status": "resumed"}
+
+
+@app.post("/api/system/restart")
+async def api_system_restart():
+    """Restart the threat matcher"""
+    if not _db or not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    threat_matcher.restart()
+    return {"status": "restarted"}
+
+
+@app.post("/api/system/shutdown")
+async def api_system_shutdown():
+    """Shutdown the threat matcher"""
+    if not _db or not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    threat_matcher.stop()
+    return {"status": "shutdown"}
+
+
+@app.get("/api/reports/generate")
+async def api_generate_report(days: int = Query(7, ge=1, le=30)):
+    """Generate a comprehensive security report"""
+    if not _db:
+        raise HTTPException(status_code=503, detail="Database not initialized")
+
+    reporter = SecurityReporter(_db)
+    try:
+        report = reporter.generate_comprehensive_report(days)
+        return {"status": "success", "report": report}
+    except Exception as e:
+        logger.error(f"Failed to generate report: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate report")
+
+
+@app.get("/api/reports/generate/html")
+async def api_generate_report_html(days: int = Query(7, ge=1, le=30)):
+    """Generate and retrieve HTML report file"""
+    if not _db:
+        raise HTTPException(status_code=503, detail="Database not initialized")
+
+    reporter = SecurityReporter(_db)
+    try:
+        html_path = reporter.generate_html_report(days)
+        return FileResponse(html_path, media_type="text/html")
+    except Exception as e:
+        logger.error(f"Failed to generate HTML report: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate HTML report")
 
 
 # --- Dashboard Endpoints ---
@@ -1019,6 +1142,65 @@ async def api_cyber_news_ai(query: str = Query(..., min_length=3, description="S
     except Exception as e:
         logger.error(f"AI news hunter failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to run AI incident hunter")
+
+
+@app.get("/api/news/verify")
+async def api_cyber_news_verify(network_check: bool = Query(False, description="Perform network reachability check if True")):
+    """Return all news feed URLs with parsed validation and optional reachable status"""
+    try:
+        feed = get_feed()
+        news_items = feed.get_latest(limit=50)
+        verified_items = []
+
+        for item in news_items:
+            source_url = item.get("source_url")
+            cve_url = item.get("cve_url")
+
+            source_parsed = urlparse(source_url) if source_url else None
+            cve_parsed = urlparse(cve_url) if cve_url else None
+
+            source_valid = bool(source_parsed and source_parsed.scheme in ["http", "https"] and source_parsed.netloc)
+            cve_valid = bool(cve_parsed and cve_parsed.scheme in ["http", "https"] and cve_parsed.netloc)
+
+            source_reachable = None
+            cve_reachable = None
+            if network_check:
+                try:
+                    import requests
+
+                    if source_valid:
+                        r = requests.head(source_url, timeout=5, allow_redirects=True)
+                        source_reachable = r.status_code < 400
+                except Exception:
+                    source_reachable = False
+
+                if cve_url and cve_valid:
+                    try:
+                        r = requests.head(cve_url, timeout=5, allow_redirects=True)
+                        cve_reachable = r.status_code < 400
+                    except Exception:
+                        cve_reachable = False
+
+            verified_items.append({
+                "id": item.get("id"),
+                "title": item.get("title"),
+                "source_url": source_url,
+                "source_valid": source_valid,
+                "source_reachable": source_reachable,
+                "cve_url": cve_url,
+                "cve_valid": cve_valid,
+                "cve_reachable": cve_reachable,
+            })
+
+        return {
+            "status": "success",
+            "network_check": network_check,
+            "verified_count": len(verified_items),
+            "items": verified_items,
+        }
+    except Exception as e:
+        logger.error(f"Failed to verify news links: {e}")
+        raise HTTPException(status_code=500, detail="Failed to verify news links")
 
 
 # --- Arkime Integration Endpoints ---

@@ -137,6 +137,50 @@ class PCAPCapture:
             for interface in list(self.active_captures.keys()):
                 self.stop_capture(interface)
 
+    def pause_capture(self, interface: str) -> bool:
+        """Pause PCAP capture on specified interface"""
+        with self.capture_lock:
+            if interface not in self.active_captures:
+                logger.warning(f"No capture running on {interface}")
+                return False
+
+            process = self.active_captures[interface]
+            try:
+                os.killpg(os.getpgid(process.pid), signal.SIGSTOP)
+                logger.info(f"Paused PCAP capture on {interface}")
+                return True
+            except Exception as e:
+                logger.error(f"Failed to pause capture on {interface}: {e}")
+                return False
+
+    def resume_capture(self, interface: str) -> bool:
+        """Resume PCAP capture on specified interface"""
+        with self.capture_lock:
+            if interface not in self.active_captures:
+                logger.warning(f"No capture available to resume on {interface}")
+                return False
+
+            process = self.active_captures[interface]
+            try:
+                os.killpg(os.getpgid(process.pid), signal.SIGCONT)
+                logger.info(f"Resumed PCAP capture on {interface}")
+                return True
+            except Exception as e:
+                logger.error(f"Failed to resume capture on {interface}: {e}")
+                return False
+
+    def pause_all_captures(self) -> None:
+        """Pause all active captures"""
+        with self.capture_lock:
+            for interface in list(self.active_captures.keys()):
+                self.pause_capture(interface)
+
+    def resume_all_captures(self) -> None:
+        """Resume all paused captures"""
+        with self.capture_lock:
+            for interface in list(self.active_captures.keys()):
+                self.resume_capture(interface)
+
     def get_active_captures(self) -> List[Dict[str, Any]]:
         """Get list of active captures"""
         result = []
@@ -259,20 +303,26 @@ class PacketAnalyzer:
     def __init__(self, db: Database):
         self.db = db
         self.use_scapy = False
-        try:
-            import scapy.all as scapy
-            self.scapy = scapy
-            self.use_scapy = True
-            logger.info("Using Scapy for PCAP analysis")
-        except ImportError:
-            logger.info("Scapy not available, using tshark for PCAP analysis")
+        self.scapy = None
+        logger.info("PacketAnalyzer initialized; lazy Scapy import handler")
 
     def analyze_pcap(self, pcap_path: str) -> List[Alert]:
         """Analyze PCAP file for threat indicators"""
-        if self.use_scapy:
+        if self.scapy is None:
+            try:
+                import scapy.all as scapy
+                self.scapy = scapy
+                self.use_scapy = True
+                logger.info("Scapy successfully imported for analysis")
+            except Exception as e:
+                self.scapy = None
+                self.use_scapy = False
+                logger.warning(f"Scapy unavailable, falling back to tshark: {e}")
+
+        if self.use_scapy and self.scapy is not None:
             return self._analyze_with_scapy(pcap_path)
-        else:
-            return self._analyze_with_tshark(pcap_path)
+
+        return self._analyze_with_tshark(pcap_path)
 
     def _analyze_with_scapy(self, pcap_path: str) -> List[Alert]:
         """Analyze PCAP using Scapy"""
