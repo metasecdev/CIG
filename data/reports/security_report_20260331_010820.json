@@ -1,0 +1,322 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-03-31T01:08:17.921540",
+    "period_start": "2026-03-30T01:08:17.921540",
+    "period_end": "2026-03-31T01:08:17.921540",
+    "days_covered": 1
+  },
+  "executive_summary": {
+    "total_alerts": 2,
+    "total_indicators": 6,
+    "total_pcaps": 1,
+    "severity_breakdown": {
+      "medium": 1,
+      "high": 1
+    },
+    "indicator_type_breakdown": {
+      "ip": 6
+    },
+    "source_breakdown": {
+      "test": 5,
+      "test_feed": 1
+    },
+    "risk_level": "Medium",
+    "period_summary": "Detected 2 security events from 6 threat indicators across 1 network captures"
+  },
+  "threat_intelligence": {
+    "sources": {
+      "test": {
+        "total_indicators": 5,
+        "types": {
+          "ip": 5
+        },
+        "top_indicators": [
+          {
+            "id": "c8aef83f-004e-427f-8f85-3ec0519baf28",
+            "value": "192.168.1.205",
+            "type": "ip",
+            "source": "test",
+            "feed_id": "bulk-test",
+            "first_seen": "2026-03-31T01:08:08.734816",
+            "last_seen": "2026-03-31T01:08:08.734820",
+            "tags": "",
+            "count": 1
+          },
+          {
+            "id": "2afca799-c431-491e-adec-da9655c39928",
+            "value": "192.168.1.204",
+            "type": "ip",
+            "source": "test",
+            "feed_id": "bulk-test",
+            "first_seen": "2026-03-31T01:08:08.734799",
+            "last_seen": "2026-03-31T01:08:08.734804",
+            "tags": "",
+            "count": 1
+          },
+          {
+            "id": "b1060117-4bff-4197-8e38-02d4a1149619",
+            "value": "192.168.1.203",
+            "type": "ip",
+            "source": "test",
+            "feed_id": "bulk-test",
+            "first_seen": "2026-03-31T01:08:08.734779",
+            "last_seen": "2026-03-31T01:08:08.734783",
+            "tags": "",
+            "count": 1
+          },
+          {
+            "id": "c467382a-ec21-4323-a5ba-47380110445d",
+            "value": "192.168.1.202",
+            "type": "ip",
+            "source": "test",
+            "feed_id": "bulk-test",
+            "first_seen": "2026-03-31T01:08:08.734760",
+            "last_seen": "2026-03-31T01:08:08.734765",
+            "tags": "",
+            "count": 1
+          },
+          {
+            "id": "559e4927-477c-451b-8d33-ca9d540d3d9c",
+            "value": "192.168.1.201",
+            "type": "ip",
+            "source": "test",
+            "feed_id": "bulk-test",
+            "first_seen": "2026-03-31T01:08:08.734724",
+            "last_seen": "2026-03-31T01:08:08.734738",
+            "tags": "",
+            "count": 1
+          }
+        ]
+      },
+      "test_feed": {
+        "total_indicators": 1,
+        "types": {
+          "ip": 1
+        },
+        "top_indicators": [
+          {
+            "id": "test-ind-123",
+            "value": "192.168.1.200",
+            "type": "ip",
+            "source": "test_feed",
+            "feed_id": "test-feed-1",
+            "first_seen": "2026-03-31T01:08:08.726646+00:00",
+            "last_seen": "2026-03-31T01:08:08.726664+00:00",
+            "tags": "malware,botnet",
+            "count": 1
+          }
+        ]
+      }
+    },
+    "total_unique_indicators": 6,
+    "most_active_feeds": [
+      [
+        "test",
+        {
+          "total_indicators": 5,
+          "types": {
+            "ip": 5
+          },
+          "top_indicators": [
+            {
+              "id": "c8aef83f-004e-427f-8f85-3ec0519baf28",
+              "value": "192.168.1.205",
+              "type": "ip",
+              "source": "test",
+              "feed_id": "bulk-test",
+              "first_seen": "2026-03-31T01:08:08.734816",
+              "last_seen": "2026-03-31T01:08:08.734820",
+              "tags": "",
+              "count": 1
+            },
+            {
+              "id": "2afca799-c431-491e-adec-da9655c39928",
+              "value": "192.168.1.204",
+              "type": "ip",
+              "source": "test",
+              "feed_id": "bulk-test",
+              "first_seen": "2026-03-31T01:08:08.734799",
+              "last_seen": "2026-03-31T01:08:08.734804",
+              "tags": "",
+              "count": 1
+            },
+            {
+              "id": "b1060117-4bff-4197-8e38-02d4a1149619",
+              "value": "192.168.1.203",
+              "type": "ip",
+              "source": "test",
+              "feed_id": "bulk-test",
+              "first_seen": "2026-03-31T01:08:08.734779",
+              "last_seen": "2026-03-31T01:08:08.734783",
+              "tags": "",
+              "count": 1
+            },
+            {
+              "id": "c467382a-ec21-4323-a5ba-47380110445d",
+              "value": "192.168.1.202",
+              "type": "ip",
+              "source": "test",
+              "feed_id": "bulk-test",
+              "first_seen": "2026-03-31T01:08:08.734760",
+              "last_seen": "2026-03-31T01:08:08.734765",
+              "tags": "",
+              "count": 1
+            },
+            {
+              "id": "559e4927-477c-451b-8d33-ca9d540d3d9c",
+              "value": "192.168.1.201",
+              "type": "ip",
+              "source": "test",
+              "feed_id": "bulk-test",
+              "first_seen": "2026-03-31T01:08:08.734724",
+              "last_seen": "2026-03-31T01:08:08.734738",
+              "tags": "",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      [
+        "test_feed",
+        {
+          "total_indicators": 1,
+          "types": {
+            "ip": 1
+          },
+          "top_indicators": [
+            {
+              "id": "test-ind-123",
+              "value": "192.168.1.200",
+              "type": "ip",
+              "source": "test_feed",
+              "feed_id": "test-feed-1",
+              "first_seen": "2026-03-31T01:08:08.726646+00:00",
+              "last_seen": "2026-03-31T01:08:08.726664+00:00",
+              "tags": "malware,botnet",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "network_activity": {
+    "protocols": {
+      "tcp": 2
+    },
+    "top_ports": [
+      [
+        443,
+        1
+      ],
+      [
+        80,
+        1
+      ]
+    ],
+    "top_source_ips": [
+      [
+        "192.168.1.1",
+        1
+      ],
+      [
+        "192.168.1.100",
+        1
+      ]
+    ],
+    "top_destination_ips": [
+      [
+        "10.0.0.1",
+        2
+      ]
+    ],
+    "pcap_statistics": {
+      "total_captures": 1,
+      "total_packets": 0,
+      "total_size_bytes": 0,
+      "average_packets_per_capture": 0.0
+    }
+  },
+  "mitre_attack_analysis": {
+    "total_ttp_matches": 5,
+    "techniques_detected": {
+      "T1595": 2,
+      "T1071": 2,
+      "T1573": 1
+    },
+    "tactics_detected": {
+      "TA0043": 2,
+      "TA0011": 3
+    },
+    "high_confidence_matches": [],
+    "sample_matches": [
+      {
+        "alert_id": "report-test-alert",
+        "technique_id": "T1595",
+        "technique_name": "Active Scanning",
+        "tactic_id": "TA0043",
+        "tactic_name": "Reconnaissance",
+        "confidence": 40,
+        "matched_indicators": [
+          "network_scan"
+        ]
+      },
+      {
+        "alert_id": "report-test-alert",
+        "technique_id": "T1071",
+        "technique_name": "Application Layer Protocol",
+        "tactic_id": "TA0011",
+        "tactic_name": "Command and Control",
+        "confidence": 45,
+        "matched_indicators": [
+          "c2_traffic"
+        ]
+      },
+      {
+        "alert_id": "report-test-alert",
+        "technique_id": "T1573",
+        "technique_name": "Encrypted Channel",
+        "tactic_id": "TA0011",
+        "tactic_name": "Command and Control",
+        "confidence": 40,
+        "matched_indicators": [
+          "encrypted_channel"
+        ]
+      },
+      {
+        "alert_id": "test-alert-123",
+        "technique_id": "T1595",
+        "technique_name": "Active Scanning",
+        "tactic_id": "TA0043",
+        "tactic_name": "Reconnaissance",
+        "confidence": 40,
+        "matched_indicators": [
+          "network_scan"
+        ]
+      },
+      {
+        "alert_id": "test-alert-123",
+        "technique_id": "T1071",
+        "technique_name": "Application Layer Protocol",
+        "tactic_id": "TA0011",
+        "tactic_name": "Command and Control",
+        "confidence": 45,
+        "matched_indicators": [
+          "c2_traffic"
+        ]
+      }
+    ]
+  },
+  "recommendations": [
+    "Monitor high-severity alerts closely",
+    "Update threat intelligence feeds and signatures",
+    "Review access controls and authentication mechanisms",
+    "Implement additional logging for suspicious activities",
+    "Review MITRE ATT&CK techniques detected and implement specific countermeasures"
+  ],
+  "charts": {
+    "alerts_over_time": "data/reports/alerts_over_time_20260331_010818.png",
+    "severity_distribution": "data/reports/severity_distribution_20260331_010818.png",
+    "indicator_sources": "data/reports/indicator_sources_20260331_010819.png"
+  }
+}

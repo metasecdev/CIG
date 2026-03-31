@@ -39,6 +39,15 @@
                         <a href="/dashboard/health" class="list-group-item list-group-item-action">
                             <i class="fas fa-heartbeat"></i> Health Check
                         </a>
+                        <a href="/dashboard/checks" class="list-group-item list-group-item-action">
+                            <i class="fas fa-check-circle"></i> Checks
+                        </a>
+                        <a href="/dashboard/news" class="list-group-item list-group-item-action">
+                            <i class="fas fa-newspaper"></i> Cybersecurity News
+                        </a>
+                        <a href="/dashboard/arkime" class="list-group-item list-group-item-action">
+                            <i class="fas fa-network-wired"></i> Arkime
+                        </a>
                         <a href="/dashboard/events" class="list-group-item list-group-item-action">
                             <i class="fas fa-bell"></i> Events & Alerts
                         </a>
@@ -63,7 +72,7 @@
                 </div>
 
                 <!-- Report Generation Form -->
-                <div class="card mb-4" id="reportForm" style="display: none;">
+                <div class="card mb-4 d-none" id="reportForm">
                     <div class="card-header">
                         <h5>Generate New Report</h5>
                     </div>
@@ -234,7 +243,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Generating Report...</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex align-items-center">
@@ -242,7 +251,7 @@
                         <span>Generating security report...</span>
                     </div>
                     <div class="progress mt-3">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div>
                     </div>
                 </div>
             </div>

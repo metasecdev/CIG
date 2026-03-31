@@ -40,6 +40,15 @@
                         <a href="/dashboard/health" class="list-group-item list-group-item-action">
                             <i class="fas fa-heartbeat"></i> Health Check
                         </a>
+                        <a href="/dashboard/checks" class="list-group-item list-group-item-action">
+                            <i class="fas fa-check-circle"></i> Checks
+                        </a>
+                        <a href="/dashboard/news" class="list-group-item list-group-item-action">
+                            <i class="fas fa-newspaper"></i> Cybersecurity News
+                        </a>
+                        <a href="/dashboard/arkime" class="list-group-item list-group-item-action">
+                            <i class="fas fa-network-wired"></i> Arkime
+                        </a>
                         <a href="/dashboard/events" class="list-group-item list-group-item-action">
                             <i class="fas fa-bell"></i> Events & Alerts
                         </a>
@@ -52,7 +61,169 @@
 
             <!-- Main Content -->
             <div class="col-md-10">
+                <!-- Quick Status Banner -->
+                <div class="alert alert-info mb-4" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>System Status:</strong>
+                    {% set healthy_checks = health_checks|selectattr('status', 'equalto', 'healthy')|list %}
+                    {{ healthy_checks|length }}/{{ health_checks|length }} components healthy
+                    | <a href="/dashboard/health">View Details</a>
+                </div>
+
                 <!-- System Overview Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-exclamation-triangle"></i> Alerts
+                                </h5>
+                                <h2>{{ stats.alerts.total|default(0) }}</h2>
+                                <small>Active threats detected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-database"></i> Indicators
+                                </h5>
+                                <h2>{{ stats.indicators.values()|sum|default(0) }}</h2>
+                                <small>Threat intelligence items</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-rss"></i> Feeds
+                                </h5>
+                                <h2>{{ stats.feeds|length }}</h2>
+                                <small>Active intelligence feeds</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-network-wired"></i> Captures
+                                </h5>
+                                <h2>{{ stats.captures|length }}</h2>
+                                <small>Active PCAP captures</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Status Summary -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-heartbeat"></i> Component Health</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group">
+                                    {% for check in health_checks|slice(3) %}
+                                    <div class="list-group-item d-flex justify-content-between">
+                                        <span>{{ check.component|replace('_', ' ')|title }}</span>
+                                        <span class="badge bg-{{ 'success' if check.status == 'healthy' else 'warning' if check.status in ['degraded', 'configured'] else 'danger' }}">
+                                            {{ check.status }}
+                                        </span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <a href="/dashboard/checks" class="btn btn-sm btn-outline-primary mt-2 w-100">View All Checks</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-newspaper"></i> Security Alerts</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if latest_news %}
+                                    <div class="list-group">
+                                        {% for news in latest_news %}
+                                        <div class="list-group-item">
+                                            <strong class="news-title">{{ news.title|truncate(40) }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ news.source }}</small>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">No recent news</p>
+                                {% endif %}
+                                <a href="/dashboard/news" class="btn btn-sm btn-outline-primary mt-2 w-100">Latest News</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-network-wired"></i> Arkime Status</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if arkime_status %}
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <strong>Installed:</strong>
+                                            <span class="badge bg-{{ 'success' if arkime_status.installed else 'danger' }}">
+                                                {{ 'Yes' if arkime_status.installed else 'No' }}
+                                            </span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <strong>Capture:</strong>
+                                            <span class="badge bg-{{ 'success' if arkime_status.capture_running else 'warning' }}">
+                                                {{ 'Running' if arkime_status.capture_running else 'Stopped' }}
+                                            </span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <strong>Viewer:</strong>
+                                            <span class="badge bg-{{ 'success' if arkime_status.viewer_running else 'warning' }}">
+                                                {{ 'Running' if arkime_status.viewer_running else 'Stopped' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Arkime not configured</p>
+                                {% endif %}
+                                <a href="/dashboard/arkime" class="btn btn-sm btn-outline-primary mt-2 w-100">Arkime Console</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Operations Panel -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-robot"></i> AI Incident Hunter</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Enter a threat query to evaluate matching news, get AI hypothesis and playbook actions.</p>
+                                <form id="ai-hunter-form" class="row g-2">
+                                    <div class="col-md-8">
+                                        <input type="text" id="ai-hunter-query" class="form-control" placeholder="Search: e.g., cve, rce, botnet" value="rce" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary w-100">Run AI Hunt</button>
+                                    </div>
+                                </form>
+                                <div id="ai-hunter-result" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card bg-primary text-white">
@@ -196,6 +367,57 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('ai-hunter-form');
+            const results = document.getElementById('ai-hunter-result');
+
+            if (!form) return;
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const query = document.getElementById('ai-hunter-query').value.trim();
+                if (!query) {
+                    results.innerHTML = '<div class="alert alert-warning">Please enter a query.</div>';
+                    return;
+                }
+
+                results.innerHTML = '<div class="alert alert-secondary">Running AI incident hunter...</div>';
+
+                try {
+                    const response = await fetch(`/api/news/ai?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        results.innerHTML = `<div class="alert alert-danger">Failed: ${data.detail || 'unknown error'}</div>`;
+                        return;
+                    }
+
+                    const matchHtml = data.matches.map(item => `
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6>${item.title}</h6>
+                                <p>${item.summary}</p>
+                                <small>Source: <a href="${item.source_url}" target="_blank" rel="noreferrer">${item.source}</a></small>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const actions = (data.ai_context?.suggested_actions || []).map(a => `<li>${a}</li>`).join('');
+                    const hypotheses = (data.ai_context?.ai_hypotheses || []).map(a => `<li>${a}</li>`).join('');
+
+                    results.innerHTML = `
+                        <div class="alert alert-success">Found ${data.result_count} matching news items.</div>
+                        <div class="mb-3"><strong>AI Hypotheses:</strong><ul>${hypotheses}</ul></div>
+                        <div class="mb-3"><strong>Suggested Playbook Actions:</strong><ul>${actions}</ul></div>
+                        <div>${matchHtml}</div>
+                    `;
+                } catch (error) {
+                    results.innerHTML = `<div class="alert alert-danger">Exception: ${error.message}</div>`;
+                }
+            });
+        });
+    </script>
     <script src="/static/dashboard.js"></script>
 </body>
 </html>
