@@ -48,14 +48,26 @@ class CIGHealthChecker:
 
             # Check indicators
             indicators = self.database.get_indicators(limit=1)
+            indicator_counts = (
+                self.database.get_indicator_counts()
+                if hasattr(self.database, "get_indicator_counts")
+                else {}
+            )
+            alert_stats = (
+                self.database.get_alert_stats()
+                if hasattr(self.database, "get_alert_stats")
+                else {}
+            )
 
             return {
                 "status": "healthy",
                 "message": "Database connection successful",
                 "details": {
                     "connection": "ok",
-                    "alert_count": alert_count,
-                    "indicator_count": len(indicators),
+                    "alert_count": alert_stats.get("total", alert_count),
+                    "indicator_count": sum(indicator_counts.values())
+                    if indicator_counts
+                    else len(indicators),
                 },
             }
         except Exception as e:
@@ -94,11 +106,14 @@ class CIGHealthChecker:
         """Check threat feed status"""
         feeds_status = {}
 
+        # Use config to get actual feed status
+        from app.core.config import settings
+
         # Check MISP
         try:
             from app.feeds.misp import MISPFeed
 
-            misp_enabled = True  # Check from config
+            misp_enabled = getattr(settings, "enable_misp", True)
             feeds_status["misp"] = {
                 "enabled": misp_enabled,
                 "status": "configured" if misp_enabled else "disabled",
@@ -110,7 +125,11 @@ class CIGHealthChecker:
         try:
             from app.feeds.pfblocker import PFBlockerFeed
 
-            feeds_status["pfblocker"] = {"enabled": True, "status": "configured"}
+            pf_enabled = getattr(settings, "enable_pfblocker", True)
+            feeds_status["pfblocker"] = {
+                "enabled": pf_enabled,
+                "status": "configured" if pf_enabled else "disabled",
+            }
         except Exception as e:
             feeds_status["pfblocker"] = {"status": "error", "message": str(e)}
 
@@ -118,14 +137,54 @@ class CIGHealthChecker:
         try:
             from app.feeds.abuseipdb import AbuseIPDBFeed
 
-            feeds_status["abuseipdb"] = {"enabled": True, "status": "configured"}
+            abuse_enabled = getattr(settings, "enable_abuseipdb", True)
+            feeds_status["abuseipdb"] = {
+                "enabled": abuse_enabled,
+                "status": "configured" if abuse_enabled else "disabled",
+            }
         except Exception as e:
             feeds_status["abuseipdb"] = {"status": "error", "message": str(e)}
+
+        # Check CVE Details
+        try:
+            from app.feeds.cvedetails import CVEDetailsFeedManager
+
+            cve_enabled = getattr(settings, "enable_cvedetails", True)
+            feeds_status["cve_details"] = {
+                "enabled": cve_enabled,
+                "status": "configured" if cve_enabled else "disabled",
+            }
+        except Exception as e:
+            feeds_status["cve_details"] = {"status": "error", "message": str(e)}
+
+        # Check CISA KEV
+        try:
+            from app.feeds.cisa_kev import CISAKevFeedManager
+
+            cisa_enabled = getattr(settings, "enable_cisa_kev", True)
+            feeds_status["cisa_kev"] = {
+                "enabled": cisa_enabled,
+                "status": "configured" if cisa_enabled else "disabled",
+            }
+        except Exception as e:
+            feeds_status["cisa_kev"] = {"status": "error", "message": str(e)}
+
+        # Check Shadowserver
+        try:
+            from app.feeds.shadowserver import ShadowserverFeedManager
+
+            shadow_enabled = getattr(settings, "enable_shadowserver", False)
+            shadow_key = getattr(settings, "shadowserver_api_key", "")
+            feeds_status["shadowserver"] = {
+                "enabled": shadow_enabled and bool(shadow_key),
+                "status": "configured" if shadow_enabled and shadow_key else "disabled",
+            }
+        except Exception as e:
+            feeds_status["shadowserver"] = {"status": "error", "message": str(e)}
 
         # Check Abuse.ch (URLhaus + ThreatFox)
         try:
             from app.feeds.abusech import AbuseChFeedManager
-            from app.core.config import settings
 
             feeds_status["urlhaus"] = {
                 "enabled": getattr(settings, "enable_urlhaus", True),
@@ -148,6 +207,12 @@ class CIGHealthChecker:
             feeds_status["custom_feeds"] = {"status": "error", "message": str(e)}
 
         all_healthy = all(f.get("status") != "error" for f in feeds_status.values())
+
+        return {
+            "status": "healthy" if all_healthy else "degraded",
+            "message": "Threat feeds checked",
+            "details": feeds_status,
+        }
 
         return {
             "status": "healthy" if all_healthy else "degraded",

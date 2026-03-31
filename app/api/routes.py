@@ -875,8 +875,9 @@ async def dashboard(request: Request):
 
         # Get health status
         health_status = get_health_status(database, matcher)
+        health_components = health_status.get("components", {})
         health_checks = []
-        for component, detail in health_status.get("components", {}).items():
+        for component, detail in health_components.items():
             health_checks.append(
                 {
                     "component": component,
@@ -902,6 +903,7 @@ async def dashboard(request: Request):
                 "stats": stats,
                 "recent_alerts": alerts_data,
                 "health_checks": health_checks,
+                "health_components": health_components,
                 "latest_news": latest_news,
                 "arkime_status": arkime_info,
                 "timestamp": datetime.utcnow().isoformat(),
