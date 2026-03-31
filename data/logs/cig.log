@@ -2417,3 +2417,5 @@ jinja2.exceptions.UndefinedError: 'health_components' is undefined
 2026-03-31 01:33:21,444 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
 2026-03-31 01:33:28,689 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
 2026-03-31 01:33:28,695 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 01:33:42,553 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 01:33:52,476 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
