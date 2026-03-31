@@ -67,6 +67,13 @@ class Settings:
     enable_abuseipdb: bool = True
     enable_urlhaus: bool = True
     enable_threatfox: bool = True
+    enable_cvedetails: bool = True
+    cvedetails_update_interval: int = 3600  # seconds
+    enable_cisa_kev: bool = True
+    cisa_kev_update_interval: int = 86400  # seconds
+    enable_shadowserver: bool = False  # Requires API key
+    shadowserver_api_key: str = ""
+    shadowserver_update_interval: int = 86400  # seconds
 
     # Feed Update Configuration
     skip_feed_updates: bool = False  # Skip all feed updates for testing
@@ -144,6 +151,23 @@ class Settings:
             ),
             # Feed Updates
             skip_feed_updates=os.getenv("SKIP_FEED_UPDATES", "false").lower() == "true",
+            # CVE Details
+            enable_cvedetails=os.getenv("ENABLE_CVEDETAILS", "true").lower() == "true",
+            cvedetails_update_interval=int(
+                os.getenv("CVEDETAILS_UPDATE_INTERVAL", "3600")
+            ),
+            # CISA KEV
+            enable_cisa_kev=os.getenv("ENABLE_CISA_KEV", "true").lower() == "true",
+            cisa_kev_update_interval=int(
+                os.getenv("CISA_KEV_UPDATE_INTERVAL", "86400")
+            ),
+            # Shadowserver
+            enable_shadowserver=os.getenv("ENABLE_SHADOWSERVER", "false").lower()
+            == "true",
+            shadowserver_api_key=os.getenv("SHADOWSERVER_API_KEY", ""),
+            shadowserver_update_interval=int(
+                os.getenv("SHADOWSERVER_UPDATE_INTERVAL", "86400")
+            ),
             # DNS
             dns_log_path=os.getenv("DNS_LOG_PATH", "data/logs/dns.log"),
             dns_query_log_enabled=os.getenv("DNS_QUERY_LOG_ENABLED", "true").lower()
