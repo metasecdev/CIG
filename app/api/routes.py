@@ -185,7 +185,7 @@ async def dashboard_summary():
         recent_alerts = database.get_alerts(limit=5)
         alert_stats = database.get_alert_stats()
         latest_news = get_feed().get_latest()[:3]
-        
+
         # Calculate risk score (0-100)
         high_alerts = alert_stats.get("by_severity", {}).get("high", 0)
         medium_alerts = alert_stats.get("by_severity", {}).get("medium", 0)
@@ -197,11 +197,19 @@ async def dashboard_summary():
                 "total_alerts": alert_stats.get("total", 0),
                 "high_severity_alerts": high_alerts,
                 "risk_score": risk_score,
-                "components_healthy": len([c for c in health.get("components", {}).values() if c.get("status") == "healthy"]),
+                "components_healthy": len(
+                    [
+                        c
+                        for c in health.get("components", {}).values()
+                        if c.get("status") == "healthy"
+                    ]
+                ),
                 "total_components": len(health.get("components", {})),
             },
             "health": health,
-            "recent_alerts": [AlertResponse(**a.to_dict()).dict() for a in recent_alerts],
+            "recent_alerts": [
+                AlertResponse(**a.to_dict()).dict() for a in recent_alerts
+            ],
             "latest_news": latest_news,
             "timestamp": datetime.utcnow().isoformat(),
         }
@@ -349,6 +357,33 @@ async def get_pfblocker_status():
         raise HTTPException(status_code=503, detail="System not initialized")
 
     return threat_matcher.pfblocker_feed.get_status()
+
+
+@app.get("/api/intel/cvedetails")
+async def get_cvedetails_status():
+    """Get CVE Details feed status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return threat_matcher.cvedetails_feed.get_status()
+
+
+@app.get("/api/intel/cisa_kev")
+async def get_cisa_kev_status():
+    """Get CISA KEV feed status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return threat_matcher.cisa_kev_feed.get_status()
+
+
+@app.get("/api/intel/shadowserver")
+async def get_shadowserver_status():
+    """Get Shadowserver feed status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return threat_matcher.shadowserver_feed.get_status()
 
 
 @app.get("/api/intel/indicators")
@@ -525,6 +560,36 @@ async def update_pfblocker_feed():
     return {"status": "updated", "indicators_count": count}
 
 
+@app.post("/api/feeds/update/cvedetails")
+async def update_cvedetails_feed():
+    """Manually trigger CVE Details feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_cvedetails()
+    return {"status": "updated", "vulnerabilities_count": count}
+
+
+@app.post("/api/feeds/update/cisa_kev")
+async def update_cisa_kev_feed():
+    """Manually trigger CISA KEV feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_cisa_kev()
+    return {"status": "updated", "vulnerabilities_count": count}
+
+
+@app.post("/api/feeds/update/shadowserver")
+async def update_shadowserver_feed():
+    """Manually trigger Shadowserver feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_shadowserver()
+    return {"status": "updated", "indicators_count": count}
+
+
 @app.post("/api/feeds/update/all")
 async def update_all_feeds():
     """Manually trigger all feed updates"""
@@ -567,6 +632,23 @@ async def get_all_feeds_status():
             "configured": True,
             "status": "configured" if settings.enable_threatfox else "disabled",
         },
+        "cvedetails": {
+            "enabled": settings.enable_cvedetails,
+            "configured": True,
+            "status": "configured" if settings.enable_cvedetails else "disabled",
+        },
+        "cisa_kev": {
+            "enabled": settings.enable_cisa_kev,
+            "configured": True,
+            "status": "configured" if settings.enable_cisa_kev else "disabled",
+        },
+        "shadowserver": {
+            "enabled": settings.enable_shadowserver,
+            "configured": bool(settings.shadowserver_api_key),
+            "status": "configured"
+            if settings.enable_shadowserver and settings.shadowserver_api_key
+            else "disabled",
+        },
     }
 
 
@@ -591,6 +673,12 @@ async def toggle_feed(request: FeedToggleRequest):
         settings.enable_urlhaus = enabled
     elif feed == "threatfox":
         settings.enable_threatfox = enabled
+    elif feed == "cvedetails":
+        settings.enable_cvedetails = enabled
+    elif feed == "cisa_kev":
+        settings.enable_cisa_kev = enabled
+    elif feed == "shadowserver":
+        settings.enable_shadowserver = enabled
     else:
         raise HTTPException(status_code=400, detail=f"Unknown feed: {feed}")
 
@@ -773,6 +861,9 @@ async def dashboard(request: Request):
                 "misp": matcher.misp_feed.get_status(),
                 "pfblocker": matcher.pfblocker_feed.get_status(),
                 "abuseipdb": matcher.abuseipdb_feed.get_status(),
+                "cvedetails": matcher.cvedetails_feed.get_status(),
+                "cisa_kev": matcher.cisa_kev_feed.get_status(),
+                "shadowserver": matcher.shadowserver_feed.get_status(),
             },
             "captures": matcher.pcap_capture.get_active_captures(),
             "system": matcher.get_status(),
@@ -786,11 +877,13 @@ async def dashboard(request: Request):
         health_status = get_health_status(database, matcher)
         health_checks = []
         for component, detail in health_status.get("components", {}).items():
-            health_checks.append({
-                "component": component,
-                "status": detail.get("status", "unknown"),
-                "message": detail.get("message", ""),
-            })
+            health_checks.append(
+                {
+                    "component": component,
+                    "status": detail.get("status", "unknown"),
+                    "message": detail.get("message", ""),
+                }
+            )
 
         # Get latest news
         latest_news = get_feed().get_latest()[:2]  # Top 2 news items
@@ -843,6 +936,9 @@ async def status_dashboard(request: Request):
                 "abuseipdb": matcher.abuseipdb_feed.get_status()
                 if hasattr(matcher, "abuseipdb_feed")
                 else {"status": "not_configured"},
+                "cvedetails": matcher.cvedetails_feed.get_status(),
+                "cisa_kev": matcher.cisa_kev_feed.get_status(),
+                "shadowserver": matcher.shadowserver_feed.get_status(),
             },
             "captures": matcher.pcap_capture.get_active_captures(),
         }
@@ -886,6 +982,9 @@ async def health_dashboard(request: Request):
                 "abuseipdb": matcher.abuseipdb_feed.get_status()
                 if hasattr(matcher, "abuseipdb_feed")
                 else {"status": "not_configured"},
+                "cvedetails": matcher.cvedetails_feed.get_status(),
+                "cisa_kev": matcher.cisa_kev_feed.get_status(),
+                "shadowserver": matcher.shadowserver_feed.get_status(),
             },
             "capture": {
                 "active_captures": len(matcher.pcap_capture.get_active_captures()),
@@ -1008,11 +1107,11 @@ async def arkime_dashboard(request: Request):
     try:
         arkime_setup = ArkimeSetupManager()
         so_integration = SecurityOnionIntegration()
-        
+
         arkime_status = arkime_setup.check_installation()
         so_info = so_integration.get_deployment_info()
         arkime_info = arkime_setup.get_system_info()
-        
+
         return templates.TemplateResponse(
             "arkime.html",
             {
@@ -1104,7 +1203,11 @@ async def api_cyber_news(limit: int = Query(10, ge=1, le=50)):
 
 
 @app.get("/api/news/ai")
-async def api_cyber_news_ai(query: str = Query(..., min_length=3, description="Search term for AI-driven threat hunting")):
+async def api_cyber_news_ai(
+    query: str = Query(
+        ..., min_length=3, description="Search term for AI-driven threat hunting"
+    ),
+):
     """AI incident hunter for exploratory threat matching and playbook recommendations"""
     try:
         feed = get_feed()
@@ -1113,13 +1216,18 @@ async def api_cyber_news_ai(query: str = Query(..., min_length=3, description="S
 
         matched = []
         for item in news_items:
-            text = " ".join([str(item.get(field, "")).lower() for field in ["title", "summary", "source", "cve", "iocs"]])
+            text = " ".join(
+                [
+                    str(item.get(field, "")).lower()
+                    for field in ["title", "summary", "source", "cve", "iocs"]
+                ]
+            )
             if q in text:
                 matched.append(item)
 
         playbook = [
             "Validate included IOCs in detection pipeline (IDS/WAF/EPP)",
-            "Cross-check CVE details and apply vendor patches immediately", 
+            "Cross-check CVE details and apply vendor patches immediately",
             "Populate SIEM with behavior rules from article signature sections",
         ]
 
@@ -1127,7 +1235,8 @@ async def api_cyber_news_ai(query: str = Query(..., min_length=3, description="S
             "query": query,
             "matches": len(matched),
             "ai_hypotheses": [
-                f"Potential campaign type aligned to {item.get('source')} feed" for item in matched[:3]
+                f"Potential campaign type aligned to {item.get('source')} feed"
+                for item in matched[:3]
             ],
             "suggested_actions": playbook,
         }
@@ -1145,7 +1254,11 @@ async def api_cyber_news_ai(query: str = Query(..., min_length=3, description="S
 
 
 @app.get("/api/news/verify")
-async def api_cyber_news_verify(network_check: bool = Query(False, description="Perform network reachability check if True")):
+async def api_cyber_news_verify(
+    network_check: bool = Query(
+        False, description="Perform network reachability check if True"
+    ),
+):
     """Return all news feed URLs with parsed validation and optional reachable status"""
     try:
         feed = get_feed()
@@ -1159,8 +1272,16 @@ async def api_cyber_news_verify(network_check: bool = Query(False, description="
             source_parsed = urlparse(source_url) if source_url else None
             cve_parsed = urlparse(cve_url) if cve_url else None
 
-            source_valid = bool(source_parsed and source_parsed.scheme in ["http", "https"] and source_parsed.netloc)
-            cve_valid = bool(cve_parsed and cve_parsed.scheme in ["http", "https"] and cve_parsed.netloc)
+            source_valid = bool(
+                source_parsed
+                and source_parsed.scheme in ["http", "https"]
+                and source_parsed.netloc
+            )
+            cve_valid = bool(
+                cve_parsed
+                and cve_parsed.scheme in ["http", "https"]
+                and cve_parsed.netloc
+            )
 
             source_reachable = None
             cve_reachable = None
@@ -1181,16 +1302,18 @@ async def api_cyber_news_verify(network_check: bool = Query(False, description="
                     except Exception:
                         cve_reachable = False
 
-            verified_items.append({
-                "id": item.get("id"),
-                "title": item.get("title"),
-                "source_url": source_url,
-                "source_valid": source_valid,
-                "source_reachable": source_reachable,
-                "cve_url": cve_url,
-                "cve_valid": cve_valid,
-                "cve_reachable": cve_reachable,
-            })
+            verified_items.append(
+                {
+                    "id": item.get("id"),
+                    "title": item.get("title"),
+                    "source_url": source_url,
+                    "source_valid": source_valid,
+                    "source_reachable": source_reachable,
+                    "cve_url": cve_url,
+                    "cve_valid": cve_valid,
+                    "cve_reachable": cve_reachable,
+                }
+            )
 
         return {
             "status": "success",

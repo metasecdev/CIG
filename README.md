@@ -9,6 +9,9 @@ A real-time cyber threat intelligence platform that aggregates multiple threat f
 - **pfBlockerNG** - DNS blocklists (ads, trackers, malware, phishing)
 - **AbuseIPDB** - IP reputation database
 - **Abuse.ch** - URLhaus (malware URLs) and ThreatFox (malware indicators)
+- **CVE Details** - Vulnerability data from cvedetails.com
+- **CISA KEV** - Known Exploited Vulnerabilities catalog
+- **Shadowserver** - Network vulnerability reports (requires API key)
 
 ### Network Capture
 - **PCAP Capture** - Packet capture on LAN/WAN interfaces

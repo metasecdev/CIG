@@ -14,6 +14,9 @@ from app.feeds.misp import MISPFeed
 from app.feeds.pfblocker import PFBlockerFeed
 from app.feeds.abuseipdb import AbuseIPDBFeed
 from app.feeds.abusech import AbuseChFeedManager
+from app.feeds.cvedetails import CVEDetailsFeedManager
+from app.feeds.cisa_kev import CISAKevFeedManager
+from app.feeds.shadowserver import ShadowserverFeedManager
 from app.capture.pcap import PCAPCapture, DNSQueryMonitor, PacketAnalyzer
 from app.mitre.attack_mapper import MITREAttackMapper
 from app.reporting.security_report import SecurityReporter
@@ -32,6 +35,9 @@ class ThreatMatcher:
         self.pfblocker_feed = PFBlockerFeed(db)
         self.abuseipdb_feed = AbuseIPDBFeed(db)
         self.abusech_feeds = AbuseChFeedManager(db)
+        self.cvedetails_feed = CVEDetailsFeedManager(db)
+        self.cisa_kev_feed = CISAKevFeedManager(db)
+        self.shadowserver_feed = ShadowserverFeedManager(db)
         self.pcap_capture = PCAPCapture(db)
         self.dns_monitor = DNSQueryMonitor(db)
         self.packet_analyzer = PacketAnalyzer(db)
@@ -48,12 +54,18 @@ class ThreatMatcher:
             "abuseipdb_indicators": 0,
             "urlhaus_indicators": 0,
             "threatfox_indicators": 0,
+            "cvedetails_indicators": 0,
+            "cisa_kev_indicators": 0,
+            "shadowserver_indicators": 0,
             "total_alerts": 0,
             "last_misp_update": None,
             "last_pfblocker_update": None,
             "last_abuseipdb_update": None,
             "last_urlhaus_update": None,
             "last_threatfox_update": None,
+            "last_cvedetails_update": None,
+            "last_cisa_kev_update": None,
+            "last_shadowserver_update": None,
         }
 
     def configure(self) -> None:
@@ -87,6 +99,32 @@ class ThreatMatcher:
                 enable_threatfox=getattr(settings, "enable_threatfox", True),
             )
             logger.info("Configured Abuse.ch feeds (URLhaus + ThreatFox)")
+
+        # Configure CVE Details
+        self.cvedetails_feed.configure(
+            enabled=getattr(settings, "enable_cvedetails", True),
+            update_interval=getattr(settings, "cvedetails_update_interval", 3600),
+        )
+        logger.info("Configured CVE Details feed")
+
+        # Configure CISA KEV
+        self.cisa_kev_feed.configure(
+            enabled=getattr(settings, "enable_cisa_kev", True),
+            update_interval=getattr(settings, "cisa_kev_update_interval", 86400),
+        )
+        logger.info("Configured CISA KEV feed")
+
+        # Configure Shadowserver
+        shadowserver_key = getattr(settings, "shadowserver_api_key", "")
+        if shadowserver_key and getattr(settings, "enable_shadowserver", False):
+            self.shadowserver_feed.configure(
+                api_key=shadowserver_key,
+                enabled=True,
+                update_interval=getattr(
+                    settings, "shadowserver_update_interval", 86400
+                ),
+            )
+            logger.info("Configured Shadowserver feed")
 
     def start(self) -> None:
         """Start the threat matching engine"""
@@ -168,6 +206,9 @@ class ThreatMatcher:
         self._update_misp()
         self._update_pfblocker()
         self._update_abuseipdb()
+        self._update_cvedetails()
+        self._update_cisa_kev()
+        self._update_shadowserver()
         self._load_local_blocklist()
         self._cleanup_old_alerts()
 
@@ -214,6 +255,54 @@ class ThreatMatcher:
             return count
         except Exception as e:
             logger.error(f"Failed to update AbuseIPDB: {e}")
+            return 0
+
+    def _update_cvedetails(self) -> int:
+        """Update CVE Details indicators"""
+        if not self.cvedetails_feed.is_enabled():
+            return 0
+
+        try:
+            results = self.cvedetails_feed.update_all()
+            count = results.get("cvedetails", 0)
+            self.stats["cvedetails_indicators"] = count
+            self.stats["last_cvedetails_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated CVE Details: {count} vulnerabilities")
+            return count
+        except Exception as e:
+            logger.error(f"Failed to update CVE Details: {e}")
+            return 0
+
+    def _update_cisa_kev(self) -> int:
+        """Update CISA KEV indicators"""
+        if not self.cisa_kev_feed.is_enabled():
+            return 0
+
+        try:
+            results = self.cisa_kev_feed.update_all()
+            count = results.get("cisa_kev", 0)
+            self.stats["cisa_kev_indicators"] = count
+            self.stats["last_cisa_kev_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated CISA KEV: {count} vulnerabilities")
+            return count
+        except Exception as e:
+            logger.error(f"Failed to update CISA KEV: {e}")
+            return 0
+
+    def _update_shadowserver(self) -> int:
+        """Update Shadowserver indicators"""
+        if not self.shadowserver_feed.is_enabled():
+            return 0
+
+        try:
+            results = self.shadowserver_feed.update_all()
+            count = sum(results.values())
+            self.stats["shadowserver_indicators"] = count
+            self.stats["last_shadowserver_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated Shadowserver: {count} indicators")
+            return count
+        except Exception as e:
+            logger.error(f"Failed to update Shadowserver: {e}")
             return 0
 
     def _load_local_blocklist(self) -> int:
@@ -270,8 +359,7 @@ class ThreatMatcher:
         # restart feed loop thread if not alive
         if not self.update_thread or not self.update_thread.is_alive():
             self.update_thread = threading.Thread(
-                target=self._feed_update_loop,
-                daemon=True
+                target=self._feed_update_loop, daemon=True
             )
             self.update_thread.start()
 
