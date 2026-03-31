@@ -1482,3 +1482,47 @@ RuntimeError: dictionary changed size during iteration
 2026-03-31 00:10:34,155 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
 2026-03-31 00:10:34,159 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
 2026-03-31 00:10:46,421 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:11:17,397 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:11:21,682 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:11:23,831 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:11:29,258 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:11:33,630 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:11:34,351 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:11:34,355 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:11:55,302 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:12:02,695 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:12:09,647 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:12:24,442 - __main__ - INFO - Received shutdown signal, stopping...
+2026-03-31 00:12:25,290 - app.capture.pcap - INFO - Stopped DNS query monitoring
+2026-03-31 00:12:25,290 - app.matching.engine - INFO - Threat matching engine stopped
+2026-03-31 00:13:59,820 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-31 00:13:59,820 - __main__ - INFO - Initializing database...
+2026-03-31 00:13:59,821 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-31 00:13:59,822 - __main__ - INFO - Initializing threat matcher...
+2026-03-31 00:13:59,822 - app.capture.pcap - INFO - PacketAnalyzer initialized; lazy Scapy import handler
+2026-03-31 00:13:59,862 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:13:59,866 - app.mitre.attack_mapper - ERROR - Failed to load MITRE ATT&CK data: No module named 'typing.io'; 'typing' is not a package
+2026-03-31 00:13:59,866 - __main__ - INFO - Threat matcher initialized
+2026-03-31 00:13:59,866 - __main__ - INFO - API routes initialized
+2026-03-31 00:13:59,866 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-31 00:13:59,866 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-31 00:13:59,867 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-31 00:13:59,867 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-31 00:13:59,867 - app.feeds.cvedetails - INFO - CVE Details feed configured: enabled=True
+2026-03-31 00:13:59,867 - app.matching.engine - INFO - Configured CVE Details feed
+2026-03-31 00:13:59,868 - app.feeds.cisa_kev - INFO - CISA KEV feed configured: enabled=True
+2026-03-31 00:13:59,868 - app.matching.engine - INFO - Configured CISA KEV feed
+2026-03-31 00:13:59,868 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-31 00:13:59,869 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-31 00:13:59,869 - app.matching.engine - INFO - Threat matching engine started
+2026-03-31 00:13:59,869 - __main__ - INFO - Threat matching engine started
+2026-03-31 00:13:59,870 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-31 00:14:00,417 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-31 00:14:00,418 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-31 00:14:00,542 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 00:14:00,547 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 00:14:00,667 - app.feeds.cvedetails - ERROR - Failed to fetch CVE Details feed: 403 Client Error: Forbidden for url: https://www.cvedetails.com/vulnerability-list.php?vendor_id=0&product_id=0&page=1
+2026-03-31 00:14:00,670 - app.matching.engine - INFO - Updated CVE Details: 0 vulnerabilities
+2026-03-31 00:14:00,951 - app.feeds.cisa_kev - INFO - CISA KEV feed updated: 0 vulnerabilities (version: 2026.03.30)
+2026-03-31 00:14:00,953 - app.matching.engine - INFO - Updated CISA KEV: 0 vulnerabilities
+2026-03-31 00:14:00,954 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
