@@ -23,6 +23,7 @@ from app.reporting.security_report import SecurityReporter
 from app.core.config import settings
 from app.health import get_health_status
 from app.feeds.news_feed import get_feed
+from app.feeds.cve_news import get_cve_feed
 from app.integrations.arkime_setup import ArkimeSetupManager, SecurityOnionIntegration
 
 logger = logging.getLogger(__name__)
@@ -386,6 +387,15 @@ async def get_shadowserver_status():
     return threat_matcher.shadowserver_feed.get_status()
 
 
+@app.get("/api/intel/sans_isc")
+async def get_sans_isc_status():
+    """Get SANS ISC feed status"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    return threat_matcher.sans_isc_feed.get_status()
+
+
 @app.get("/api/intel/indicators")
 async def get_indicators(
     limit: int = Query(1000, ge=1, le=10000),
@@ -590,6 +600,26 @@ async def update_shadowserver_feed():
     return {"status": "updated", "indicators_count": count}
 
 
+@app.post("/api/feeds/update/cve_news")
+async def update_cve_news_feed():
+    """Manually trigger CVE News feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_cve_news()
+    return {"status": "updated", "cve_count": count}
+
+
+@app.post("/api/feeds/update/sans_isc")
+async def update_sans_isc_feed():
+    """Manually trigger SANS ISC feed update"""
+    if not threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    count = threat_matcher._update_sans_isc()
+    return {"status": "updated", "indicators_count": count}
+
+
 @app.post("/api/feeds/update/all")
 async def update_all_feeds():
     """Manually trigger all feed updates"""
@@ -649,6 +679,11 @@ async def get_all_feeds_status():
             if settings.enable_shadowserver and settings.shadowserver_api_key
             else "disabled",
         },
+        "sans_isc": {
+            "enabled": settings.enable_sans_isc,
+            "configured": True,
+            "status": "configured" if settings.enable_sans_isc else "disabled",
+        },
     }
 
 
@@ -679,6 +714,8 @@ async def toggle_feed(request: FeedToggleRequest):
         settings.enable_cisa_kev = enabled
     elif feed == "shadowserver":
         settings.enable_shadowserver = enabled
+    elif feed == "sans_isc":
+        settings.enable_sans_isc = enabled
     else:
         raise HTTPException(status_code=400, detail=f"Unknown feed: {feed}")
 
@@ -1202,6 +1239,35 @@ async def api_cyber_news(limit: int = Query(10, ge=1, le=50)):
     except Exception as e:
         logger.error(f"Failed to fetch news: {e}")
         raise HTTPException(status_code=500, detail="Failed to load cyber news")
+
+
+@app.get("/api/news/cve")
+async def api_cve_news(limit: int = Query(10, ge=1, le=50)):
+    """High-level CVE news with IOCs, signatures, and MITRE T-codes"""
+    try:
+        cve_feed = get_cve_feed()
+        cve_items = cve_feed.get_latest(limit=limit)
+
+        # Add threat matcher CVE news if available
+        if threat_matcher and hasattr(threat_matcher, "cve_news_feed"):
+            try:
+                news_items = threat_matcher.cve_news_feed.get_latest(limit=limit)
+                if news_items and not cve_items:
+                    cve_items = news_items
+            except Exception:
+                pass
+
+        return {
+            "status": "success",
+            "items": cve_items,
+            "count": len(cve_items),
+            "last_update": cve_feed.last_fetch.isoformat()
+            if cve_feed.last_fetch
+            else None,
+        }
+    except Exception as e:
+        logger.error(f"Failed to fetch CVE news: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load CVE news")
 
 
 @app.get("/api/news/ai")
