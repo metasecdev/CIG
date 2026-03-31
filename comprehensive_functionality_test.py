@@ -31,6 +31,7 @@ from app.matching.engine import ThreatMatcher
 from app.mitre.attack_mapper import MITREAttackMapper
 from app.reporting.security_report import SecurityReporter
 from app.api.routes import app as fastapi_app, init_app, get_system_status
+from fastapi.testclient import TestClient
 
 
 class ComprehensiveFunctionalityTest:
@@ -436,6 +437,81 @@ class ComprehensiveFunctionalityTest:
             routes = [route.path for route in fastapi_app.routes]
             assert len(routes) > 0
             self.add_test_result(suite_name, "routes_registered", True, f"Registered {len(routes)} routes")
+
+            # Test root health endpoint and checks endpoint with TestClient
+            client = TestClient(fastapi_app)
+
+            health_response = client.get("/api/health/checks")
+            assert health_response.status_code == 200
+            health_json = health_response.json()
+            assert "overall_status" in health_json
+            assert "components" in health_json
+            self.add_test_result(suite_name, "api_health_checks", True, "/api/health/checks endpoint works")
+
+            dashboard_checks_response = client.get("/dashboard/checks")
+            assert dashboard_checks_response.status_code == 200
+            assert "System Health Checks" in dashboard_checks_response.text
+            self.add_test_result(suite_name, "dashboard_checks", True, "/dashboard/checks endpoint renders")
+
+            test_response = client.get("/test")
+            assert test_response.status_code == 200
+            assert test_response.json().get("message") == "Server is working"
+            self.add_test_result(suite_name, "basic_test_endpoint", True, "/test endpoint works")
+
+            news_response = client.get("/api/news?limit=10")
+            assert news_response.status_code == 200
+            news_json = news_response.json()
+            assert news_json.get("status") == "success"
+            assert isinstance(news_json.get("items"), list)
+            assert len(news_json.get("items")) >= 10
+            assert all("ai_agent" in item for item in news_json.get("items"))
+            self.add_test_result(suite_name, "api_news_endpoint", True, "/api/news endpoint returns 10+ news items with AI agent field")
+
+            ai_news_response = client.get("/api/news/ai?q=rce")
+            assert ai_news_response.status_code == 200
+            ai_json = ai_news_response.json()
+            assert ai_json.get("status") == "success"
+            assert ai_json.get("result_count") >= 1
+            assert "ai_context" in ai_json
+            self.add_test_result(suite_name, "api_news_ai_endpoint", True, "/api/news/ai endpoint works")
+
+            news_dashboard_response = client.get("/dashboard/news")
+            assert news_dashboard_response.status_code == 200
+            assert "Latest Cybersecurity News" in news_dashboard_response.text
+            self.add_test_result(suite_name, "dashboard_news", True, "/dashboard/news endpoint renders")
+
+            # Test new dashboard summary endpoint
+            dashboard_summary_response = client.get("/api/dashboard/summary")
+            assert dashboard_summary_response.status_code == 200
+            summary_json = dashboard_summary_response.json()
+            assert summary_json.get("status") == "success"
+            assert "summary" in summary_json
+            assert "health" in summary_json
+            assert "recent_alerts" in summary_json
+            assert "latest_news" in summary_json
+            assert "risk_score" in summary_json.get("summary", {})
+            self.add_test_result(suite_name, "api_dashboard_summary", True, "/api/dashboard/summary endpoint works")
+
+            arkime_status_response = client.get("/api/arkime/status")
+            assert arkime_status_response.status_code == 200
+            arkime_json = arkime_status_response.json()
+            assert "arkime" in arkime_json
+            self.add_test_result(suite_name, "api_arkime_status", True, "/api/arkime/status endpoint works")
+
+            arkime_info_response = client.get("/api/arkime/info")
+            assert arkime_info_response.status_code == 200
+            assert "info" in arkime_info_response.json()
+            self.add_test_result(suite_name, "api_arkime_info", True, "/api/arkime/info endpoint works")
+
+            arkime_so_response = client.get("/api/arkime/security-onion")
+            assert arkime_so_response.status_code == 200
+            assert "security_onion" in arkime_so_response.json()
+            self.add_test_result(suite_name, "api_arkime_so", True, "/api/arkime/security-onion endpoint works")
+
+            arkime_dashboard_response = client.get("/dashboard/arkime")
+            assert arkime_dashboard_response.status_code == 200
+            assert "Arkime" in arkime_dashboard_response.text
+            self.add_test_result(suite_name, "dashboard_arkime", True, "/dashboard/arkime endpoint renders")
 
         except AssertionError as e:
             self.add_test_result(suite_name, "api_test", False, str(e))

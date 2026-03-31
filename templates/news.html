@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIG - Cybersecurity News</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> Cyber Intelligence Gateway - News
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3"><small>Last updated: {{ timestamp }}</small></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header"><h5 class="mb-0">Navigation</h5></div>
+                    <div class="list-group list-group-flush">
+                        <a href="/" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="/dashboard/status" class="list-group-item list-group-item-action">
+                            <i class="fas fa-info-circle"></i> System Status
+                        </a>
+                        <a href="/dashboard/health" class="list-group-item list-group-item-action">
+                            <i class="fas fa-heartbeat"></i> Health Check
+                        </a>
+                        <a href="/dashboard/checks" class="list-group-item list-group-item-action">
+                            <i class="fas fa-check-circle"></i> Checks
+                        </a>
+                        <a href="/dashboard/news" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-newspaper"></i> Cybersecurity News
+                        </a>
+                        <a href="/dashboard/events" class="list-group-item list-group-item-action">
+                            <i class="fas fa-bell"></i> Events & Alerts
+                        </a>
+                        <a href="/dashboard/reports" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <h2><i class="fas fa-newspaper"></i> Latest Cybersecurity News</h2>
+                <div class="alert alert-info" role="alert">
+                    <strong>Source:</strong> Open source feeds, MISP, AbuseIPDB, pfBlocker and internal intelligence
+                </div>
+
+                {% for item in news_items %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>{{ item.title }}</h5>
+                        <small class="text-muted">Published: {{ item.published_at }} • Source: {{ item.source }}</small>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ item.summary }}</p>
+                        <p>
+                            {% if item.source_url %}
+                            <strong>Source:</strong> <a href="{{ item.source_url }}" target="_blank" rel="noreferrer">{{ item.source_url }}</a><br>
+                            {% endif %}
+                            {% if item.cve %}
+                            <strong>CVE:</strong> <a class="text-decoration-none" href="{{ item.cve_url }}" target="_blank" rel="noreferrer">{{ item.cve }}</a><br>
+                            {% endif %}
+                        </p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>IOCs</h6>
+                                <div class="list-group">
+                                    {% for ioc in item.iocs %}
+                                        <div class="list-group-item"><code>{{ ioc }}</code></div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Signatures</h6>
+                                <div class="list-group">
+                                    {% for sig in item.signatures %}
+                                        <div class="list-group-item"><code>{{ sig }}</code></div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Mitigation</h6>
+                                <div class="list-group">
+                                    {% for m in item.mitigation %}
+                                        <div class="list-group-item">{{ m }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% if item.ai_agent %}
+                        <hr>
+                        <div class="ai-agent bg-light p-3 rounded">
+                            <strong><i class="fas fa-robot"></i> AI Discovery Agent</strong><br>
+                            <small>{{ item.ai_agent }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

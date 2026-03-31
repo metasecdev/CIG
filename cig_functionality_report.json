@@ -1,0 +1,264 @@
+{
+  "timestamp": "2026-03-31T01:08:08.700985+00:00",
+  "test_suites": {
+    "configuration": {
+      "tests": {
+        "app_name_loaded": {
+          "passed": true,
+          "message": "Default app name loaded",
+          "duration": 0
+        },
+        "api_port_default": {
+          "passed": true,
+          "message": "Default API port is 8000",
+          "duration": 0
+        },
+        "alert_retention_set": {
+          "passed": true,
+          "message": "Alert retention configured",
+          "duration": 0
+        },
+        "env_override": {
+          "passed": true,
+          "message": "Environment overrides work",
+          "duration": 0
+        },
+        "pcap_dir_accessible": {
+          "passed": true,
+          "message": "PCAP directory is accessible",
+          "duration": 0
+        }
+      },
+      "passed": 5,
+      "failed": 0,
+      "total": 5
+    },
+    "database": {
+      "tests": {
+        "alert_crud": {
+          "passed": true,
+          "message": "Alert CRUD operations work",
+          "duration": 0
+        },
+        "indicator_crud": {
+          "passed": true,
+          "message": "Indicator CRUD operations work",
+          "duration": 0
+        },
+        "indicator_lookup": {
+          "passed": true,
+          "message": "Indicator lookup works",
+          "duration": 0
+        },
+        "alert_stats": {
+          "passed": true,
+          "message": "Alert statistics generation works",
+          "duration": 0
+        },
+        "bulk_insert": {
+          "passed": true,
+          "message": "Bulk insert operations work",
+          "duration": 0
+        },
+        "pcap_tracking": {
+          "passed": true,
+          "message": "PCAP file tracking works",
+          "duration": 0
+        }
+      },
+      "passed": 6,
+      "failed": 0,
+      "total": 6
+    },
+    "feeds": {
+      "tests": {
+        "misp_init": {
+          "passed": true,
+          "message": "MISP feed initializes correctly",
+          "duration": 0
+        },
+        "pfblocker_init": {
+          "passed": true,
+          "message": "pfBlocker feed initializes",
+          "duration": 0
+        },
+        "abuseipdb_init": {
+          "passed": true,
+          "message": "AbuseIPDB feed initializes",
+          "duration": 0
+        },
+        "feed_status": {
+          "passed": true,
+          "message": "Feed status methods work",
+          "duration": 0
+        }
+      },
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "pcap": {
+      "tests": {
+        "pcap_init": {
+          "passed": true,
+          "message": "PCAP capture initializes",
+          "duration": 0
+        },
+        "dns_monitor_init": {
+          "passed": true,
+          "message": "DNS monitor initializes",
+          "duration": 0
+        },
+        "packet_analyzer_init": {
+          "passed": true,
+          "message": "Packet analyzer initializes",
+          "duration": 0
+        },
+        "active_captures": {
+          "passed": true,
+          "message": "Active captures list works",
+          "duration": 0
+        }
+      },
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "mitre": {
+      "tests": {
+        "mapper_init": {
+          "passed": true,
+          "message": "MITRE mapper initializes",
+          "duration": 0
+        },
+        "ttp_mapping": {
+          "passed": true,
+          "message": "TTP mapping works",
+          "duration": 0
+        },
+        "technique_count": {
+          "passed": true,
+          "message": "Loaded 22 techniques",
+          "duration": 0
+        },
+        "tactic_mappings": {
+          "passed": true,
+          "message": "Tactic mappings loaded",
+          "duration": 0
+        }
+      },
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "matcher": {
+      "tests": {
+        "matcher_init": {
+          "passed": true,
+          "message": "Threat matcher initializes",
+          "duration": 0
+        },
+        "matcher_config": {
+          "passed": true,
+          "message": "Feed configuration works",
+          "duration": 0
+        },
+        "matcher_stats": {
+          "passed": true,
+          "message": "Statistics tracking works",
+          "duration": 0
+        },
+        "status_method": {
+          "passed": true,
+          "message": "Status method works",
+          "duration": 0
+        },
+        "ip_check": {
+          "passed": true,
+          "message": "IP checking works",
+          "duration": 0
+        }
+      },
+      "passed": 5,
+      "failed": 0,
+      "total": 5
+    },
+    "reporter": {
+      "tests": {
+        "reporter_init": {
+          "passed": true,
+          "message": "Security reporter initializes",
+          "duration": 0
+        },
+        "report_generation": {
+          "passed": true,
+          "message": "Report generation works",
+          "duration": 0
+        },
+        "report_with_data": {
+          "passed": true,
+          "message": "Report generation with data works",
+          "duration": 0
+        }
+      },
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "api": {
+      "tests": {
+        "app_exists": {
+          "passed": true,
+          "message": "FastAPI app exists and configured",
+          "duration": 0
+        },
+        "api_test": {
+          "passed": false,
+          "message": "",
+          "duration": 0
+        }
+      },
+      "passed": 1,
+      "failed": 1,
+      "total": 2
+    },
+    "main": {
+      "tests": {
+        "main_functions": {
+          "passed": true,
+          "message": "Main functions available",
+          "duration": 0
+        },
+        "directory_setup": {
+          "passed": true,
+          "message": "Directory setup works",
+          "duration": 0
+        },
+        "exports": {
+          "passed": true,
+          "message": "Required exports available",
+          "duration": 0
+        }
+      },
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    }
+  },
+  "total_tests": 36,
+  "total_passed": 35,
+  "total_failed": 1,
+  "improvements_found": [
+    "Fix failing test cases to improve stability",
+    "Consider adding query caching for repeated indicator lookups",
+    "Implement full MITRE ATT&CK framework loading (currently using simplified mappings)",
+    "Add retry logic with exponential backoff for feed updates",
+    "Implement feed health checking and alerting",
+    "Add database connection pooling for concurrent requests",
+    "Implement request-level caching for indicator lookups",
+    "Add comprehensive logging throughout threat matching flow",
+    "Implement metrics collection (Prometheus format)"
+  ],
+  "critical_issues": [],
+  "warnings": []
+}

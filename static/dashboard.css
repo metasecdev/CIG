@@ -79,6 +79,11 @@ body {
     }
 }
 
+.news-title {
+    font-size: 0.9em;
+}
+
+
 /* Custom animations */
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -98,6 +103,24 @@ body {
 /* Modal improvements */
 .modal-content {
     border-radius: 0.5rem;
+}
+
+/* Card border-left styles for status indicators */
+.card.border-left-success {
+    border-left: 4px solid #28a745;
+}
+
+.card.border-left-warning {
+    border-left: 4px solid #ffc107;
+}
+
+.card.border-left-danger {
+    border-left: 4px solid #dc3545;
+}
+
+/* Timestamp styling */
+.timestamp-small {
+    font-size: 0.9em;
 }
 
 .modal-header {

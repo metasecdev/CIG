@@ -18,6 +18,9 @@ from typing import Optional, List, Dict, Any
 from app.models.database import Database, Alert, PcapFile, Indicator
 from app.matching.engine import ThreatMatcher
 from app.core.config import settings
+from app.health import get_health_status
+from app.feeds.news_feed import get_feed
+from app.integrations.arkime_setup import ArkimeSetupManager, SecurityOnionIntegration
 
 logger = logging.getLogger(__name__)
 
@@ -164,21 +167,44 @@ async def health_check():
     )
 
 
-@app.get("/api/stats", response_model=StatsResponse)
-async def get_stats():
-    """Get system statistics"""
-    database = get_db()
-    matcher = get_threat_matcher()
+@app.get("/api/dashboard/summary")
+async def dashboard_summary():
+    """Get comprehensive dashboard summary"""
+    try:
+        if _db is None or _threat_matcher is None:
+            raise HTTPException(status_code=503, detail="System not initialized")
 
-    return StatsResponse(
-        alerts=database.get_alert_stats(),
-        indicators=database.get_indicator_counts(),
-        feeds={
-            "misp": matcher.misp_feed.get_status(),
-            "pfblocker": matcher.pfblocker_feed.get_status(),
-        },
-        captures=matcher.pcap_capture.get_active_captures(),
-    )
+        database = _db
+        matcher = _threat_matcher
+
+        # Gather all critical info
+        health = get_health_status(database, matcher)
+        recent_alerts = database.get_alerts(limit=5)
+        alert_stats = database.get_alert_stats()
+        latest_news = get_feed().get_latest()[:3]
+        
+        # Calculate risk score (0-100)
+        high_alerts = alert_stats.get("by_severity", {}).get("high", 0)
+        medium_alerts = alert_stats.get("by_severity", {}).get("medium", 0)
+        risk_score = min(100, (high_alerts * 30) + (medium_alerts * 10))
+
+        return {
+            "status": "success",
+            "summary": {
+                "total_alerts": alert_stats.get("total", 0),
+                "high_severity_alerts": high_alerts,
+                "risk_score": risk_score,
+                "components_healthy": len([c for c in health.get("components", {}).values() if c.get("status") == "healthy"]),
+                "total_components": len(health.get("components", {})),
+            },
+            "health": health,
+            "recent_alerts": [AlertResponse(**a.to_dict()).dict() for a in recent_alerts],
+            "latest_news": latest_news,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Failed to get dashboard summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get dashboard summary")
 
 
 # --- Alert Endpoints ---
@@ -633,12 +659,35 @@ async def dashboard(request: Request):
         recent_alerts = database.get_alerts(limit=10, offset=0)
         alerts_data = [AlertResponse(**a.to_dict()) for a in recent_alerts]
 
+        # Get health status
+        health_status = get_health_status(database, matcher)
+        health_checks = []
+        for component, detail in health_status.get("components", {}).items():
+            health_checks.append({
+                "component": component,
+                "status": detail.get("status", "unknown"),
+                "message": detail.get("message", ""),
+            })
+
+        # Get latest news
+        latest_news = get_feed().get_latest()[:2]  # Top 2 news items
+
+        # Get Arkime status
+        try:
+            arkime_setup = ArkimeSetupManager()
+            arkime_info = arkime_setup.check_installation()
+        except:
+            arkime_info = None
+
         return templates.TemplateResponse(
             "dashboard.html",
             {
                 "request": request,
                 "stats": stats,
                 "recent_alerts": alerts_data,
+                "health_checks": health_checks,
+                "latest_news": latest_news,
+                "arkime_status": arkime_info,
                 "timestamp": datetime.utcnow().isoformat(),
             },
         )
@@ -737,6 +786,47 @@ async def health_dashboard(request: Request):
         )
 
 
+@app.get("/dashboard/checks")
+async def checks_dashboard(request: Request):
+    """Health checks checkmarks dashboard"""
+    try:
+        if _db is None or _threat_matcher is None:
+            return templates.TemplateResponse(
+                "error.html", {"request": request, "error": "System not initialized."}
+            )
+
+        health_status = get_health_status(_db, _threat_matcher)
+
+        checks = []
+        for component, detail in health_status.get("components", {}).items():
+            status = detail.get("status", "unknown")
+            check_pass = status in ["healthy", "configured", "operational", "available"]
+            checks.append(
+                {
+                    "component": component,
+                    "status": status,
+                    "message": detail.get("message", ""),
+                    "details": detail.get("details", {}),
+                    "pass": check_pass,
+                }
+            )
+
+        return templates.TemplateResponse(
+            "checks.html",
+            {
+                "request": request,
+                "health_status": health_status,
+                "checks": checks,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except Exception as e:
+        logger.error(f"Checks dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
 @app.get("/dashboard/events")
 async def events_dashboard(request: Request):
     """Events/Alerts dashboard"""
@@ -764,6 +854,54 @@ async def events_dashboard(request: Request):
         )
     except Exception as e:
         logger.error(f"Events dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
+@app.get("/dashboard/news")
+async def news_dashboard(request: Request):
+    """Cybersecurity news dashboard"""
+    try:
+        news_items = get_feed().get_latest()
+        return templates.TemplateResponse(
+            "news.html",
+            {
+                "request": request,
+                "news_items": news_items,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except Exception as e:
+        logger.error(f"News dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
+@app.get("/dashboard/arkime")
+async def arkime_dashboard(request: Request):
+    """Arkime installation and management dashboard"""
+    try:
+        arkime_setup = ArkimeSetupManager()
+        so_integration = SecurityOnionIntegration()
+        
+        arkime_status = arkime_setup.check_installation()
+        so_info = so_integration.get_deployment_info()
+        arkime_info = arkime_setup.get_system_info()
+        
+        return templates.TemplateResponse(
+            "arkime.html",
+            {
+                "request": request,
+                "arkime_status": arkime_status,
+                "so_info": so_info,
+                "arkime_info": arkime_info,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except Exception as e:
+        logger.error(f"Arkime dashboard error: {e}")
         return templates.TemplateResponse(
             "error.html", {"request": request, "error": str(e)}
         )
@@ -829,6 +967,114 @@ async def generate_security_report(days: int = Query(7, ge=1, le=90)):
     except Exception as e:
         logger.error(f"Failed to generate security report: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate report")
+
+
+@app.get("/api/news")
+async def api_cyber_news(limit: int = Query(10, ge=1, le=50)):
+    """Latest curated cybersecurity news, IOC and mitigation signatures"""
+    try:
+        news_items = get_feed().get_latest(limit=limit)
+        return {"status": "success", "items": news_items, "count": len(news_items)}
+    except Exception as e:
+        logger.error(f"Failed to fetch news: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load cyber news")
+
+
+@app.get("/api/news/ai")
+async def api_cyber_news_ai(query: str = Query(..., min_length=3, description="Search term for AI-driven threat hunting")):
+    """AI incident hunter for exploratory threat matching and playbook recommendations"""
+    try:
+        feed = get_feed()
+        news_items = feed.get_latest(limit=50)
+        q = query.strip().lower()
+
+        matched = []
+        for item in news_items:
+            text = " ".join([str(item.get(field, "")).lower() for field in ["title", "summary", "source", "cve", "iocs"]])
+            if q in text:
+                matched.append(item)
+
+        playbook = [
+            "Validate included IOCs in detection pipeline (IDS/WAF/EPP)",
+            "Cross-check CVE details and apply vendor patches immediately", 
+            "Populate SIEM with behavior rules from article signature sections",
+        ]
+
+        ai_context = {
+            "query": query,
+            "matches": len(matched),
+            "ai_hypotheses": [
+                f"Potential campaign type aligned to {item.get('source')} feed" for item in matched[:3]
+            ],
+            "suggested_actions": playbook,
+        }
+
+        return {
+            "status": "success",
+            "query": query,
+            "result_count": len(matched),
+            "matches": matched,
+            "ai_context": ai_context,
+        }
+    except Exception as e:
+        logger.error(f"AI news hunter failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to run AI incident hunter")
+
+
+# --- Arkime Integration Endpoints ---
+
+
+@app.get("/api/arkime/status")
+async def arkime_status():
+    """Check Arkime installation and status"""
+    try:
+        arkime_setup = ArkimeSetupManager()
+        status = arkime_setup.check_installation()
+        return {"status": "success", "arkime": status}
+    except Exception as e:
+        logger.error(f"Failed to check Arkime status: {e}")
+        raise HTTPException(status_code=500, detail="Failed to check Arkime status")
+
+
+@app.get("/api/arkime/info")
+async def arkime_info():
+    """Get Arkime system information"""
+    try:
+        arkime_setup = ArkimeSetupManager()
+        info = arkime_setup.get_system_info()
+        validation = arkime_setup.validate_configuration()
+        return {
+            "status": "success",
+            "info": info,
+            "configuration": validation,
+        }
+    except Exception as e:
+        logger.error(f"Failed to get Arkime info: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get Arkime info")
+
+
+@app.get("/api/arkime/installation-guide")
+async def arkime_installation_guide():
+    """Get Arkime installation guide"""
+    try:
+        arkime_setup = ArkimeSetupManager()
+        guide = arkime_setup.get_installation_guide()
+        return {"status": "success", "guide": guide}
+    except Exception as e:
+        logger.error(f"Failed to get installation guide: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get installation guide")
+
+
+@app.get("/api/arkime/security-onion")
+async def arkime_security_onion_info():
+    """Get Security Onion + Arkime integration info"""
+    try:
+        so_integration = SecurityOnionIntegration()
+        info = so_integration.get_deployment_info()
+        return {"status": "success", "security_onion": info}
+    except Exception as e:
+        logger.error(f"Failed to get Security Onion info: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get Security Onion info")
 
 
 @app.get("/api/reports/html")

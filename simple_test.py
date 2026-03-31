@@ -51,6 +51,7 @@ try:
     from app.api.routes import app as fastapi_app, init_app
     from app.models.database import Database
     from app.matching.engine import ThreatMatcher
+    from app.health import get_health_status
 
     print("   ✅ API routes imported")
 
@@ -65,11 +66,18 @@ try:
     assert system_status_response["running"] is False
     print("   ✅ /api/status handler returns data")
 
+    # Health checks
+    health_checks = get_health_status(db, matcher)
+    assert health_checks["overall_status"] in ["healthy", "degraded"]
+    assert "components" in health_checks
+    print("   ✅ /api/health/checks status collected")
+
     # OpenAPI generation
     openapi_schema = fastapi_app.openapi()
     assert "/api/status" in openapi_schema["paths"]
+    assert "/api/health/checks" in openapi_schema["paths"]
     assert "/openapi.json" not in openapi_schema["paths"]
-    print("   ✅ openapi schema generated and includes /api/status")
+    print("   ✅ openapi schema generated and includes /api/status and /api/health/checks")
 
     print("9. Testing main application...")
     import app.main
