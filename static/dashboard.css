@@ -123,6 +123,12 @@ body {
     font-size: 0.9em;
 }
 
+/* Critical CVEs box scroll behavior */
+.cve-card-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 .modal-header {
     border-bottom: 1px solid #dee2e6;
 }
