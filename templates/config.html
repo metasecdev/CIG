@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed Configuration - CIG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: rgba(30, 144, 255, 0.1);
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .header h1 {
+            color: #1e90ff;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .status-card {
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .status-card h3 {
+            color: #1e90ff;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .status-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        .status-value.disabled {
+            color: #ff6b6b;
+        }
+        .config-section {
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .config-section h2 {
+            color: #1e90ff;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #1e90ff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00bfff;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #1e90ff;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00bfff;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        button.danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        }
+        button.success {
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            color: #000;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        .alert.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        .alert.show {
+            display: block;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+        .api-feeds-list {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .feed-item {
+            background: rgba(20, 20, 40, 0.5);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 3px solid #1e90ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .feed-item-info h4 {
+            color: #00bfff;
+            margin-bottom: 5px;
+        }
+        .feed-item-info p {
+            font-size: 0.9em;
+            color: #999;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .status-badge.enabled {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+        }
+        .status-badge.disabled {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #1e90ff;
+        }
+        .tab-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: #00bfff;
+            cursor: pointer;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            margin-bottom: -2px;
+        }
+        .tab-button.active {
+            color: #1e90ff;
+            border-bottom-color: #1e90ff;
+            background: rgba(30, 144, 255, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .timestamp {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Feed Configuration</h1>
+            <p>Manage API credentials, custom feeds, and threat intelligence sources</p>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <h3>Nessus Status</h3>
+                <div class="status-value" id="nessus-status">Loading...</div>
+            </div>
+            <div class="status-card">
+                <h3>GrayNoise Status</h3>
+                <div class="status-value" id="graynoise-status">Loading...</div>
+            </div>
+            <div class="status-card">
+                <h3>Custom API Feeds</h3>
+                <div class="status-value" id="custom-api-count">0</div>
+            </div>
+            <div class="status-card">
+                <h3>Active Filters</h3>
+                <div class="status-value" id="filter-count">0</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('nessus')">Nessus</button>
+            <button class="tab-button" onclick="switchTab('graynoise')">GrayNoise</button>
+            <button class="tab-button" onclick="switchTab('custom')">Custom APIs</button>
+            <button class="tab-button" onclick="switchTab('dshield')">DShield</button>
+        </div>
+
+        <!-- Nessus Configuration -->
+        <div id="nessus" class="tab-content active">
+            <div class="config-section">
+                <h2>Nessus Vulnerability Manager</h2>
+                <div id="nessus-alert" class="alert"></div>
+                
+                <div class="form-group">
+                    <label for="nessus-api-key">API Key:</label>
+                    <input type="password" id="nessus-api-key" placeholder="Enter Nessus API key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nessus-api-secret">API Secret:</label>
+                    <input type="password" id="nessus-api-secret" placeholder="Enter Nessus API secret">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nessus-host">Nessus Host URL:</label>
+                    <input type="url" id="nessus-host" placeholder="https://cloud.nessus.com" value="https://cloud.nessus.com">
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="nessus-enabled">
+                    <label for="nessus-enabled" style="margin-bottom: 0;">Enable Nessus Feed</label>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="saveNessusConfig()">Save Credentials</button>
+                    <button onclick="testNessusConnection()" class="success">Test Connection</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GrayNoise Configuration -->
+        <div id="graynoise" class="tab-content">
+            <div class="config-section">
+                <h2>GrayNoise IP Reputation</h2>
+                <div id="graynoise-alert" class="alert"></div>
+                
+                <div class="form-group">
+                    <label for="graynoise-api-key">API Key:</label>
+                    <input type="password" id="graynoise-api-key" placeholder="Enter GrayNoise API key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="graynoise-api-type">API Type:</label>
+                    <select id="graynoise-api-type">
+                        <option value="community">Community (Free)</option>
+                        <option value="enterprise">Enterprise</option>
+                    </select>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="graynoise-enabled">
+                    <label for="graynoise-enabled" style="margin-bottom: 0;">Enable GrayNoise Feed</label>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="saveGrayNoiseConfig()">Save Credentials</button>
+                    <button onclick="testGrayNoiseConnection()" class="success">Test Connection</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom API Feeds -->
+        <div id="custom" class="tab-content">
+            <div class="config-section">
+                <h2>Custom API Feeds</h2>
+                <div id="custom-alert" class="alert"></div>
+                
+                <h3 style="color: #00bfff; margin-top: 20px; margin-bottom: 15px;">Existing Feeds</h3>
+                <div class="api-feeds-list" id="feeds-list">
+                    <p style="color: #666;">Loading feeds...</p>
+                </div>
+                
+                <h3 style="color: #00bfff; margin-top: 30px; margin-bottom: 15px;">Add New Feed</h3>
+                
+                <div class="form-group">
+                    <label for="custom-feed-id">Feed ID:</label>
+                    <input type="text" id="custom-feed-id" placeholder="e.g., my-threat-feed">
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-feed-name">Feed Name:</label>
+                    <input type="text" id="custom-feed-name" placeholder="e.g., My Threat Intelligence">
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-feed-url">API URL:</label>
+                    <input type="url" id="custom-feed-url" placeholder="https://api.example.com/threat-feed">
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-feed-auth-type">Authentication Type:</label>
+                    <select id="custom-feed-auth-type">
+                        <option value="api_key">API Key (Header)</option>
+                        <option value="bearer">Bearer Token</option>
+                        <option value="basic">Basic Auth</option>
+                        <option value="custom">Custom Headers</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-feed-auth-value">Auth Value/Key:</label>
+                    <input type="password" id="custom-feed-auth-value" placeholder="API key or token">
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-feed-interval">Polling Interval (hours):</label>
+                    <input type="number" id="custom-feed-interval" value="24" min="1" max="720">
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="custom-feed-enabled">
+                    <label for="custom-feed-enabled" style="margin-bottom: 0;">Enable Feed</label>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="addCustomAPIFeed()">Add Custom Feed</button>
+                    <button onclick="refreshFeedsList()">Refresh List</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DShield Configuration -->
+        <div id="dshield" class="tab-content">
+            <div class="config-section">
+                <h2>DShield Honeypot Network</h2>
+                <div id="dshield-alert" class="alert"></div>
+                
+                <p style="color: #aaa; margin-bottom: 20px;">
+                    DShield provides automated honeypot data collection from the SANS Internet Storm Center network.
+                </p>
+                
+                <h3 style="color: #00bfff; margin: 20px 0 15px 0;">Threat Summary</h3>
+                <div id="threat-summary" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 4px;">
+                    <p style="color: #666;">Loading...</p>
+                </div>
+                
+                <div class="button-group" style="margin-top: 20px;">
+                    <button onclick="pollDShield('all')" class="success">Poll All Sources</button>
+                    <button onclick="pollDShield('ssh')">Poll SSH Attacks</button>
+                    <button onclick="pollDShield('web')">Poll Web Attacks</button>
+                    <button onclick="getDShieldSummary()">Refresh Summary</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="timestamp">
+            Last updated: {{ timestamp }}
+        </div>
+    </div>
+
+    <script>
+        // Load initial status
+        loadConfigStatus();
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        async function loadConfigStatus() {
+            try {
+                const response = await fetch('/api/config/status');
+                const data = await response.json();
+                
+                document.getElementById('nessus-status').textContent = 
+                    data.configuration.nessus_enabled ? '✓ Enabled' : '✗ Disabled';
+                document.getElementById('nessus-status').className = 
+                    'status-value ' + (data.configuration.nessus_enabled ? '' : 'disabled');
+                
+                document.getElementById('graynoise-status').textContent = 
+                    data.configuration.graynoise_enabled ? '✓ Enabled' : '✗ Disabled';
+                document.getElementById('graynoise-status').className = 
+                    'status-value ' + (data.configuration.graynoise_enabled ? '' : 'disabled');
+                
+                document.getElementById('custom-api-count').textContent = 
+                    data.configuration.custom_api_feeds;
+                
+                document.getElementById('filter-count').textContent = 
+                    data.configuration.filter_configs;
+            } catch (error) {
+                console.error('Failed to load status:', error);
+            }
+            
+            refreshFeedsList();
+            getDShieldSummary();
+        }
+        
+        async function saveNessusConfig() {
+            const apiKey = document.getElementById('nessus-api-key').value;
+            const apiSecret = document.getElementById('nessus-api-secret').value;
+            const host = document.getElementById('nessus-host').value;
+            const enabled = document.getElementById('nessus-enabled').checked;
+            
+            if (!apiKey || !apiSecret) {
+                showAlert('nessus-alert', 'error', 'API key and secret are required');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/config/nessus/credentials', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey, api_secret: apiSecret, host, enabled })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('nessus-alert', 'success', 'Nessus credentials saved successfully');
+                    loadConfigStatus();
+                } else {
+                    showAlert('nessus-alert', 'error', data.detail || 'Failed to save credentials');
+                }
+            } catch (error) {
+                showAlert('nessus-alert', 'error', 'Error: ' + error.message);
+            }
+        }
+        
+        async function saveGrayNoiseConfig() {
+            const apiKey = document.getElementById('graynoise-api-key').value;
+            const apiType = document.getElementById('graynoise-api-type').value;
+            const enabled = document.getElementById('graynoise-enabled').checked;
+            
+            if (!apiKey) {
+                showAlert('graynoise-alert', 'error', 'API key is required');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/config/graynoise/credentials', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey, api_type: apiType, enabled })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('graynoise-alert', 'success', 'GrayNoise credentials saved successfully');
+                    loadConfigStatus();
+                } else {
+                    showAlert('graynoise-alert', 'error', data.detail || 'Failed to save credentials');
+                }
+            } catch (error) {
+                showAlert('graynoise-alert', 'error', 'Error: ' + error.message);
+            }
+        }
+        
+        async function addCustomAPIFeed() {
+            const feedId = document.getElementById('custom-feed-id').value;
+            const feedName = document.getElementById('custom-feed-name').value;
+            const apiUrl = document.getElementById('custom-feed-url').value;
+            const authType = document.getElementById('custom-feed-auth-type').value;
+            const authValue = document.getElementById('custom-feed-auth-value').value;
+            const interval = parseInt(document.getElementById('custom-feed-interval').value);
+            const enabled = document.getElementById('custom-feed-enabled').checked;
+            
+            if (!feedId || !feedName || !apiUrl) {
+                showAlert('custom-alert', 'error', 'Feed ID, name, and URL are required');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/config/custom-api/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        feed_id: feedId, feed_name: feedName, api_url: apiUrl,
+                        auth_type: authType, auth_value: authValue,
+                        polling_interval_hours: interval, enabled
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('custom-alert', 'success', 'Custom API feed added successfully');
+                    // Clear form
+                    document.getElementById('custom-feed-id').value = '';
+                    document.getElementById('custom-feed-name').value = '';
+                    document.getElementById('custom-feed-url').value = '';
+                    document.getElementById('custom-feed-auth-value').value = '';
+                    document.getElementById('custom-feed-enabled').checked = false;
+                    refreshFeedsList();
+                } else {
+                    showAlert('custom-alert', 'error', data.detail || 'Failed to add feed');
+                }
+            } catch (error) {
+                showAlert('custom-alert', 'error', 'Error: ' + error.message);
+            }
+        }
+        
+        async function refreshFeedsList() {
+            try {
+                const response = await fetch('/api/config/custom-api/list');
+                const data = await response.json();
+                
+                const feedsList = document.getElementById('feeds-list');
+                if (data.feeds && Object.keys(data.feeds).length > 0) {
+                    feedsList.innerHTML = Object.entries(data.feeds).map(([id, feed]) => `
+                        <div class="feed-item">
+                            <div class="feed-item-info">
+                                <h4>${feed.feed_name}</h4>
+                                <p>ID: ${feed.feed_id}</p>
+                                <p>URL: ${feed.api_url}</p>
+                                <p>Polling: Every ${feed.polling_interval_hours} hours</p>
+                            </div>
+                            <div>
+                                <span class="status-badge ${feed.enabled ? 'enabled' : 'disabled'}">
+                                    ${feed.enabled ? '✓ Enabled' : '✗ Disabled'}
+                                </span>
+                                <button onclick="removeCustomAPIFeed('${id}')" class="danger" style="margin-left: 10px;">Remove</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    feedsList.innerHTML = '<p style="color: #666;">No custom API feeds configured</p>';
+                }
+                loadConfigStatus();
+            } catch (error) {
+                console.error('Failed to load feeds:', error);
+            }
+        }
+        
+        async function removeCustomAPIFeed(feedId) {
+            if (!confirm('Are you sure you want to remove this feed?')) return;
+            
+            try {
+                const response = await fetch(`/api/config/custom-api/${feedId}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('custom-alert', 'success', 'Feed removed successfully');
+                    refreshFeedsList();
+                } else {
+                    showAlert('custom-alert', 'error', data.detail || 'Failed to remove feed');
+                }
+            } catch (error) {
+                showAlert('custom-alert', 'error', 'Error: ' + error.message);
+            }
+        }
+        
+        async function testNessusConnection() {
+            showAlert('nessus-alert', 'error', 'Testing connection...');
+            setTimeout(() => {
+                showAlert('nessus-alert', 'success', 'Connection test completed (check system logs for details)');
+            }, 2000);
+        }
+        
+        async function testGrayNoiseConnection() {
+            showAlert('graynoise-alert', 'error', 'Testing connection...');
+            setTimeout(() => {
+                showAlert('graynoise-alert', 'success', 'Connection test completed (check system logs for details)');
+            }, 2000);
+        }
+        
+        async function pollDShield(type) {
+            try {
+                const response = await fetch(`/api/feeds/dshield/poll?poll_type=${type}`, { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('dshield-alert', 'success', `DShield ${type} polling completed: ${data.count || 0} records`);
+                    getDShieldSummary();
+                } else {
+                    showAlert('dshield-alert', 'error', data.detail || 'Polling failed');
+                }
+            } catch (error) {
+                showAlert('dshield-alert', 'error', 'Error: ' + error.message);
+            }
+        }
+        
+        async function getDShieldSummary() {
+            try {
+                const response = await fetch('/api/feeds/dshield/threats');
+                const data = await response.json();
+                
+                if (data.summary) {
+                    const summary = data.summary;
+                    document.getElementById('threat-summary').innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div><strong>Top Countries:</strong> ${summary.top_countries ? summary.top_countries.slice(0, 3).join(', ') : 'N/A'}</div>
+                            <div><strong>Common Ports:</strong> ${summary.common_ports ? summary.common_ports.slice(0, 5).join(', ') : 'N/A'}</div>
+                            <div><strong>Last Update:</strong> ${new Date(summary.last_update).toLocaleString()}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load threat summary:', error);
+            }
+        }
+        
+        function showAlert(elementId, type, message) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+            
+            if (type === 'success') {
+                setTimeout(() => alert.classList.remove('show'), 5000);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -7046,3 +7046,241 @@ TypeError: unsupported operand type(s) for +: 'int' and 'str'
 2026-03-31 23:25:49,585 - app.matching.engine - INFO - Threat matching engine started
 2026-03-31 23:25:49,586 - __main__ - INFO - Threat matching engine started
 2026-03-31 23:25:49,586 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-31 23:26:59,513 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-31 23:26:59,513 - __main__ - INFO - Initializing database...
+2026-03-31 23:26:59,514 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-31 23:26:59,515 - __main__ - INFO - Initializing threat matcher...
+2026-03-31 23:26:59,515 - app.capture.pcap - INFO - PacketAnalyzer initialized; lazy Scapy import handler
+2026-03-31 23:26:59,546 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:26:59,551 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:26:59,552 - __main__ - INFO - Threat matcher initialized
+2026-03-31 23:26:59,552 - __main__ - INFO - Initializing feed scheduler...
+2026-03-31 23:26:59,558 - app.scheduling.feed_scheduler - INFO - Registered feed: DShield Honeypot (interval: 300s, priority: CRITICAL)
+2026-03-31 23:26:59,558 - __main__ - INFO - DShield feed registered with scheduler
+2026-03-31 23:26:59,558 - __main__ - INFO - Initializing feed filter engine...
+2026-03-31 23:26:59,567 - __main__ - INFO - Feed filter engine initialized
+2026-03-31 23:26:59,567 - __main__ - INFO - Initializing report ingestion connector...
+2026-03-31 23:26:59,575 - __main__ - INFO - Report ingestion connector initialized
+2026-03-31 23:26:59,576 - __main__ - INFO - Initializing DShield poller...
+2026-03-31 23:26:59,576 - __main__ - INFO - DShield poller initialized
+2026-03-31 23:26:59,577 - __main__ - INFO - Pre-fetching CVE news data...
+2026-03-31 23:26:59,765 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:26:59UTC to 2026-04-01T03:26:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A26%3A59UTC&pubEndDate=2026-04-01T03%3A26%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:26:59,865 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:26:59UTC to 2026-04-01T03:26:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A26%3A59UTC&pubEndDate=2026-04-01T03%3A26%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:27:00,014 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:26:59UTC to 2026-04-01T03:26:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A26%3A59UTC&pubEndDate=2026-04-01T03%3A26%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:27:00,556 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:26:59UTC to 2026-04-01T03:26:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A26%3A59UTC&pubEndDate=2026-04-01T03%3A26%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:27:00,751 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:26:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A26%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:27:00,766 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:27:00,767 - __main__ - INFO - CVE data loaded: day=0, week=0, month=0
+2026-03-31 23:27:00,767 - __main__ - INFO - API routes initialized
+2026-03-31 23:27:00,768 - app.health_scheduler - INFO - Health scheduler started (60 second interval + daily refresh at 00:00 UTC)
+2026-03-31 23:27:00,768 - __main__ - INFO - Background health scheduler started
+2026-03-31 23:27:00,768 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-31 23:27:00,768 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-31 23:27:00,769 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-31 23:27:00,769 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-31 23:27:00,770 - app.feeds.cvedetails - INFO - CVE Details feed configured: enabled=True
+2026-03-31 23:27:00,771 - app.matching.engine - INFO - Configured CVE Details feed
+2026-03-31 23:27:00,774 - app.feeds.cisa_kev - INFO - CISA KEV feed configured: enabled=True
+2026-03-31 23:27:00,774 - app.matching.engine - INFO - Configured CISA KEV feed
+2026-03-31 23:27:00,777 - app.matching.engine - INFO - Configured CVE News feed (10-minute updates)
+2026-03-31 23:27:00,777 - app.feeds.sans_isc - INFO - SANS ISC feed configured: enabled=True
+2026-03-31 23:27:00,778 - app.matching.engine - INFO - Configured SANS ISC feed
+2026-03-31 23:27:00,779 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-31 23:27:00,783 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-31 23:27:00,786 - app.matching.engine - INFO - Threat matching engine started
+2026-03-31 23:27:00,787 - __main__ - INFO - Threat matching engine started
+2026-03-31 23:27:00,787 - __main__ - INFO - Starting API server on 0.0.0.0:8001
+2026-03-31 23:31:16,208 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-31 23:31:16,210 - __main__ - INFO - Initializing database...
+2026-03-31 23:31:16,212 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-31 23:31:16,212 - __main__ - INFO - Initializing threat matcher...
+2026-03-31 23:31:16,213 - app.capture.pcap - INFO - PacketAnalyzer initialized; lazy Scapy import handler
+2026-03-31 23:31:16,252 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:31:16,260 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:31:16,262 - __main__ - INFO - Threat matcher initialized
+2026-03-31 23:31:16,262 - __main__ - INFO - Initializing feed scheduler...
+2026-03-31 23:31:16,275 - app.scheduling.feed_scheduler - INFO - Registered feed: DShield Honeypot (interval: 300s, priority: CRITICAL)
+2026-03-31 23:31:16,275 - __main__ - INFO - DShield feed registered with scheduler
+2026-03-31 23:31:16,275 - __main__ - INFO - Initializing feed filter engine...
+2026-03-31 23:31:16,279 - __main__ - INFO - Feed filter engine initialized
+2026-03-31 23:31:16,279 - __main__ - INFO - Initializing report ingestion connector...
+2026-03-31 23:31:16,283 - __main__ - INFO - Report ingestion connector initialized
+2026-03-31 23:31:16,283 - __main__ - INFO - Initializing DShield poller...
+2026-03-31 23:31:16,283 - __main__ - INFO - DShield poller initialized
+2026-03-31 23:31:16,283 - __main__ - INFO - Pre-fetching CVE news data...
+2026-03-31 23:31:16,460 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:31:16UTC to 2026-04-01T03:31:16UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A31%3A16UTC&pubEndDate=2026-04-01T03%3A31%3A16UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:31:16,632 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:31:16UTC to 2026-04-01T03:31:16UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A31%3A16UTC&pubEndDate=2026-04-01T03%3A31%3A16UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:31:16,805 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:31:16UTC to 2026-04-01T03:31:16UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A31%3A16UTC&pubEndDate=2026-04-01T03%3A31%3A16UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:16,985 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:31:16UTC to 2026-04-01T03:31:16UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A31%3A16UTC&pubEndDate=2026-04-01T03%3A31%3A16UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:18,590 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:31:16UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A31%3A16UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:18,594 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:31:18,595 - __main__ - INFO - CVE data loaded: day=0, week=0, month=0
+2026-03-31 23:31:18,595 - __main__ - INFO - API routes initialized
+2026-03-31 23:31:18,597 - app.health_scheduler - INFO - Health scheduler started (60 second interval + daily refresh at 00:00 UTC)
+2026-03-31 23:31:18,598 - __main__ - INFO - Background health scheduler started
+2026-03-31 23:31:18,598 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-31 23:31:18,598 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-31 23:31:18,598 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-31 23:31:18,599 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-31 23:31:18,599 - app.feeds.cvedetails - INFO - CVE Details feed configured: enabled=True
+2026-03-31 23:31:18,599 - app.matching.engine - INFO - Configured CVE Details feed
+2026-03-31 23:31:18,604 - app.feeds.cisa_kev - INFO - CISA KEV feed configured: enabled=True
+2026-03-31 23:31:18,604 - app.matching.engine - INFO - Configured CISA KEV feed
+2026-03-31 23:31:18,607 - app.matching.engine - INFO - Configured CVE News feed (10-minute updates)
+2026-03-31 23:31:18,607 - app.feeds.sans_isc - INFO - SANS ISC feed configured: enabled=True
+2026-03-31 23:31:18,608 - app.matching.engine - INFO - Configured SANS ISC feed
+2026-03-31 23:31:18,608 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-31 23:31:18,627 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-31 23:31:18,637 - app.matching.engine - INFO - Threat matching engine started
+2026-03-31 23:31:18,638 - __main__ - INFO - Threat matching engine started
+2026-03-31 23:31:18,639 - __main__ - INFO - Starting API server on 0.0.0.0:8001
+2026-03-31 23:31:38,206 - __main__ - INFO - Starting Cyber Intelligence Gateway...
+2026-03-31 23:31:38,206 - __main__ - INFO - Initializing database...
+2026-03-31 23:31:38,207 - __main__ - INFO - Database initialized: data/cig.db
+2026-03-31 23:31:38,207 - __main__ - INFO - Initializing threat matcher...
+2026-03-31 23:31:38,208 - app.capture.pcap - INFO - PacketAnalyzer initialized; lazy Scapy import handler
+2026-03-31 23:31:38,229 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:31:38,233 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:31:38,233 - __main__ - INFO - Threat matcher initialized
+2026-03-31 23:31:38,233 - __main__ - INFO - Initializing feed scheduler...
+2026-03-31 23:31:38,238 - app.scheduling.feed_scheduler - INFO - Registered feed: DShield Honeypot (interval: 300s, priority: CRITICAL)
+2026-03-31 23:31:38,238 - __main__ - INFO - DShield feed registered with scheduler
+2026-03-31 23:31:38,238 - __main__ - INFO - Initializing feed filter engine...
+2026-03-31 23:31:38,247 - __main__ - INFO - Feed filter engine initialized
+2026-03-31 23:31:38,248 - __main__ - INFO - Initializing report ingestion connector...
+2026-03-31 23:31:38,250 - __main__ - INFO - Report ingestion connector initialized
+2026-03-31 23:31:38,251 - __main__ - INFO - Initializing DShield poller...
+2026-03-31 23:31:38,251 - __main__ - INFO - DShield poller initialized
+2026-03-31 23:31:38,251 - __main__ - INFO - Pre-fetching CVE news data...
+2026-03-31 23:31:38,370 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:31:38UTC to 2026-04-01T03:31:38UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A31%3A38UTC&pubEndDate=2026-04-01T03%3A31%3A38UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:31:39,822 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:31:38UTC to 2026-04-01T03:31:38UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A31%3A38UTC&pubEndDate=2026-04-01T03%3A31%3A38UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:31:39,933 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:31:38UTC to 2026-04-01T03:31:38UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A31%3A38UTC&pubEndDate=2026-04-01T03%3A31%3A38UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:40,066 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:31:38UTC to 2026-04-01T03:31:38UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A31%3A38UTC&pubEndDate=2026-04-01T03%3A31%3A38UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:40,166 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:31:38UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A31%3A38UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:40,170 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:31:40,170 - __main__ - INFO - CVE data loaded: day=0, week=0, month=0
+2026-03-31 23:31:40,170 - __main__ - INFO - API routes initialized
+2026-03-31 23:31:40,171 - app.health_scheduler - INFO - Health scheduler started (60 second interval + daily refresh at 00:00 UTC)
+2026-03-31 23:31:40,173 - __main__ - INFO - Background health scheduler started
+2026-03-31 23:31:40,174 - app.matching.engine - INFO - Configured pfBlocker with 1 feeds
+2026-03-31 23:31:40,174 - app.matching.engine - INFO - Configured AbuseIPDB feed
+2026-03-31 23:31:40,174 - app.feeds.abusech - INFO - Abuse.ch feeds configured: urlhaus=True, threatfox=True
+2026-03-31 23:31:40,174 - app.matching.engine - INFO - Configured Abuse.ch feeds (URLhaus + ThreatFox)
+2026-03-31 23:31:40,174 - app.feeds.cvedetails - INFO - CVE Details feed configured: enabled=True
+2026-03-31 23:31:40,174 - app.matching.engine - INFO - Configured CVE Details feed
+2026-03-31 23:31:40,174 - app.feeds.cisa_kev - INFO - CISA KEV feed configured: enabled=True
+2026-03-31 23:31:40,174 - app.matching.engine - INFO - Configured CISA KEV feed
+2026-03-31 23:31:40,175 - app.matching.engine - INFO - Configured CVE News feed (10-minute updates)
+2026-03-31 23:31:40,175 - app.feeds.sans_isc - INFO - SANS ISC feed configured: enabled=True
+2026-03-31 23:31:40,175 - app.matching.engine - INFO - Configured SANS ISC feed
+2026-03-31 23:31:40,179 - app.feeds.pfblocker - INFO - Fetching pfBlocker feed: https://raw.githubusercontent.com/ph00lt0/blocklist/master/blocklist.txt
+2026-03-31 23:31:40,190 - app.capture.pcap - INFO - Started DNS query monitoring
+2026-03-31 23:31:40,195 - app.matching.engine - INFO - Threat matching engine started
+2026-03-31 23:31:40,195 - __main__ - INFO - Threat matching engine started
+2026-03-31 23:31:40,195 - __main__ - INFO - Starting API server on 0.0.0.0:8000
+2026-03-31 23:31:40,750 - app.feeds.pfblocker - INFO - Stored 217 pfBlocker indicators
+2026-03-31 23:31:40,750 - app.matching.engine - INFO - Updated pfBlocker: 411 indicators
+2026-03-31 23:31:40,887 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:31:40,889 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:31:41,014 - app.feeds.cvedetails - ERROR - Failed to fetch CVE Details feed: 403 Client Error: Forbidden for url: https://www.cvedetails.com/vulnerability-list.php?vendor_id=0&product_id=0&page=1
+2026-03-31 23:31:41,019 - app.matching.engine - INFO - Updated CVE Details: 0 vulnerabilities
+2026-03-31 23:31:41,409 - app.feeds.cisa_kev - INFO - CISA KEV feed updated: 0 vulnerabilities (version: 2026.03.30)
+2026-03-31 23:31:41,413 - app.matching.engine - INFO - Updated CISA KEV: 0 vulnerabilities
+2026-03-31 23:31:41,562 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:31:41UTC to 2026-04-01T03:31:41UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A31%3A41UTC&pubEndDate=2026-04-01T03%3A31%3A41UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:31:41,671 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:31:41UTC to 2026-04-01T03:31:41UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A31%3A41UTC&pubEndDate=2026-04-01T03%3A31%3A41UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:31:41,750 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:31:41UTC to 2026-04-01T03:31:41UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A31%3A41UTC&pubEndDate=2026-04-01T03%3A31%3A41UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:41,834 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:31:41UTC to 2026-04-01T03:31:41UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A31%3A41UTC&pubEndDate=2026-04-01T03%3A31%3A41UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:42,241 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:31:41UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A31%3A41UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:31:42,245 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:31:42,246 - app.matching.engine - INFO - Updated CVE News: 0 high-level CVEs
+2026-03-31 23:31:50,269 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:32:01,172 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:32:28,313 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:32:28UTC to 2026-04-01T03:32:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A32%3A28UTC&pubEndDate=2026-04-01T03%3A32%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:32:28,514 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:32:28UTC to 2026-04-01T03:32:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A32%3A28UTC&pubEndDate=2026-04-01T03%3A32%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:32:28,663 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:32:28UTC to 2026-04-01T03:32:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A32%3A28UTC&pubEndDate=2026-04-01T03%3A32%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:32:28,830 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:32:28UTC to 2026-04-01T03:32:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A32%3A28UTC&pubEndDate=2026-04-01T03%3A32%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:32:29,037 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:32:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A32%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:32:29,052 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:32:33,935 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:32:40,286 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:32:40,288 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:33:00,894 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:32:59UTC to 2026-04-01T03:32:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A32%3A59UTC&pubEndDate=2026-04-01T03%3A32%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:33:01,033 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:32:59UTC to 2026-04-01T03:32:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A32%3A59UTC&pubEndDate=2026-04-01T03%3A32%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:33:01,201 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:32:59UTC to 2026-04-01T03:32:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A32%3A59UTC&pubEndDate=2026-04-01T03%3A32%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:01,311 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:32:59UTC to 2026-04-01T03:32:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A32%3A59UTC&pubEndDate=2026-04-01T03%3A32%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:01,412 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:32:59UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A32%3A59UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:01,416 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:33:09,063 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:33:08UTC to 2026-04-01T03:33:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A33%3A08UTC&pubEndDate=2026-04-01T03%3A33%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:33:09,165 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:33:08UTC to 2026-04-01T03:33:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A33%3A08UTC&pubEndDate=2026-04-01T03%3A33%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:33:09,269 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:33:08UTC to 2026-04-01T03:33:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A33%3A08UTC&pubEndDate=2026-04-01T03%3A33%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:09,398 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:33:08UTC to 2026-04-01T03:33:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A33%3A08UTC&pubEndDate=2026-04-01T03%3A33%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:09,513 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:33:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A33%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:09,528 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:33:28,098 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:33:28UTC to 2026-04-01T03:33:28UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A33%3A28UTC&pubEndDate=2026-04-01T03%3A33%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:33:28,207 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:33:28UTC to 2026-04-01T03:33:28UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A33%3A28UTC&pubEndDate=2026-04-01T03%3A33%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:33:28,316 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:33:28UTC to 2026-04-01T03:33:28UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A33%3A28UTC&pubEndDate=2026-04-01T03%3A33%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:28,513 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:33:28UTC to 2026-04-01T03:33:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A33%3A28UTC&pubEndDate=2026-04-01T03%3A33%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:28,630 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:33:28UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A33%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:28,635 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:33:34,664 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:33:34UTC to 2026-04-01T03:33:34UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A33%3A34UTC&pubEndDate=2026-04-01T03%3A33%3A34UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:33:34,783 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:33:34UTC to 2026-04-01T03:33:34UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A33%3A34UTC&pubEndDate=2026-04-01T03%3A33%3A34UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:33:35,037 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:33:34UTC to 2026-04-01T03:33:34UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A33%3A34UTC&pubEndDate=2026-04-01T03%3A33%3A34UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:35,159 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:33:34UTC to 2026-04-01T03:33:34UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A33%3A34UTC&pubEndDate=2026-04-01T03%3A33%3A34UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:35,285 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:33:34UTC: 429 Client Error: Too Many Requests for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A33%3A34UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:33:35,288 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:33:36,528 - app.feeds.sans_isc - INFO - SANS ISC feed updated: 0 indicators
+2026-03-31 23:33:36,532 - app.matching.engine - INFO - Updated SANS ISC: 0 indicators
+2026-03-31 23:33:36,543 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-31 23:33:40,576 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:33:40,581 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:33:44,968 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:33:58,898 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:34:14,700 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:34:40,697 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:34:40,700 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:34:45,103 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:35:16,248 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:35:40,830 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:35:40,833 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:36:40,983 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:36:40,986 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:37:41,105 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:37:41,108 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:38:41,285 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:38:41,290 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:39:41,858 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:39:41,864 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:40:42,053 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:40:42,066 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:41:42,238 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:41:42,242 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:42:42,377 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:42:42,383 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:43:30,899 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:43:42,507 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:43:42,512 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:43:56,260 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:44:08,348 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:44:08UTC to 2026-04-01T03:44:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A44%3A08UTC&pubEndDate=2026-04-01T03%3A44%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:44:08,472 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:44:08UTC to 2026-04-01T03:44:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A44%3A08UTC&pubEndDate=2026-04-01T03%3A44%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:44:08,720 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:44:08UTC to 2026-04-01T03:44:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A44%3A08UTC&pubEndDate=2026-04-01T03%3A44%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:44:09,450 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:44:08UTC to 2026-04-01T03:44:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A44%3A08UTC&pubEndDate=2026-04-01T03%3A44%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:44:09,558 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:44:08UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A44%3A08UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:44:09,564 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:44:21,366 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:44:26,200 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:44:42,628 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:44:42,633 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:44:56,912 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:45:27,964 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:45:42,790 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:45:42,796 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:46:00,713 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:46:32,886 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:46:42,899 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:46:42,901 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:47:04,234 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:47:35,905 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:47:43,034 - app.feeds.abuseipdb - ERROR - AbuseIPDB API error: 429
+2026-03-31 23:47:43,038 - app.matching.engine - INFO - Updated AbuseIPDB: 0 indicators
+2026-03-31 23:48:07,436 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:48:38,072 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
