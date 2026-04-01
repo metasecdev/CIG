@@ -44,7 +44,10 @@
                             <i class="fas fa-check-circle"></i> Checks
                         </a>
                         <a href="/dashboard/news" class="list-group-item list-group-item-action">
-                            <i class="fas fa-newspaper"></i> Cybersecurity News
+                            <i class="fas fa-newspaper"></i> Cyber News
+                        </a>
+                        <a href="/dashboard/cves" class="list-group-item list-group-item-action">
+                            <i class="fas fa-bug"></i> CVE News
                         </a>
                         <a href="/dashboard/arkime" class="list-group-item list-group-item-action">
                             <i class="fas fa-network-wired"></i> Arkime
@@ -91,7 +94,7 @@
                                 <h5 class="card-title">
                                     <i class="fas fa-database"></i> Indicators
                                 </h5>
-                                <h2>{{ stats.indicators.values()|sum|default(0) }}</h2>
+                                <h2>{{ stats.indicators.count|default(stats.indicators.values()|map('int')|sum|default(0)) }}</h2>
                                 <small>Threat intelligence items</small>
                             </div>
                         </div>
@@ -115,6 +118,35 @@
                                 </h5>
                                 <h2>{{ stats.captures|length }}</h2>
                                 <small>Active PCAP captures</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map + Indicator Status -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-map-marker-alt"></i> Threat Map</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Last checked at: {{ stats.map.last_checked_at|default('N/A') }}</p>
+                                <p>Status: {{ stats.map.status|default('unknown') }}</p>
+                                <p>Known threat locations: {{ stats.map.known_threat_locations|length }}</p>
+                                <div class="alert alert-secondary">Map visualization currently placeholder; integrate with location service.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-bullseye"></i> Indicator Stats</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Total indicators: {{ stats.indicators.count|default(0) }}</p>
+                                <p>Last checked at: {{ stats.indicators.last_checked_at|default('N/A') }}</p>
+                                <p>Indicator breakdown: {{ stats.indicator_breakdown|tojson }}</p>
                             </div>
                         </div>
                     </div>
@@ -157,6 +189,36 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
+                                <h5><i class="fas fa-bug"></i> Critical CVEs</h5>
+                            </div>
+                            <div class="card-body cve-card-scroll">
+                                <div id="cve-severity-loading" class="text-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    <small class="text-muted">Loading CVEs...</small>
+                                </div>
+                                <div id="cve-severity-content" class="d-none">
+                                    <div class="mb-2">
+                                        <span class="badge bg-danger me-1">Critical: <span id="critical-count">0</span></span>
+                                        <span class="badge bg-warning text-dark me-1">High: <span id="high-count">0</span></span>
+                                        <span class="badge bg-info text-dark">Medium: <span id="medium-count">0</span></span>
+                                    </div>
+                                    <div class="list-group" id="cve-list">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="btn-group btn-group-sm w-100">
+                                    <button class="btn btn-outline-danger active" onclick="showSeverity('critical')">Critical</button>
+                                    <button class="btn btn-outline-warning" onclick="showSeverity('high')">High</button>
+                                    <button class="btn btn-outline-info" onclick="showSeverity('medium')">Medium</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
                                 <h5><i class="fas fa-newspaper"></i> Security Alerts</h5>
                             </div>
                             <div class="card-body">
@@ -173,7 +235,7 @@
                                 {% else %}
                                     <p class="text-muted">No recent news</p>
                                 {% endif %}
-                                <a href="/dashboard/news" class="btn btn-sm btn-outline-primary mt-2 w-100">Latest News</a>
+                                <a href="/dashboard/cves" class="btn btn-sm btn-outline-danger mt-2 w-100">View CVE News</a>
                             </div>
                         </div>
                     </div>
@@ -256,7 +318,7 @@
                                 <h5 class="card-title">
                                     <i class="fas fa-database"></i> Indicators
                                 </h5>
-                                <h2>{{ stats.indicators.values()|sum|default(0) }}</h2>
+                                <h2>{{ stats.indicators.values()|map('int')|sum|default(0) }}</h2>
                                 <small>Threat intelligence items</small>
                             </div>
                         </div>
@@ -289,11 +351,16 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-server"></i> System Status</h5>
+                                <div>
+                                    <button id="system-restart" class="btn btn-sm btn-warning me-1">Restart</button>
+                                    <button id="system-shutdown" class="btn btn-sm btn-danger">Shutdown</button>
+                                </div>
                             </div>
                             <div class="card-body">
-                        <div class="mb-2">
+                                <div id="system-action-result" class="mb-3"></div>
+                                <div class="mb-2">
                                     <strong>Status:</strong>
                                     <span class="badge bg-{{ 'success' if stats.system.running else 'warning' }}">
                                         {{ 'running' if stats.system.running else 'stopped' }}
@@ -431,6 +498,170 @@
                 }
             });
         });
+
+        async function callSystemEndpoint(endpoint, action) {
+            const resultEl = document.getElementById('system-action-result');
+            try {
+                const resp = await fetch(endpoint, { method: 'POST' });
+                const body = await resp.json();
+                if (!resp.ok) {
+                    resultEl.innerHTML = `<div class="alert alert-danger">${action} failed: ${body.detail || JSON.stringify(body)}</div>`;
+                } else {
+                    resultEl.innerHTML = `<div class="alert alert-success">${action} succeeded: ${body.status}</div>`;
+                }
+            } catch (err) {
+                resultEl.innerHTML = `<div class="alert alert-danger">${action} error: ${err.message}</div>`;
+            }
+        }
+
+        document.getElementById('system-restart').addEventListener('click', function () {
+            callSystemEndpoint('/api/system/restart', 'Restart');
+        });
+
+        document.getElementById('system-shutdown').addEventListener('click', function () {
+            callSystemEndpoint('/api/system/shutdown', 'Shutdown');
+        });
+
+        // CVE Severity Dashboard
+        let currentSeverity = 'critical';
+        let cveData = { critical: [], high: [], medium: [] };
+
+        async function loadCVESeverity() {
+            try {
+                const response = await fetch('/api/news/cve/severity?limit=50');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    cveData = {
+                        critical: data.critical || [],
+                        high: data.high || [],
+                        medium: data.medium || []
+                    };
+                    
+                    document.getElementById('critical-count').textContent = data.critical_count || 0;
+                    document.getElementById('high-count').textContent = data.high_count || 0;
+                    document.getElementById('medium-count').textContent = data.medium_count || 0;
+                    
+                    document.getElementById('cve-severity-loading').style.display = 'none';
+                    document.getElementById('cve-severity-content').style.display = 'block';
+                    
+                    showSeverity('critical');
+                }
+            } catch (error) {
+                console.error('Failed to load CVE severity:', error);
+                document.getElementById('cve-severity-loading').innerHTML = 
+                    '<small class="text-muted">Failed to load CVEs</small>';
+            }
+        }
+
+        function showSeverity(severity) {
+            currentSeverity = severity;
+            const items = cveData[severity] || [];
+            const cveList = document.getElementById('cve-list');
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.btn-group-sm .btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.toLowerCase().includes(severity)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            if (items.length === 0) {
+                cveList.innerHTML = '<div class="list-group-item text-muted">No CVEs found. Click refresh to load.</div>';
+                return;
+            }
+            
+            cveList.innerHTML = items.slice(0, 10).map(item => {
+                const severityClass = severity === 'critical' ? 'danger' : severity === 'high' ? 'warning' : 'info';
+                const mitreTechs = item.mitre_techniques?.length ? item.mitre_techniques.map(t => `<span class="badge bg-secondary me-1">${t}</span>`).join('') : '';
+                const iocs = item.iocs?.length ? item.iocs.map(i => `<span class="badge bg-dark me-1" style="font-size:0.65rem">${i}</span>`).join('') : '';
+                const cwes = item.cwes?.length ? item.cwes.slice(0,3).map(c => `<span class="badge bg-outline-secondary border me-1" style="font-size:0.6rem">${c}</span>`).join('') : '';
+                
+                return `
+                <div class="list-group-item list-group-item-action" style="cursor:pointer" onclick="showCVEDetails('${item.cve}')">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div>
+                            <strong class="text-${severityClass}">${item.cve || 'N/A'}</strong>
+                        </div>
+                        <span class="badge bg-${severityClass}">${item.cvss_score?.toFixed(1) || 'N/A'}</span>
+                    </div>
+                    <small class="text-muted">${item.vendor || ''} ${item.product || ''}</small>
+                    <br>
+                    ${mitreTechs ? `<div class="mt-1">${mitreTechs}</div>` : ''}
+                    ${iocs ? `<div class="mt-1" style="overflow-x:auto">${iocs}</div>` : ''}
+                    <small class="text-muted" style="font-size: 0.7rem;">${(item.summary || '').substring(0, 60)}...</small>
+                </div>
+                `}).join('');
+        }
+
+        function showCVEDetails(cveId) {
+            const items = cveData[currentSeverity] || [];
+            const item = items.find(i => i.cve === cveId);
+            if (!item) return;
+            
+            const modalHtml = `
+            <div class="modal fade" id="cveDetailModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-${currentSeverity === 'critical' ? 'danger' : currentSeverity === 'high' ? 'warning' : 'info'} text-white">
+                            <h5 class="modal-title"><i class="fas fa-bug"></i> ${item.cve} - ${item.severity?.toUpperCase()}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-shield-alt"></i> Details</h6>
+                                    <table class="table table-sm">
+                                        <tr><td><strong>CVSS Score:</strong></td><td><span class="badge bg-${currentSeverity === 'critical' ? 'danger' : currentSeverity === 'high' ? 'warning' : 'info'}">${item.cvss_score?.toFixed(1)}</span></td></tr>
+                                        <tr><td><strong>Vendor:</strong></td><td>${item.vendor}</td></tr>
+                                        <tr><td><strong>Product:</strong></td><td>${item.product}</td></tr>
+                                        <tr><td><strong>Attack Vector:</strong></td><td>${item.attack_vector || 'N/A'}</td></tr>
+                                        <tr><td><strong>Attack Complexity:</strong></td><td>${item.attack_complexity || 'N/A'}</td></tr>
+                                        <tr><td><strong>Privileges Required:</strong></td><td>${item.privileges_required || 'N/A'}</td></tr>
+                                        <tr><td><strong>User Interaction:</strong></td><td>${item.user_interaction || 'N/A'}</td></tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-exclamation-circle"></i> Weaknesses (CWE)</h6>
+                                    <div class="mb-3">${item.cwes?.length ? item.cwes.map(c => `<span class="badge bg-outline-secondary border me-1">${c}</span>`).join('') : 'None'}</div>
+                                    <h6><i class="fas fa-crosshairs"></i> MITRE ATT&CK</h6>
+                                    <div class="mb-3">${item.mitre_techniques?.length ? item.mitre_techniques.map(t => `<span class="badge bg-danger me-1">${t}</span>`).join('') : 'None'}</div>
+                                </div>
+                            </div>
+                            <h6><i class="fas fa-align-left"></i> Description</h6>
+                            <p class="bg-light p-2 rounded">${item.summary || item.description || 'No description'}</p>
+                            <h6><i class="fas fa-network-card"></i> Indicators of Compromise (IOCs)</h6>
+                            <div class="bg-dark p-2 rounded" style="max-height:100px;overflow-y:auto">
+                                ${item.iocs?.length ? item.iocs.map(ioc => `<span class="badge bg-light text-dark me-1">${ioc}</span>`).join('') : 'None'}
+                            </div>
+                            <h6 class="mt-2"><i class="fas fa-shield-virus"></i> Mitigations</h6>
+                            <ul class="list-group">
+                                ${item.mitigations?.length ? item.mitigations.map(m => `<li class="list-group-item small">${m}</li>`).join('') : 'None'}
+                            </ul>
+                            <h6 class="mt-2"><i class="fas fa-signature"></i> Detection Signatures</h6>
+                            <div class="bg-dark p-2 rounded" style="max-height:150px;overflow-y:auto;font-family:monospace;font-size:0.7rem">
+                                ${item.signatures?.length ? item.signatures.map(s => `<div class="text-light mb-1">${s}</div>`).join('') : 'None'}
+                            </div>
+                            <div class="mt-2">
+                                <a href="${item.cve_url || '#'}" target="_blank" class="btn btn-sm btn-primary"><i class="fas fa-external-link-alt"></i> NVD Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            const existingModal = document.getElementById('cveDetailModal');
+            if (existingModal) existingModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('cveDetailModal'));
+            modal.show();
+        }
+
+        // Load CVE data on page load
+        loadCVESeverity();
     </script>
     <script src="/static/dashboard.js"></script>
 </body>

@@ -267,20 +267,18 @@ async def get_alert_stats():
 @app.get("/api/pcaps")
 async def get_pcaps(limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
     """Get PCAP file list"""
-    if not db:
-        raise HTTPException(status_code=503, detail="Database not initialized")
+    database = get_db()
 
-    pcaps = db.get_pcaps(limit=limit, offset=offset)
+    pcaps = database.get_pcaps(limit=limit, offset=offset)
     return {"pcaps": [PcapResponse(**p.to_dict()).dict() for p in pcaps]}
 
 
 @app.get("/api/pcaps/{pcap_id}/download")
 async def download_pcap(pcap_id: str):
     """Download a PCAP file"""
-    if not db:
-        raise HTTPException(status_code=503, detail="Database not initialized")
+    database = get_db()
 
-    conn = db.db_path
+    conn = database.db_path
     import sqlite3
 
     conn = sqlite3.connect(db.db_path)
@@ -314,8 +312,7 @@ async def download_pcap(pcap_id: str):
 @app.get("/api/pcaps/{pcap_id}/alerts")
 async def get_pcap_alerts(pcap_id: str):
     """Get alerts associated with a PCAP file"""
-    if not db:
-        raise HTTPException(status_code=503, detail="Database not initialized")
+    database = get_db()
 
     # Get alerts that might be related to this PCAP (by timestamp)
     # This is a simplified implementation
@@ -402,10 +399,9 @@ async def get_indicators(
     indicator_type: Optional[str] = Query(None),
 ):
     """Get threat indicators"""
-    if not db:
-        raise HTTPException(status_code=503, detail="Database not initialized")
+    database = get_db()
 
-    indicators = db.get_indicators(limit=limit, indicator_type=indicator_type)
+    indicators = database.get_indicators(limit=limit, indicator_type=indicator_type)
     return {"indicators": [IndicatorResponse(**i.to_dict()).dict() for i in indicators]}
 
 
@@ -821,6 +817,7 @@ async def api_system_restart():
         raise HTTPException(status_code=503, detail="System not initialized")
 
     threat_matcher.restart()
+    logger.info("API system restart invoked: threat matcher restarted")
     return {"status": "restarted"}
 
 
@@ -831,7 +828,43 @@ async def api_system_shutdown():
         raise HTTPException(status_code=503, detail="System not initialized")
 
     threat_matcher.stop()
+    logger.info("API system shutdown invoked: threat matcher stopped")
     return {"status": "shutdown"}
+
+
+@app.post("/api/system/selfheal")
+async def api_system_selfheal():
+    """Self-healing endpoint triggered manually or on startup"""
+    from app.main import self_heal_from_logs
+
+    report = self_heal_from_logs()
+    return {"status": "success", "self_heal_report": report}
+
+
+@app.get("/api/health/monitor")
+async def api_health_monitor():
+    """Get health monitoring status and last self-heal report"""
+    from app.health_scheduler import get_health_report
+    
+    report = get_health_report()
+    return {
+        "status": "success",
+        "monitor": report,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+
+
+@app.post("/api/health/monitor/trigger")
+async def api_health_monitor_trigger():
+    """Manually trigger a health check (outside the normal 60-second cycle)"""
+    from app.health_scheduler import trigger_health_check
+    
+    report = trigger_health_check()
+    return {
+        "status": "success",
+        "manual_check": report,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
 
 
 @app.get("/api/reports/generate")
@@ -893,17 +926,26 @@ async def dashboard(request: Request):
         # Get system stats
         stats = {
             "alerts": database.get_alert_stats(),
-            "indicators": database.get_indicator_counts(),
+            "indicator_breakdown": database.get_indicator_counts(),
             "feeds": {
                 "misp": matcher.misp_feed.get_status(),
                 "pfblocker": matcher.pfblocker_feed.get_status(),
                 "abuseipdb": matcher.abuseipdb_feed.get_status(),
-                "cvedetails": matcher.cvedetails_feed.get_status(),
-                "cisa_kev": matcher.cisa_kev_feed.get_status(),
-                "shadowserver": matcher.shadowserver_feed.get_status(),
+                "cvedetails": getattr(matcher, "cvedetails_feed", None).get_status() if getattr(matcher, "cvedetails_feed", None) else {"status": "not_configured"},
+                "cisa_kev": getattr(matcher, "cisa_kev_feed", None).get_status() if getattr(matcher, "cisa_kev_feed", None) else {"status": "not_configured"},
+                "shadowserver": getattr(matcher, "shadowserver_feed", None).get_status() if getattr(matcher, "shadowserver_feed", None) else {"status": "not_configured"},
             },
             "captures": matcher.pcap_capture.get_active_captures(),
             "system": matcher.get_status(),
+            "map": {
+                "status": "online",
+                "last_checked_at": datetime.utcnow().isoformat(),
+                "known_threat_locations": [],
+            },
+            "indicators": {
+                "count": sum(database.get_indicator_counts().values()),
+                "last_checked_at": datetime.utcnow().isoformat(),
+            },
         }
 
         # Get recent alerts
@@ -995,6 +1037,20 @@ async def status_dashboard(request: Request):
         return templates.TemplateResponse(
             "error.html", {"request": request, "error": str(e)}
         )
+
+
+@app.get("/api/dashboard/health")
+async def api_dashboard_health():
+    """API endpoint for dashboard health JSON"""
+    if _db is None or _threat_matcher is None:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    health_data = get_health_status(_db, _threat_matcher)
+    return {
+        "status": "success",
+        "last_checked_at": datetime.utcnow().isoformat(),
+        "health": health_data,
+    }
 
 
 @app.get("/dashboard/health")
@@ -1122,7 +1178,7 @@ async def events_dashboard(request: Request):
 
 @app.get("/dashboard/news")
 async def news_dashboard(request: Request):
-    """Cybersecurity news dashboard"""
+    """Cybersecurity news dashboard - curated threat intelligence"""
     try:
         news_items = get_feed().get_latest()
         return templates.TemplateResponse(
@@ -1135,6 +1191,29 @@ async def news_dashboard(request: Request):
         )
     except Exception as e:
         logger.error(f"News dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
+@app.get("/dashboard/cves")
+async def cve_dashboard(request: Request):
+    """CVE vulnerability news dashboard with severity tracking"""
+    try:
+        cve_feed = get_cve_feed()
+        # Ensure most recent data is loaded
+        cve_feed.fetch_all_periods()
+        cve_summary = cve_feed.get_summary()
+        return templates.TemplateResponse(
+            "cve_news.html",
+            {
+                "request": request,
+                "cve_summary": cve_summary,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except Exception as e:
+        logger.error(f"CVE dashboard error: {e}")
         return templates.TemplateResponse(
             "error.html", {"request": request, "error": str(e)}
         )
@@ -1242,11 +1321,55 @@ async def api_cyber_news(limit: int = Query(10, ge=1, le=50)):
 
 
 @app.get("/api/news/cve")
-async def api_cve_news(limit: int = Query(10, ge=1, le=50)):
+async def api_cve_news(
+    limit: int = Query(10, ge=1, le=100),
+    period: str = Query(
+        "day", description="Time period: day, week, month, year, historical, all"
+    ),
+    search: str = Query(
+        "", description="Search term (cve id, vendor, product, keyword)"
+    ),
+    severity: str = Query("", description="Filter by severity: critical, high, medium"),
+):
     """High-level CVE news with IOCs, signatures, and MITRE T-codes"""
     try:
         cve_feed = get_cve_feed()
-        cve_items = cve_feed.get_latest(limit=limit)
+
+        # Get CVEs by time period
+        if period and period != "all":
+            cve_items = cve_feed.get_by_period(period)
+        else:
+            cve_items = cve_feed.get_latest(limit=100)  # Get more for searching
+
+        # Apply search filter
+        if search:
+            search_lower = search.lower()
+            filtered_items = []
+            for item in cve_items:
+                # Search in CVE ID, title, summary, vendor, product, cves
+                searchable_text = " ".join(
+                    [
+                        str(item.get("cve", "")),
+                        str(item.get("title", "")),
+                        str(item.get("summary", "")),
+                        str(item.get("vendor", "")),
+                        str(item.get("product", "")),
+                        " ".join(item.get("cwes", [])),
+                    ]
+                ).lower()
+
+                if search_lower in searchable_text:
+                    filtered_items.append(item)
+            cve_items = filtered_items
+
+        # Apply severity filter
+        if severity:
+            severity_lower = severity.lower()
+            cve_items = [
+                item
+                for item in cve_items
+                if item.get("severity", "").lower() == severity_lower
+            ]
 
         # Add threat matcher CVE news if available
         if threat_matcher and hasattr(threat_matcher, "cve_news_feed"):
@@ -1259,8 +1382,12 @@ async def api_cve_news(limit: int = Query(10, ge=1, le=50)):
 
         return {
             "status": "success",
-            "items": cve_items,
+            "items": cve_items[:limit],
             "count": len(cve_items),
+            "period": period,
+            "search": search,
+            "filters": {"severity": severity} if severity else None,
+            "summary": cve_feed.get_summary(),
             "last_update": cve_feed.last_fetch.isoformat()
             if cve_feed.last_fetch
             else None,
@@ -1268,6 +1395,61 @@ async def api_cve_news(limit: int = Query(10, ge=1, le=50)):
     except Exception as e:
         logger.error(f"Failed to fetch CVE news: {e}")
         raise HTTPException(status_code=500, detail="Failed to load CVE news")
+
+
+@app.post("/api/news/cve/refresh")
+async def api_cve_news_refresh():
+    """Refresh all CVE news data (day/week/month/year/historical)"""
+    try:
+        cve_feed = get_cve_feed()
+        counts = cve_feed.fetch_all_periods()
+
+        return {
+            "status": "success",
+            "message": "CVE news data refreshed",
+            "counts": counts,
+            "summary": cve_feed.get_summary(),
+        }
+    except Exception as e:
+        logger.error(f"Failed to refresh CVE news: {e}")
+        raise HTTPException(status_code=500, detail="Failed to refresh CVE news")
+
+
+@app.get("/api/news/cve/severity")
+async def api_cve_by_severity(
+    limit: int = Query(50, ge=1, le=100),
+    severity: str = Query(
+        "", description="Optional: critical, high, medium (leave empty for all)"
+    ),
+):
+    """Get last 50 CVEs by severity level - returns critical, high, medium each with up to 50 CVEs"""
+    try:
+        cve_feed = get_cve_feed()
+
+        if severity:
+            # Return specific severity
+            items = cve_feed.get_by_severity(severity, limit)
+            return {
+                "status": "success",
+                "severity": severity.lower(),
+                "items": items,
+                "count": len(items),
+            }
+        else:
+            # Return all severities (last 50 each)
+            result = cve_feed.get_all_severities(limit_per_severity=limit)
+            return {
+                "status": "success",
+                "critical_count": len(result["critical"]),
+                "high_count": len(result["high"]),
+                "medium_count": len(result["medium"]),
+                "critical": result["critical"],
+                "high": result["high"],
+                "medium": result["medium"],
+            }
+    except Exception as e:
+        logger.error(f"Failed to fetch CVE by severity: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load CVE by severity")
 
 
 @app.get("/api/news/ai")
@@ -1354,19 +1536,32 @@ async def api_cyber_news_verify(
             source_reachable = None
             cve_reachable = None
             if network_check:
+                # Try requests first, then urllib as fallback
                 try:
                     import requests
 
-                    if source_valid:
-                        r = requests.head(source_url, timeout=5, allow_redirects=True)
-                        source_reachable = r.status_code < 400
-                except Exception:
-                    source_reachable = False
+                    http_head = lambda url: requests.head(url, timeout=5, allow_redirects=True)
+                except ImportError:
+                    import urllib.request
+
+                    def urllib_head(url):
+                        req = urllib.request.Request(url, method='HEAD', headers={'User-Agent': 'CIG/1.0'})
+                        with urllib.request.urlopen(req, timeout=5) as resp:
+                            return resp
+
+                    http_head = urllib_head
+
+                if source_valid:
+                    try:
+                        r = http_head(source_url)
+                        source_reachable = (getattr(r, 'status', None) or getattr(r, 'getcode', lambda: None)()) < 400
+                    except Exception:
+                        source_reachable = False
 
                 if cve_url and cve_valid:
                     try:
-                        r = requests.head(cve_url, timeout=5, allow_redirects=True)
-                        cve_reachable = r.status_code < 400
+                        r = http_head(cve_url)
+                        cve_reachable = (getattr(r, 'status', None) or getattr(r, 'getcode', lambda: None)()) < 400
                     except Exception:
                         cve_reachable = False
 
@@ -1392,6 +1587,48 @@ async def api_cyber_news_verify(
     except Exception as e:
         logger.error(f"Failed to verify news links: {e}")
         raise HTTPException(status_code=500, detail="Failed to verify news links")
+
+
+@app.get("/api/news/verify/summary")
+async def api_cyber_news_verify_summary():
+    """Summary of news link verification result counts"""
+    try:
+        feed = get_feed()
+        news_items = feed.get_latest(limit=50)
+        confirmed = 0
+        invalid = 0
+
+        for item in news_items:
+            source_url = item.get("source_url")
+            cve_url = item.get("cve_url")
+            source_parsed = urlparse(source_url) if source_url else None
+            cve_parsed = urlparse(cve_url) if cve_url else None
+
+            source_valid = bool(
+                source_parsed
+                and source_parsed.scheme in ["http", "https"]
+                and source_parsed.netloc
+            )
+            cve_valid = bool(
+                cve_parsed
+                and cve_parsed.scheme in ["http", "https"]
+                and cve_parsed.netloc
+            )
+
+            if source_valid and (cve_url is None or cve_valid):
+                confirmed += 1
+            else:
+                invalid += 1
+
+        return {
+            "status": "success",
+            "total": len(news_items),
+            "confirmed": confirmed,
+            "invalid": invalid,
+        }
+    except Exception as e:
+        logger.error(f"Failed to generate verify summary: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate verify summary")
 
 
 # --- Arkime Integration Endpoints ---

@@ -52,7 +52,10 @@ class MITREAttackMapper:
 
             logger.info("Loaded MITRE ATT&CK framework data")
         except Exception as e:
-            logger.error(f"Failed to load MITRE ATT&CK data: {e}")
+            if "typing.io" in str(e):
+                logger.warning("MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings")
+            else:
+                logger.error(f"Failed to load MITRE ATT&CK data: {e}")
             self._load_simplified_mappings()
 
     def _load_simplified_mappings(self):

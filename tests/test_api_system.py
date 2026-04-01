@@ -128,3 +128,122 @@ def test_cyber_news_links_valid():
     except ImportError:
         # requests may not be installed in all test environments
         pass
+
+
+def test_news_verify_endpoint():
+    client = setup_test_client()
+
+    # parse-only check
+    r = client.get("/api/news/verify?network_check=false")
+    assert r.status_code == 200
+    payload = r.json()
+    assert payload.get("status") == "success"
+    assert payload.get("network_check") is False
+    assert payload.get("verified_count") >= 1
+
+    for item in payload.get("items", []):
+        assert "source_url" in item
+        assert "source_valid" in item
+        assert item.get("source_valid") in [True, False]
+
+    # optional network reachability check (best-effort, may fail due environment network restrictions)
+    r2 = client.get("/api/news/verify?network_check=true")
+    assert r2.status_code == 200
+    payload2 = r2.json()
+    assert payload2.get("status") == "success"
+    assert payload2.get("network_check") is True
+    assert payload2.get("verified_count") >= 1
+
+    for item in payload2.get("items", []):
+        assert "source_reachable" in item
+        assert item.get("source_reachable") in [True, False, None]
+        if item.get("cve_url"):
+            assert "cve_reachable" in item
+
+
+def test_api_pcaps_insert_and_list():
+    client = setup_test_client()
+    from app.models.database import PcapFile
+    from app.api.routes import _db
+    import os
+
+    pcap_path = "/tmp/test_capture.pcap"
+    pcap_content = b"pcap test data"
+    with open(pcap_path, "wb") as f:
+        f.write(pcap_content)
+
+    pcap = PcapFile(
+        filename="test_capture.pcap",
+        filepath=pcap_path,
+        start_time="2026-03-31T00:00:00Z",
+        end_time="2026-03-31T00:01:00Z",
+        size_bytes=len(pcap_content),
+        packets_count=100,
+        interface="eth0",
+        alerts_count=0,
+    )
+
+    # use the previously initialized database instance from routes
+    _db.insert_pcap(pcap)
+
+    response = client.get("/api/pcaps")
+    assert response.status_code == 200
+    data = response.json()
+    assert "pcaps" in data
+
+    found = [item for item in data["pcaps"] if item.get("id") == pcap.id]
+    assert len(found) == 1
+
+    # verify download works and content matches
+    download_resp = client.get(f"/api/pcaps/{pcap.id}/download")
+    assert download_resp.status_code == 200
+    assert download_resp.content == pcap_content
+
+    bad_resp = client.get("/api/pcaps/nonexistent-id/download")
+    assert bad_resp.status_code == 404
+    assert bad_resp.json().get("detail") in ["PCAP not found", "PCAP file not found"]
+
+    # clean up test file
+    if os.path.exists(pcap_path):
+        os.remove(pcap_path)
+
+
+def test_news_verify_summary():
+    client = setup_test_client()
+    resp = client.get("/api/news/verify/summary")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data.get("status") == "success"
+    assert "total" in data and "confirmed" in data and "invalid" in data
+    assert data["total"] == data["confirmed"] + data["invalid"]
+
+
+def test_system_selfheal_endpoint():
+    client = setup_test_client()
+    response = client.post("/api/system/selfheal")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload.get("status") == "success"
+    assert "self_heal_report" in payload
+
+
+def test_health_monitor_endpoint():
+    client = setup_test_client()
+    response = client.get("/api/health/monitor")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload.get("status") == "success"
+    assert "monitor" in payload
+    assert "timestamp" in payload
+
+
+def test_health_monitor_trigger():
+    client = setup_test_client()
+    response = client.post("/api/health/monitor/trigger")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload.get("status") == "success"
+    assert "manual_check" in payload
+    assert payload["manual_check"].get("last_check") is not None
+    assert payload["self_heal_report"].get("checked") is True
+

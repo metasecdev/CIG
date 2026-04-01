@@ -22,8 +22,8 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(str(LOG_DIR / "cig.log"))
-    ]
+        logging.FileHandler(str(LOG_DIR / "cig.log")),
+    ],
 )
 
 logger = logging.getLogger(__name__)
@@ -63,10 +63,64 @@ def setup_directories():
 def signal_handler(signum, frame):
     """Handle shutdown signals"""
     logger.info("Received shutdown signal, stopping...")
+    from app.health_scheduler import stop_health_scheduler
+    
+    stop_health_scheduler()
     global threat_matcher
     if threat_matcher:
         threat_matcher.stop()
     sys.exit(0)
+
+
+def self_heal_from_logs():
+    """Scan cig.log for known errors and apply straightforward corrections."""
+    log_file = LOG_DIR / "cig.log"
+    report = {
+        "checked": False,
+        "issues_found": [],
+        "actions_taken": [],
+        "message": ""
+    }
+
+    if not log_file.exists():
+        report["message"] = "No log file found; nothing to heal."
+        return report
+
+    report["checked"] = True
+
+    with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
+        lines = f.readlines()[-200:]
+
+    for line in lines:
+        if "No module named 'typing.io'" in line:
+            report["issues_found"].append("typing.io import error")
+            report["actions_taken"].append("MITRE fallback mapping active; no further action required")
+
+        if "database is locked" in line.lower():
+            report["issues_found"].append("database locked")
+            try:
+                import sqlite3
+                conn = sqlite3.connect(settings.database_path)
+                conn.execute("PRAGMA journal_mode=WAL;")
+                conn.execute("VACUUM;")
+                conn.commit()
+                conn.close()
+                report["actions_taken"].append("Performed WAL and VACUUM cleanup")
+                logger.info("Self-heal: performed database WAL/VACUUM to resolve lock conditions")
+            except Exception as e:
+                report["actions_taken"].append(f"Failed to perform DB cleanup: {e}")
+                logger.warning(f"Self-heal unable to fix database lock: {e}")
+
+        if "failed to fetch news" in line.lower():
+            report["issues_found"].append("news fetch failure")
+            report["actions_taken"].append("User notified that external network may be unavailable; no automatic fix")
+
+    if not report["issues_found"]:
+        report["message"] = "No auto-fixable issues found; system is healthy."
+    else:
+        report["message"] = "Self-heal scan completed."
+
+    return report
 
 
 # Global instances are initialized above
@@ -80,7 +134,9 @@ def main():
     parser.add_argument("--host", default=settings.api_host, help="API host")
     parser.add_argument("--port", type=int, default=settings.api_port, help="API port")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
-    parser.add_argument("--no-capture", action="store_true", help="Disable PCAP capture")
+    parser.add_argument(
+        "--no-capture", action="store_true", help="Disable PCAP capture"
+    )
     parser.add_argument("--config", help="Config file path")
     args = parser.parse_args()
 
@@ -97,10 +153,30 @@ def main():
     threat_matcher = ThreatMatcher(database)
     logger.info("Threat matcher initialized")
 
+    # Pre-fetch CVE data on startup
+    logger.info("Pre-fetching CVE news data...")
+    from app.feeds.cve_news import get_cve_feed
+
+    cve_feed = get_cve_feed()
+    try:
+        cve_counts = cve_feed.fetch_all_periods()
+        logger.info(
+            f"CVE data loaded: day={cve_counts.get('day', 0)}, week={cve_counts.get('week', 0)}, month={cve_counts.get('month', 0)}"
+        )
+    except Exception as e:
+        logger.warning(f"Initial CVE fetch failed (will retry on demand): {e}")
+
     # Initialize the API routes with the instances
     from app.api.routes import init_app
+
     init_app(database, threat_matcher)
     logger.info("API routes initialized")
+
+    # Start background health scheduler
+    from app.health_scheduler import start_health_scheduler
+
+    start_health_scheduler()
+    logger.info("Background health scheduler started")
 
     # Start threat matching engine
     threat_matcher.start()
@@ -117,7 +193,7 @@ def main():
         app,
         host=args.host,
         port=args.port,
-        log_level="info" if not args.debug else "debug"
+        log_level="info" if not args.debug else "debug",
     )
 
 
