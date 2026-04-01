@@ -6293,3 +6293,39 @@ TypeError: unsupported operand type(s) for +: 'int' and 'str'
 2026-03-31 20:28:29,154 - app.matching.engine - INFO - Updated CVE News: 0 high-level CVEs
 2026-03-31 20:28:35,374 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
 2026-03-31 20:28:51,515 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:29:22,087 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:29:52,716 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:30:22,792 - app.feeds.sans_isc - INFO - SANS ISC feed updated: 0 indicators
+2026-03-31 20:30:22,795 - app.matching.engine - INFO - Updated SANS ISC: 0 indicators
+2026-03-31 20:30:22,795 - app.feeds.pfblocker - WARNING - Local blocklist file not found: /config/pfblocker_local.txt
+2026-03-31 20:30:29,539 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:31:09,238 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:31:50,671 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:32:24,276 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:32:55,572 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:33:26,225 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:33:58,294 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:34:11,020 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:34:21,191 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:34:25,992 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T00:34:25UTC to 2026-04-01T00:34:25UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T00%3A34%3A25UTC&pubEndDate=2026-04-01T00%3A34%3A25UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 20:34:26,100 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T00:34:25UTC to 2026-04-01T00:34:25UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T00%3A34%3A25UTC&pubEndDate=2026-04-01T00%3A34%3A25UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 20:34:26,274 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T00:34:25UTC to 2026-04-01T00:34:25UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T00%3A34%3A25UTC&pubEndDate=2026-04-01T00%3A34%3A25UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 20:34:26,394 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T00:34:25UTC to 2026-04-01T00:34:25UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T00%3A34%3A25UTC&pubEndDate=2026-04-01T00%3A34%3A25UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 20:34:26,532 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T00:34:25UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T00%3A34%3A25UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 20:34:26,537 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 20:34:28,517 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T00:34:28UTC to 2026-04-01T00:34:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T00%3A34%3A28UTC&pubEndDate=2026-04-01T00%3A34%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 20:34:28,652 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T00:34:28UTC to 2026-04-01T00:34:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T00%3A34%3A28UTC&pubEndDate=2026-04-01T00%3A34%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 20:34:28,754 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T00:34:28UTC to 2026-04-01T00:34:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T00%3A34%3A28UTC&pubEndDate=2026-04-01T00%3A34%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 20:34:28,859 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T00:34:28UTC to 2026-04-01T00:34:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T00%3A34%3A28UTC&pubEndDate=2026-04-01T00%3A34%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 20:34:29,026 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T00:34:28UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T00%3A34%3A28UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 20:34:29,032 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 20:34:29,956 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:34:35,004 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:34:41,166 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:34:45,704 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:35:02,745 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:35:16,311 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:35:35,073 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:36:24,814 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:36:56,907 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 20:37:28,691 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
