@@ -153,6 +153,41 @@ def main():
     threat_matcher = ThreatMatcher(database)
     logger.info("Threat matcher initialized")
 
+    # Initialize Feed Scheduler
+    logger.info("Initializing feed scheduler...")
+    from app.scheduling.feed_scheduler import FeedScheduler, FeedPriority
+    from app.feeds.dshield_polling import poll_dshield_feed
+    scheduler = FeedScheduler()
+    
+    # Register DShield feed with midnight UTC refresh
+    scheduler.register_feed(
+        feed_id="dshield",
+        feed_name="DShield Honeypot",
+        callback=lambda: poll_dshield_feed(database=database),
+        update_interval=300,  # 5 minutes for live polling
+        priority=FeedPriority.CRITICAL,
+        refresh_at_midnight_utc=True,  # Force refresh at midnight UTC
+    )
+    logger.info("DShield feed registered with scheduler")
+
+    # Initialize Feed Filter Engine
+    logger.info("Initializing feed filter engine...")
+    from app.feeds.filtering import FeedFilterEngine
+    filter_engine = FeedFilterEngine()
+    logger.info("Feed filter engine initialized")
+
+    # Initialize Report Ingestion Connector
+    logger.info("Initializing report ingestion connector...")
+    from app.feeds.report_ingestion import ReportIngestionConnector
+    report_ingestion = ReportIngestionConnector(database=database)
+    logger.info("Report ingestion connector initialized")
+
+    # Initialize DShield Poller
+    logger.info("Initializing DShield poller...")
+    from app.feeds.dshield_polling import get_dshield_poller
+    dshield_poller = get_dshield_poller(database=database)
+    logger.info("DShield poller initialized")
+
     # Pre-fetch CVE data on startup
     logger.info("Pre-fetching CVE news data...")
     from app.feeds.cve_news import get_cve_feed
@@ -169,7 +204,14 @@ def main():
     # Initialize the API routes with the instances
     from app.api.routes import init_app
 
-    init_app(database, threat_matcher)
+    init_app(
+        database, 
+        threat_matcher,
+        scheduler=scheduler,
+        filter_engine=filter_engine,
+        dshield_poller=dshield_poller,
+        report_ingestion=report_ingestion,
+    )
     logger.info("API routes initialized")
 
     # Start background health scheduler

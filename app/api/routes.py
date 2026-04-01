@@ -56,6 +56,10 @@ app.mount(
 _db: Optional[Database] = None
 _threat_matcher: Optional[ThreatMatcher] = None
 threat_matcher: Optional[ThreatMatcher] = None
+_scheduler = None
+_filter_engine = None
+_dshield_poller = None
+_report_ingestion = None
 
 
 def get_db() -> Database:
@@ -72,12 +76,45 @@ def get_threat_matcher() -> ThreatMatcher:
     return _threat_matcher
 
 
-def init_app(database: Database, matcher: ThreatMatcher):
+def get_scheduler():
+    """Get scheduler instance"""
+    if _scheduler is None:
+        raise HTTPException(status_code=503, detail="Scheduler not initialized")
+    return _scheduler
+
+
+def get_filter_engine():
+    """Get filter engine instance"""
+    if _filter_engine is None:
+        raise HTTPException(status_code=503, detail="Filter engine not initialized")
+    return _filter_engine
+
+
+def get_dshield_poller():
+    """Get DShield poller instance"""
+    if _dshield_poller is None:
+        raise HTTPException(status_code=503, detail="DShield poller not initialized")
+    return _dshield_poller
+
+
+def get_report_ingestion():
+    """Get report ingestion connector instance"""
+    if _report_ingestion is None:
+        raise HTTPException(status_code=503, detail="Report ingestion not initialized")
+    return _report_ingestion
+
+
+def init_app(database: Database, matcher: ThreatMatcher, scheduler=None, filter_engine=None, 
+             dshield_poller=None, report_ingestion=None):
     """Initialize global instances"""
-    global _db, _threat_matcher, threat_matcher
+    global _db, _threat_matcher, threat_matcher, _scheduler, _filter_engine, _dshield_poller, _report_ingestion
     _db = database
     _threat_matcher = matcher
     threat_matcher = matcher
+    _scheduler = scheduler
+    _filter_engine = filter_engine
+    _dshield_poller = dshield_poller
+    _report_ingestion = report_ingestion
 
 
 # --- Pydantic Models ---
