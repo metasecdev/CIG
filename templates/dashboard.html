@@ -222,8 +222,17 @@
                                 <h5><i class="fas fa-newspaper"></i> Security Alerts</h5>
                             </div>
                             <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="news-source-filter" class="form-label">Filter by Source:</label>
+                                    <select id="news-source-filter" class="form-select form-select-sm" title="Filter news by source">
+                                        <option value="">All Sources</option>
+                                        <option value="SANS">SANS ISC</option>
+                                        <option value="CVE">CVE Alerts</option>
+                                        <option value="APT">APT Campaigns</option>
+                                    </select>
+                                </div>
                                 {% if latest_news %}
-                                    <div class="list-group">
+                                    <div class="list-group" id="news-list">
                                         {% for news in latest_news %}
                                         <div class="list-group-item">
                                             <strong class="news-title">{{ news.title|truncate(40) }}</strong>
@@ -521,6 +530,40 @@
         document.getElementById('system-shutdown').addEventListener('click', function () {
             callSystemEndpoint('/api/system/shutdown', 'Shutdown');
         });
+
+        // News Source Filtering
+        const newsSourceFilter = document.getElementById('news-source-filter');
+        if (newsSourceFilter) {
+            newsSourceFilter.addEventListener('change', async function () {
+                const source = this.value;
+                const url = source 
+                    ? `/api/news?limit=50&source=${encodeURIComponent(source)}`
+                    : '/api/news?limit=50';
+                
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        const newsList = document.getElementById('news-list');
+                        if (data.items.length === 0) {
+                            newsList.innerHTML = '<p class="text-muted">No items for this source</p>';
+                            return;
+                        }
+                        
+                        newsList.innerHTML = data.items.map(item => `
+                            <div class="list-group-item">
+                                <strong class="news-title">${item.title.substring(0, 40)}...</strong>
+                                <br>
+                                <small class="text-muted">${item.source}</small>
+                            </div>
+                        `).join('');
+                    }
+                } catch (err) {
+                    console.error('News filter error:', err);
+                }
+            });
+        }
 
         // CVE Severity Dashboard
         let currentSeverity = 'critical';

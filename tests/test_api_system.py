@@ -245,5 +245,139 @@ def test_health_monitor_trigger():
     assert payload.get("status") == "success"
     assert "manual_check" in payload
     assert payload["manual_check"].get("last_check") is not None
+
+
+def test_news_feed_deduplication():
+    """Test that duplicate news entries are removed based on CVEs and IOCs"""
+    from app.feeds.news_feed import get_feed
+
+    feed = get_feed()
+    
+    # Create test items with duplicate CVE
+    test_items = [
+        {
+            "id": "dup-cve-1",
+            "cve": "CVE-2026-TEST-001",
+            "iocs": ["ioc_a", "ioc_b"],
+            "signatures": ["sig1"],
+        },
+        {
+            "id": "dup-cve-2",
+            "cve": "CVE-2026-TEST-001",  # Same CVE
+            "iocs": ["ioc_c"],
+            "signatures": ["sig2"],
+        },
+        {
+            "id": "dup-simc-3",
+            "cve": "CVE-2026-TEST-002",
+            "iocs": ["ioc_d"],
+            "signatures": ["sig1"],  # Same signature as item 1
+        },
+        {
+            "id": "unique-4",
+            "cve": "CVE-2026-TEST-003",
+            "iocs": ["ioc_e"],
+            "signatures": ["sig_unique"],
+        },
+    ]
+    
+    deduped = feed._deduplicate(test_items)
+    
+    # Should keep only 2: first unique, and last unique (by CVE, IOC, signature)
+    assert len(deduped) == 2
+    assert deduped[0]["id"] == "dup-cve-1"
+    assert deduped[1]["id"] == "unique-4"
+
+
+def test_sans_isc_feeds_included():
+    """Test that SANS ISC feeds are present in news"""
+    from app.feeds.news_feed import get_feed
+
+    feed = get_feed()
+    items = feed.get_latest(limit=100)
+    
+    sans_items = [item for item in items if "sans" in item.get("id", "").lower()]
+    
+    # Should have at least 5 SANS ISC items
+    assert len(sans_items) >= 5
+    
+    # Verify SANS items have required fields
+    for item in sans_items:
+        assert "iocs" in item
+        assert "signatures" in item
+        assert "mitigation" in item
+        assert len(item["iocs"]) > 0
+        assert len(item["signatures"]) > 0
+
+
+def test_news_source_filtering():
+    """Test that news can be filtered by source"""
+    client = setup_test_client()
+    
+    # Get all news
+    resp_all = client.get("/api/news?limit=50")
+    assert resp_all.status_code == 200
+    all_items = resp_all.json().get("items", [])
+    
+    # Filter by SANS
+    resp_sans = client.get("/api/news?source=SANS&limit=50")
+    assert resp_sans.status_code == 200
+    sans_items = resp_sans.json().get("items", [])
+    
+    # All SANS items should have "sans" in source or ID
+    for item in sans_items:
+        assert "sans" in item.get("id", "").lower() or "sans" in item.get("source", "").lower()
+    
+    # SANS count should be less than total
+    assert len(sans_items) <= len(all_items)
+
+
+def test_news_sources_endpoint():
+    """Test news sources discovery endpoint"""
+    client = setup_test_client()
+    
+    resp = client.get("/api/news/sources")
+    assert resp.status_code == 200
+    data = resp.json()
+    
+    assert data.get("status") == "success"
+    assert "sources" in data
+    assert "feed_types" in data
+    assert len(data["sources"]) > 0
+
+
+def test_dshield_polling():
+    """Test DShield honeypot poller"""
+    from app.feeds.dshield_polling import get_dshield_poller
+    
+    poller = get_dshield_poller()
+    
+    # These might fail if SANS API is down, so we just verify structure
+    summary = poller.summarize_threats()
+    
+    assert "last_updated" in summary
+    assert "ssh_attacks" in summary
+    assert "web_attacks" in summary
+    assert "global_unique_ips" in summary
+
+
+def test_dshield_endpoints():
+    """Test DShield API endpoints"""
+    client = setup_test_client()
+    
+    # Test threats summary endpoint
+    resp = client.get("/api/feeds/dshield/threats")
+    assert resp.status_code == 200
+    assert resp.json().get("status") == "success"
+    
+    # Test SSH attackers endpoint
+    resp_ssh = client.get("/api/feeds/dshield/ssh?limit=50")
+    assert resp_ssh.status_code == 200
+    assert resp_ssh.json().get("status") == "success"
+    
+    # Test Web scanners endpoint
+    resp_web = client.get("/api/feeds/dshield/web?limit=50")
+    assert resp_web.status_code == 200
+    assert resp_web.json().get("status") == "success"
     assert payload["self_heal_report"].get("checked") is True
 
