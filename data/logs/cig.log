@@ -6834,3 +6834,44 @@ TypeError: unsupported operand type(s) for +: 'int' and 'str'
 2026-03-31 22:58:42,399 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
 2026-03-31 22:59:14,146 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
 2026-03-31 22:59:45,699 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:00:17,822 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:00:54,549 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:01:27,615 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:01:28,911 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:02:00,366 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:02:01,855 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:02:35,119 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:02:57,749 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:03:07,801 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:03:29,011 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:03:32,740 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:03:41,121 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:04:02,373 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:04:06,410 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:04:20,154 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:04:37,978 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:04:38,859 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:04:52,067 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:05:11,759 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:05:13,447 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:05:24,589 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:05:47,282 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:05:49,240 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:05:59,330 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:06:19,228 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:06:22,350 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:06:23,870 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:06:39,449 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:06:49,969 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:06:58,220 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:07:07,466 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-31T03:07:07UTC to 2026-04-01T03:07:07UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-31T03%3A07%3A07UTC&pubEndDate=2026-04-01T03%3A07%3A07UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=500
+2026-03-31 23:07:07,703 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-25T03:07:07UTC to 2026-04-01T03:07:07UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-25T03%3A07%3A07UTC&pubEndDate=2026-04-01T03%3A07%3A07UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=1000
+2026-03-31 23:07:07,855 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2026-03-02T03:07:07UTC to 2026-04-01T03:07:07UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2026-03-02T03%3A07%3A07UTC&pubEndDate=2026-04-01T03%3A07%3A07UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:07:08,047 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2025-04-01T03:07:07UTC to 2026-04-01T03:07:07UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2025-04-01T03%3A07%3A07UTC&pubEndDate=2026-04-01T03%3A07%3A07UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:07:08,271 - app.feeds.cve_news - ERROR - Failed to fetch CVEs for 2021-01-01T00:00:00UTC to 2026-04-01T03:07:07UTC: 404 Client Error: Not Found for url: https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=2021-01-01T00%3A00%3A00UTC&pubEndDate=2026-04-01T03%3A07%3A07UTC&cvssV3Severity=CRITICAL%2CHIGH&startIndex=0&resultsPerPage=2000
+2026-03-31 23:07:08,278 - app.feeds.cve_news - INFO - CVE News: day=0, week=0, month=0, year=0, historical=0
+2026-03-31 23:07:12,523 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:07:16,862 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:07:30,777 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:07:43,871 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
+2026-03-31 23:07:47,495 - app.mitre.attack_mapper - WARNING - MITRE ATT&CK dependency mismatch (typing.io); using fallback mappings
