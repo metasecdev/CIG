@@ -1310,14 +1310,128 @@ async def generate_security_report(days: int = Query(7, ge=1, le=90)):
 
 
 @app.get("/api/news")
-async def api_cyber_news(limit: int = Query(10, ge=1, le=50)):
-    """Latest curated cybersecurity news, IOC and mitigation signatures"""
+async def api_cyber_news(
+    limit: int = Query(10, ge=1, le=50),
+    source: str = Query("", description="Filter by source: SANS, CVE, APT, or empty for all"),
+):
+    """Latest curated cybersecurity news, IOC and mitigation signatures with optional source filtering"""
     try:
         news_items = get_feed().get_latest(limit=limit)
-        return {"status": "success", "items": news_items, "count": len(news_items)}
+        
+        # Filter by source if specified
+        if source:
+            source_lower = source.lower()
+            filtered = []
+            for item in news_items:
+                item_source = item.get("source", "").lower()
+                item_id = item.get("id", "").lower()
+                
+                # Match by source field or ID prefix
+                if source_lower in item_source or source_lower in item_id:
+                    filtered.append(item)
+            news_items = filtered
+        
+        return {
+            "status": "success",
+            "items": news_items,
+            "count": len(news_items),
+            "source_filter": source if source else "all",
+        }
     except Exception as e:
         logger.error(f"Failed to fetch news: {e}")
         raise HTTPException(status_code=500, detail="Failed to load cyber news")
+
+
+@app.get("/api/news/sources")
+async def api_news_sources():
+    """Get available news feed sources"""
+    try:
+        news_items = get_feed().get_latest(limit=100)
+        
+        # Extract unique sources
+        sources = set()
+        for item in news_items:
+            source = item.get("source", "Unknown")
+            sources.add(source)
+        
+        # Detect feed types from IDs
+        feed_types = set()
+        for item in news_items:
+            item_id = item.get("id", "")
+            if "sans" in item_id.lower():
+                feed_types.add("SANS")
+            elif "cve" in item_id.lower() or "cve" in item.get("cve", "").lower():
+                feed_types.add("CVE")
+            if "apt" in item.get("summary", "").lower():
+                feed_types.add("APT")
+        
+        return {
+            "status": "success",
+            "sources": sorted(list(sources)),
+            "feed_types": sorted(list(feed_types)),
+        }
+    except Exception as e:
+        logger.error(f"Failed to fetch news sources: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load news sources")
+
+
+@app.get("/api/feeds/dshield/threats")
+async def api_dshield_threats():
+    """Get real-time DShield honeypot threat summary"""
+    try:
+        from app.feeds.dshield_polling import get_dshield_poller
+        
+        poller = get_dshield_poller()
+        threats = poller.summarize_threats()
+        
+        return {
+            "status": "success",
+            "dshield_threats": threats,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Failed to fetch DShield threats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch DShield data")
+
+
+@app.get("/api/feeds/dshield/ssh")
+async def api_dshield_ssh(limit: int = Query(100, ge=1, le=500)):
+    """Get latest DShield SSH honeypot attackers"""
+    try:
+        from app.feeds.dshield_polling import get_dshield_poller
+        
+        poller = get_dshield_poller()
+        attackers = poller.poll_ssh_attackers(limit=limit)
+        
+        return {
+            "status": "success",
+            "ssh_attackers": attackers,
+            "count": len(attackers),
+            "last_updated": poller.last_ssh_poll.isoformat() if poller.last_ssh_poll else None,
+        }
+    except Exception as e:
+        logger.error(f"Failed to fetch DShield SSH data: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch DShield SSH data")
+
+
+@app.get("/api/feeds/dshield/web")
+async def api_dshield_web(limit: int = Query(100, ge=1, le=500)):
+    """Get latest DShield web honeypot scanners"""
+    try:
+        from app.feeds.dshield_polling import get_dshield_poller
+        
+        poller = get_dshield_poller()
+        scanners = poller.poll_web_attackers(limit=limit)
+        
+        return {
+            "status": "success",
+            "web_scanners": scanners,
+            "count": len(scanners),
+            "last_updated": poller.last_web_poll.isoformat() if poller.last_web_poll else None,
+        }
+    except Exception as e:
+        logger.error(f"Failed to fetch DShield Web data: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch DShield Web data")
 
 
 @app.get("/api/news/cve")
