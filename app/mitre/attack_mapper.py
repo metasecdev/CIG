@@ -8,13 +8,22 @@ import json
 from typing import Dict, List, Optional, Any, Set
 from datetime import datetime
 import re
+import warnings
+
+# Suppress typing.io compatibility warnings from mitreattack library
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", message=".*typing.io.*")
 
 try:
-    from mitreattack.attackToExcel import attackToExcel
-    from mitreattack.navlayers import Layer
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        from mitreattack.attackToExcel import attackToExcel
+        from mitreattack.navlayers import Layer
 
     HAS_MITRE = True
 except ImportError:
+    HAS_MITRE = False
+except Exception:
     HAS_MITRE = False
 
 from app.models.database import Database, Alert

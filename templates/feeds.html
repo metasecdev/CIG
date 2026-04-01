@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed Management - CIG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: rgba(30, 144, 255, 0.1);
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .header h1 {
+            color: #1e90ff;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .control-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        button.danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        }
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .feed-card {
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .feed-card h3 {
+            color: #1e90ff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #1e90ff;
+            padding-bottom: 10px;
+        }
+        .feed-info {
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .feed-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .feed-info-label {
+            color: #00bfff;
+            font-weight: 500;
+        }
+        .feed-info-value {
+            color: #00ff00;
+            font-family: monospace;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .status-badge.running {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+        }
+        .status-badge.stopped {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .status-badge.updating {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(30, 144, 255, 0.3);
+        }
+        .card-actions button {
+            flex: 1;
+            min-width: 100px;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        .alert.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        .alert.show {
+            display: block;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-label {
+            color: #00bfff;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            color: #1e90ff;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .timestamp {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 30px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(30, 144, 255, 0.3);
+            border-top-color: #1e90ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .icon {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Feed Management Dashboard</h1>
+            <p>Monitor and control threat intelligence feed updates</p>
+        </div>
+
+        <div id="alert-container" class="alert"></div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">Scheduler Status</div>
+                <div class="stat-value" id="scheduler-status">Loading...</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Active Feeds</div>
+                <div class="stat-value" id="active-feeds">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Last Update</div>
+                <div class="stat-value" id="last-update" style="font-size: 0.8em;">---</div>
+            </div>
+        </div>
+
+        <div class="control-bar">
+            <button onclick="startScheduler()"><span class="icon">▶️</span>Start Scheduler</button>
+            <button onclick="stopScheduler()" class="danger"><span class="icon">⏹️</span>Stop Scheduler</button>
+            <button onclick="updateAllFeeds()"><span class="icon">🔄</span>Update All Feeds</button>
+            <button onclick="refreshDashboard()"><span class="icon">🔃</span>Refresh Status</button>
+        </div>
+
+        <h2 style="color: #1e90ff; margin-bottom: 20px; margin-top: 30px;">📋 Registered Feeds</h2>
+        <div class="feed-grid" id="feeds-container">
+            <p style="color: #666;">Loading feeds...</p>
+        </div>
+
+        <div class="timestamp">
+            Last updated: {{ timestamp }}
+        </div>
+    </div>
+
+    <script>
+        const updateIntervalMs = 5000;
+        let updateTimer = null;
+
+        // Load initial data
+        loadFeedsStatus();
+        startAutoRefresh();
+
+        function startAutoRefresh() {
+            if (updateTimer) clearInterval(updateTimer);
+            updateTimer = setInterval(loadFeedsStatus, updateIntervalMs);
+        }
+
+        async function loadFeedsStatus() {
+            try {
+                const response = await fetch('/api/scheduler/status');
+                const data = await response.json();
+
+                if (data.feeds) {
+                    renderFeeds(data.feeds);
+                    document.getElementById('scheduler-status').textContent = 
+                        data.scheduler_running ? '✓ Running' : '✗ Stopped';
+                    document.getElementById('scheduler-status').style.color = 
+                        data.scheduler_running ? '#00ff00' : '#ff6b6b';
+                    
+                    const activeFeedsCount = Object.values(data.feeds).filter(f => f.enabled).length;
+                    document.getElementById('active-feeds').textContent = activeFeedsCount;
+                    
+                    // Update last update time
+                    const lastUpdate = Object.values(data.feeds).reduce((latest, f) => {
+                        const feedTime = new Date(f.last_update_time);
+                        return feedTime > latest ? feedTime : latest;
+                    }, new Date(0));
+                    
+                    if (lastUpdate.getTime() > 0) {
+                        document.getElementById('last-update').textContent = 
+                            lastUpdate.toLocaleTimeString();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load feeds status:', error);
+                showAlert('error', 'Failed to load feeds status');
+            }
+        }
+
+        function renderFeeds(feeds) {
+            const container = document.getElementById('feeds-container');
+            
+            if (!feeds || Object.keys(feeds).length === 0) {
+                container.innerHTML = '<p style="color: #666;">No feeds registered</p>';
+                return;
+            }
+
+            container.innerHTML = Object.entries(feeds).map(([feedId, feed]) => {
+                const lastUpdate = new Date(feed.last_update_time);
+                const isUpdating = feed.status === 'updating';
+                
+                return `
+                    <div class="feed-card">
+                        <h3>${feed.name}</h3>
+                        
+                        <div class="feed-info">
+                            <div class="feed-info-row">
+                                <span class="feed-info-label">Status:</span>
+                                <span class="status-badge ${getStatusClass(feed.status)}">
+                                    ${isUpdating ? '<span class="spinner"></span>' : ''} ${feed.status || 'Unknown'}
+                                </span>
+                            </div>
+                            <div class="feed-info-row">
+                                <span class="feed-info-label">Priority:</span>
+                                <span class="feed-info-value">${feed.priority || 'MEDIUM'}</span>
+                            </div>
+                            <div class="feed-info-row">
+                                <span class="feed-info-label">Last Update:</span>
+                                <span class="feed-info-value">${lastUpdate.toLocaleTimeString()}</span>
+                            </div>
+                            <div class="feed-info-row">
+                                <span class="feed-info-label">Next Update:</span>
+                                <span class="feed-info-value">${feed.next_update_time || 'Pending'}</span>
+                            </div>
+                            ${feed.indicators_count !== undefined ? `
+                                <div class="feed-info-row">
+                                    <span class="feed-info-label">Indicators:</span>
+                                    <span class="feed-info-value">${feed.indicators_count}</span>
+                                </div>
+                            ` : ''}
+                            ${feed.total_updates !== undefined ? `
+                                <div class="feed-info-row">
+                                    <span class="feed-info-label">Total Updates:</span>
+                                    <span class="feed-info-value">${feed.total_updates}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button onclick="updateFeed('${feedId}')" ${isUpdating ? 'disabled' : ''}>
+                                ${isUpdating ? '<span class="spinner"></span>' : '🔄'} Update
+                            </button>
+                            <button onclick="viewFeedDetails('${feedId}')">ℹ️ Details</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'stopped';
+            status = status.toLowerCase();
+            if (status.includes('run') || status.includes('active')) return 'running';
+            if (status.includes('updat')) return 'updating';
+            if (status.includes('error')) return 'stopped';
+            return 'stopped';
+        }
+
+        async function startScheduler() {
+            try {
+                const response = await fetch('/api/scheduler/start', { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('success', 'Feed scheduler started');
+                    loadFeedsStatus();
+                } else {
+                    showAlert('error', data.detail || 'Failed to start scheduler');
+                }
+            } catch (error) {
+                showAlert('error', 'Error: ' + error.message);
+            }
+        }
+
+        async function stopScheduler() {
+            if (!confirm('Are you sure you want to stop the feed scheduler?')) return;
+            
+            try {
+                const response = await fetch('/api/scheduler/stop', { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('success', 'Feed scheduler stopped');
+                    loadFeedsStatus();
+                } else {
+                    showAlert('error', data.detail || 'Failed to stop scheduler');
+                }
+            } catch (error) {
+                showAlert('error', 'Error: ' + error.message);
+            }
+        }
+
+        async function updateFeed(feedId) {
+            try {
+                const response = await fetch(`/api/scheduler/feed/${feedId}/update`, { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('success', `Feed '${feedId}' update triggered`);
+                    loadFeedsStatus();
+                } else {
+                    showAlert('error', data.message || 'Failed to update feed');
+                }
+            } catch (error) {
+                showAlert('error', 'Error: ' + error.message);
+            }
+        }
+
+        async function updateAllFeeds() {
+            try {
+                const response = await fetch('/api/scheduler/update-all', { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('success', 'All feeds update triggered');
+                    loadFeedsStatus();
+                } else {
+                    showAlert('error', data.detail || 'Failed to update feeds');
+                }
+            } catch (error) {
+                showAlert('error', 'Error: ' + error.message);
+            }
+        }
+
+        function viewFeedDetails(feedId) {
+            alert(`Feed Details for: ${feedId}\n\nThis would open a detailed view with historical data and statistics.`);
+        }
+
+        function refreshDashboard() {
+            loadFeedsStatus();
+            showAlert('success', 'Dashboard refreshed');
+        }
+
+        function showAlert(type, message) {
+            const container = document.getElementById('alert-container');
+            container.textContent = message;
+            container.className = `alert ${type} show`;
+            
+            if (type === 'success') {
+                setTimeout(() => container.classList.remove('show'), 4000);
+            }
+        }
+    </script>
+</body>
+</html>
