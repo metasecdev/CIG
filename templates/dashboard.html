@@ -358,30 +358,9 @@
 
                 <!-- System Status -->
                 <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5><i class="fas fa-server"></i> System Status</h5>
-                                <div>
-                                    <button id="system-restart" class="btn btn-sm btn-warning me-1">Restart</button>
-                                    <button id="system-shutdown" class="btn btn-sm btn-danger">Shutdown</button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div id="system-action-result" class="mb-3"></div>
-                                <div class="mb-2">
-                                    <strong>Status:</strong>
-                                    <span class="badge bg-{{ 'success' if stats.system.running else 'warning' }}">
-                                        {{ 'running' if stats.system.running else 'stopped' }}
-                                    </span>
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Version:</strong> 1.0.0
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Uptime:</strong> Operational
-                                </div>
-                            </div>
+                    <div class="col-md-12">
+                        <div class="alert alert-warning" role="alert">
+                            <strong>System actions moved:</strong> Restart and Shutdown controls are now on the <a href="/dashboard/status">System Status</a> page for centralized service control.
                         </div>
                     </div>
 
@@ -533,37 +512,56 @@
 
         // News Source Filtering
         const newsSourceFilter = document.getElementById('news-source-filter');
-        if (newsSourceFilter) {
-            newsSourceFilter.addEventListener('change', async function () {
-                const source = this.value;
-                const url = source 
-                    ? `/api/news?limit=50&source=${encodeURIComponent(source)}`
-                    : '/api/news?limit=50';
-                
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    if (data.status === 'success') {
-                        const newsList = document.getElementById('news-list');
-                        if (data.items.length === 0) {
-                            newsList.innerHTML = '<p class="text-muted">No items for this source</p>';
-                            return;
-                        }
-                        
-                        newsList.innerHTML = data.items.map(item => `
-                            <div class="list-group-item">
-                                <strong class="news-title">${item.title.substring(0, 40)}...</strong>
-                                <br>
-                                <small class="text-muted">${item.source}</small>
-                            </div>
-                        `).join('');
+
+        async function loadCyberNews(source = "") {
+            const newsList = document.getElementById('news-list');
+            if (!newsList) return;
+
+            const url = source
+                ? `/api/news?limit=100&source=${encodeURIComponent(source)}`
+                : '/api/news?limit=100';
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    if (data.items.length === 0) {
+                        newsList.innerHTML = '<p class="text-muted">No items for this source</p>';
+                        return;
                     }
-                } catch (err) {
-                    console.error('News filter error:', err);
+
+                    newsList.innerHTML = data.items.map(item => `
+                        <div class="list-group-item">
+                            <strong class="news-title">${item.title.substring(0, 40)}...</strong>
+                            <br>
+                            <small class="text-muted">${item.source}</small>
+                        </div>
+                    `).join('');
                 }
+            } catch (err) {
+                console.error('News load error:', err);
+                if (newsList) {
+                    newsList.innerHTML = `<div class="alert alert-danger">News refresh failed: ${err.message}</div>`;
+                }
+            }
+        }
+
+        if (newsSourceFilter) {
+            newsSourceFilter.addEventListener('change', function () {
+                const source = this.value;
+                loadCyberNews(source);
             });
         }
+
+        // Initial news load
+        loadCyberNews();
+
+        // Auto_refresh every 5 minutes (300,000 ms)
+        setInterval(function () {
+            const source = newsSourceFilter ? newsSourceFilter.value : '';
+            loadCyberNews(source);
+        }, 300000);
 
         // CVE Severity Dashboard
         let currentSeverity = 'critical';
@@ -571,7 +569,7 @@
 
         async function loadCVESeverity() {
             try {
-                const response = await fetch('/api/news/cve/severity?limit=50');
+                const response = await fetch('/api/news/cve/severity?limit=100');
                 const data = await response.json();
                 
                 if (data.status === 'success') {

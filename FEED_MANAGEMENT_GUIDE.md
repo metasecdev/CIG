@@ -74,11 +74,11 @@ The CIG now includes comprehensive feed management with centralized credential m
 ### Scheduler Endpoints
 
 ```
-GET  /api/scheduler/status          - Get scheduler status and all feeds
-POST /api/scheduler/start           - Start the scheduler
-POST /api/scheduler/stop            - Stop the scheduler
-POST /api/scheduler/feed/{id}/update - Update a specific feed
-POST /api/scheduler/update-all       - Update all feeds
+GET  /api/feeds/scheduler/status      - Get scheduler status and all feeds
+POST /api/feeds/scheduler/start       - Start the scheduler
+POST /api/feeds/scheduler/stop        - Stop the scheduler
+POST /api/feeds/scheduler/update/{id} - Update a specific feed
+POST /api/feeds/scheduler/update/all  - Update all feeds
 ```
 
 ### DShield Endpoints
@@ -97,8 +97,8 @@ GET  /api/feeds/dshield/threats     - Get threat summary
 ### Filter Endpoints
 
 ```
-GET  /api/filters/status            - Get filter engine status
-POST /api/filters/apply             - Apply filters to indicators
+GET  /api/feeds/filters/status      - Get filter engine status
+POST /api/feeds/filters/apply       - Apply filters to indicators
 ```
 
 ### Configuration Endpoints
@@ -106,11 +106,13 @@ POST /api/filters/apply             - Apply filters to indicators
 ```
 GET  /api/config/status             - Get overall configuration status
 
-POST /api/config/nessus/credentials - Set Nessus API credentials
-GET  /api/config/nessus/enabled     - Check if Nessus is enabled
+POST /api/config/nessus/credentials      - Set Nessus API credentials
+POST /api/config/nessus/test             - Test Nessus connection with credentials
+GET  /api/config/nessus/enabled          - Check if Nessus is enabled
 
-POST /api/config/graynoise/credentials - Set GrayNoise API credentials
-GET  /api/config/graynoise/enabled     - Check if GrayNoise is enabled
+POST /api/config/graynoise/credentials   - Set GrayNoise API credentials
+POST /api/config/graynoise/test          - Test GrayNoise connection with credentials
+GET  /api/config/graynoise/enabled       - Check if GrayNoise is enabled
 
 POST   /api/config/custom-api/add   - Add/update a custom API feed
 GET    /api/config/custom-api/list  - List all custom API feeds
@@ -207,6 +209,9 @@ curl -X POST http://localhost:8000/api/config/nessus/credentials \
     "enabled": true
   }'
 
+# Test Nessus connection
+curl -X POST http://localhost:8000/api/config/nessus/test
+
 # Check if enabled
 curl http://localhost:8000/api/config/nessus/enabled
 ```
@@ -222,6 +227,9 @@ curl -X POST http://localhost:8000/api/config/graynoise/credentials \
     "api_type": "enterprise",
     "enabled": true
   }'
+
+# Test GrayNoise connection
+curl -X POST http://localhost:8000/api/config/graynoise/test
 
 # Check if enabled
 curl http://localhost:8000/api/config/graynoise/enabled
@@ -254,23 +262,23 @@ curl -X DELETE http://localhost:8000/api/config/custom-api/my-threat-feed
 
 ```bash
 # Update a specific feed immediately
-curl -X POST http://localhost:8000/api/scheduler/feed/dshield/update?force=true
+curl -X POST http://localhost:8000/api/feeds/scheduler/update/dshield
 
 # Update all feeds
-curl -X POST http://localhost:8000/api/scheduler/update-all
+curl -X POST http://localhost:8000/api/feeds/scheduler/update/all
 
 # Start the scheduler (runs at midnight UTC)
-curl -X POST http://localhost:8000/api/scheduler/start
+curl -X POST http://localhost:8000/api/feeds/scheduler/start
 
 # Stop the scheduler
-curl -X POST http://localhost:8000/api/scheduler/stop
+curl -X POST http://localhost:8000/api/feeds/scheduler/stop
 ```
 
 ### 5. Checking Scheduler Status
 
 ```bash
 # Get full scheduler status
-curl http://localhost:8000/api/scheduler/status
+curl http://localhost:8000/api/feeds/scheduler/status
 
 # Response example:
 {

@@ -627,17 +627,41 @@
         }
         
         async function testNessusConnection() {
-            showAlert('nessus-alert', 'error', 'Testing connection...');
-            setTimeout(() => {
-                showAlert('nessus-alert', 'success', 'Connection test completed (check system logs for details)');
-            }, 2000);
+            showAlert('nessus-alert', 'info', 'Testing Nessus connection...');
+            try {
+                const response = await fetch('/api/config/nessus/test', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showAlert('nessus-alert', 'success', `✓ ${result.message} (${result.host})`);
+                } else {
+                    showAlert('nessus-alert', 'error', `✗ Connection failed: ${result.error || result.message}`);
+                }
+            } catch (error) {
+                showAlert('nessus-alert', 'error', `✗ Test error: ${error.message}`);
+            }
         }
         
         async function testGrayNoiseConnection() {
-            showAlert('graynoise-alert', 'error', 'Testing connection...');
-            setTimeout(() => {
-                showAlert('graynoise-alert', 'success', 'Connection test completed (check system logs for details)');
-            }, 2000);
+            showAlert('graynoise-alert', 'info', 'Testing GrayNoise connection...');
+            try {
+                const response = await fetch('/api/config/graynoise/test', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showAlert('graynoise-alert', 'success', `✓ ${result.message} (${result.api_type} API)`);
+                } else {
+                    showAlert('graynoise-alert', 'error', `✗ Connection failed: ${result.error || result.message}`);
+                }
+            } catch (error) {
+                showAlert('graynoise-alert', 'error', `✗ Test error: ${error.message}`);
+            }
         }
         
         async function pollDShield(type) {

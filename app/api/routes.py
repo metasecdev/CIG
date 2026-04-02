@@ -1003,7 +1003,7 @@ async def dashboard(request: Request):
             )
 
         # Get latest news
-        latest_news = get_feed().get_latest()[:2]  # Top 2 news items
+        latest_news = get_feed().get_latest(limit=100)  # Top 100 news items
 
         # Get Arkime status
         try:
@@ -1348,7 +1348,7 @@ async def generate_security_report(days: int = Query(7, ge=1, le=90)):
 
 @app.get("/api/news")
 async def api_cyber_news(
-    limit: int = Query(10, ge=1, le=50),
+    limit: int = Query(100, ge=1, le=100),
     source: str = Query("", description="Filter by source: SANS, CVE, APT, or empty for all"),
 ):
     """Latest curated cybersecurity news, IOC and mitigation signatures with optional source filtering"""
@@ -1920,6 +1920,7 @@ async def update_abuseipdb_feed():
 # --- Feed Scheduler Endpoints ---
 
 
+@app.get("/api/feeds/scheduler/status")
 @app.get("/api/scheduler/status")
 async def scheduler_status():
     """Get feed scheduler status"""
@@ -1937,6 +1938,7 @@ async def scheduler_status():
         raise HTTPException(status_code=500, detail="Failed to get scheduler status")
 
 
+@app.post("/api/feeds/scheduler/start")
 @app.post("/api/scheduler/start")
 async def scheduler_start():
     """Start the feed scheduler"""
@@ -1953,6 +1955,7 @@ async def scheduler_start():
         raise HTTPException(status_code=500, detail="Failed to start scheduler")
 
 
+@app.post("/api/feeds/scheduler/stop")
 @app.post("/api/scheduler/stop")
 async def scheduler_stop():
     """Stop the feed scheduler"""
@@ -1969,6 +1972,7 @@ async def scheduler_stop():
         raise HTTPException(status_code=500, detail="Failed to stop scheduler")
 
 
+@app.post("/api/feeds/scheduler/update/{feed_id}")
 @app.post("/api/scheduler/feed/{feed_id}/update")
 async def scheduler_update_feed(feed_id: str, force: bool = False):
     """Trigger immediate feed update"""
@@ -1985,6 +1989,7 @@ async def scheduler_update_feed(feed_id: str, force: bool = False):
         raise HTTPException(status_code=500, detail=f"Failed to update feed: {e}")
 
 
+@app.post("/api/feeds/scheduler/update/all")
 @app.post("/api/scheduler/update-all")
 async def scheduler_update_all(force: bool = False):
     """Trigger updates for all registered feeds"""
@@ -2088,6 +2093,7 @@ class FilterConfigRequest(BaseModel):
     enabled: bool = False
 
 
+@app.get("/api/feeds/filters/status")
 @app.get("/api/filters/status")
 async def filters_status():
     """Get filter engine status"""
@@ -2105,6 +2111,7 @@ async def filters_status():
         raise HTTPException(status_code=500, detail="Failed to get filters status")
 
 
+@app.post("/api/feeds/filters/apply")
 @app.post("/api/filters/apply")
 async def filters_apply(feed_id: str, filter_id: Optional[str] = None):
     """Apply filter to a specific feed's indicators"""
@@ -2225,6 +2232,144 @@ async def config_graynoise_credentials(request: GrayNoiseCredentialsRequest):
     except Exception as e:
         logger.error(f"Failed to set GrayNoise credentials: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to set credentials: {e}")
+
+
+@app.post("/api/config/nessus/test")
+async def test_nessus_connection():
+    """Test Nessus API connection with saved credentials"""
+    try:
+        from app.config.feed_credentials import FeedCredentialManager
+        
+        cred_manager = FeedCredentialManager()
+        creds = cred_manager.get_nessus_credentials()
+        
+        if not creds:
+            raise HTTPException(status_code=400, detail="No Nessus credentials configured")
+        
+        # Try to connect to Nessus API
+        try:
+            import httpx
+            async with httpx.AsyncClient(verify=False, timeout=10.0) as client:
+                headers = {
+                    "X-API-Token": creds.get("api_key", ""),
+                }
+                # Try a simple API call to verify credentials
+                response = await client.get(
+                    f"{creds.get('host', 'https://cloud.nessus.com')}/api/v2/scans",
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    return {
+                        "status": "success",
+                        "message": "Nessus connection successful",
+                        "host": creds.get("host", "https://cloud.nessus.com"),
+                        "credential_configured": True
+                    }
+                elif response.status_code == 401:
+                    return {
+                        "status": "failed",
+                        "message": "Nessus credentials are invalid (401 Unauthorized)",
+                        "error": "Invalid API key or secret"
+                    }
+                else:
+                    return {
+                        "status": "failed",
+                        "message": f"Nessus API returned status code {response.status_code}",
+                        "error": response.text[:200] if response.text else "Unknown error"
+                    }
+        except httpx.TimeoutException:
+            return {
+                "status": "failed",
+                "message": "Connection timeout - Nessus server not responding",
+                "error": "Timeout after 10 seconds"
+            }
+        except Exception as conn_error:
+            return {
+                "status": "failed",
+                "message": "Failed to connect to Nessus",
+                "error": str(conn_error)
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to test Nessus connection: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to test connection: {e}")
+
+
+@app.post("/api/config/graynoise/test")
+async def test_graynoise_connection():
+    """Test GrayNoise API connection with saved credentials"""
+    try:
+        from app.config.feed_credentials import FeedCredentialManager
+        
+        cred_manager = FeedCredentialManager()
+        creds = cred_manager.get_graynoise_credentials()
+        
+        if not creds:
+            raise HTTPException(status_code=400, detail="No GrayNoise credentials configured")
+        
+        # Try to connect to GrayNoise API
+        try:
+            import httpx
+            api_type = creds.get("api_type", "community")
+            api_key = creds.get("api_key", "")
+            
+            async with httpx.AsyncClient(verify=False, timeout=10.0) as client:
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                }
+                
+                # Different endpoints for community vs enterprise
+                if api_type == "community":
+                    url = "https://api.greynoise.io/v3/community/ip/8.8.8.8"
+                else:
+                    url = "https://api.greynoise.io/v3/query/listLimited?limit=1"
+                
+                response = await client.get(url, headers=headers)
+                
+                if response.status_code == 200:
+                    return {
+                        "status": "success",
+                        "message": "GrayNoise connection successful",
+                        "api_type": api_type,
+                        "credential_configured": True
+                    }
+                elif response.status_code == 401:
+                    return {
+                        "status": "failed",
+                        "message": "GrayNoise credentials are invalid (401 Unauthorized)",
+                        "error": "Invalid API key"
+                    }
+                elif response.status_code == 403:
+                    return {
+                        "status": "failed",
+                        "message": "GrayNoise access forbidden (403 Forbidden)",
+                        "error": "API key does not have permission for this endpoint"
+                    }
+                else:
+                    return {
+                        "status": "failed",
+                        "message": f"GrayNoise API returned status code {response.status_code}",
+                        "error": response.text[:200] if response.text else "Unknown error"
+                    }
+        except httpx.TimeoutException:
+            return {
+                "status": "failed",
+                "message": "Connection timeout - GrayNoise server not responding",
+                "error": "Timeout after 10 seconds"
+            }
+        except Exception as conn_error:
+            return {
+                "status": "failed",
+                "message": "Failed to connect to GrayNoise",
+                "error": str(conn_error)
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to test GrayNoise connection: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to test connection: {e}")
 
 
 @app.get("/api/config/nessus/enabled")
