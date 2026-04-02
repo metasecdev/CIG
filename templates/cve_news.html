@@ -162,7 +162,7 @@
 
         async function loadCVEData() {
             try {
-                const response = await fetch('/api/news/cve/severity?limit=50');
+                const response = await fetch('/api/news/cve/severity?limit=100');
                 const data = await response.json();
                 
                 if (data.status === 'success') {
@@ -344,6 +344,9 @@
 
         // Load on page load
         loadCVEData();
+
+        // Auto refresh CVE data every 5 minutes
+        setInterval(loadCVEData, 300000);
     </script>
 </body>
 </html>

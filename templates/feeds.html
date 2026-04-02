@@ -255,7 +255,7 @@
 
         async function loadFeedsStatus() {
             try {
-                const response = await fetch('/api/scheduler/status');
+                const response = await fetch('/api/feeds/scheduler/status');
                 const data = await response.json();
 
                 if (data.feeds) {
@@ -356,7 +356,7 @@
 
         async function startScheduler() {
             try {
-                const response = await fetch('/api/scheduler/start', { method: 'POST' });
+                const response = await fetch('/api/feeds/scheduler/start', { method: 'POST' });
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -374,7 +374,7 @@
             if (!confirm('Are you sure you want to stop the feed scheduler?')) return;
             
             try {
-                const response = await fetch('/api/scheduler/stop', { method: 'POST' });
+                const response = await fetch('/api/feeds/scheduler/stop', { method: 'POST' });
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -390,7 +390,7 @@
 
         async function updateFeed(feedId) {
             try {
-                const response = await fetch(`/api/scheduler/feed/${feedId}/update`, { method: 'POST' });
+                const response = await fetch(`/api/feeds/scheduler/update/${feedId}`, { method: 'POST' });
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -406,7 +406,7 @@
 
         async function updateAllFeeds() {
             try {
-                const response = await fetch('/api/scheduler/update-all', { method: 'POST' });
+                const response = await fetch('/api/feeds/scheduler/update/all', { method: 'POST' });
                 const data = await response.json();
                 
                 if (response.ok) {

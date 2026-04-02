@@ -96,11 +96,11 @@
 
 ### Scheduler Management
 ```
-GET  /api/scheduler/status              ← Check all feed statuses
-POST /api/scheduler/start               ← Start scheduler
-POST /api/scheduler/stop                ← Stop scheduler
-POST /api/scheduler/feed/{id}/update    ← Update specific feed
-POST /api/scheduler/update-all          ← Update all feeds
+GET  /api/feeds/scheduler/status         ← Check all feed statuses
+POST /api/feeds/scheduler/start          ← Start scheduler
+POST /api/feeds/scheduler/stop           ← Stop scheduler
+POST /api/feeds/scheduler/update/{id}    ← Update specific feed
+POST /api/feeds/scheduler/update/all     ← Update all feeds
 ```
 
 ### DShield Polling
@@ -112,8 +112,8 @@ GET  /api/feeds/dshield/threats         ← Get threat summary
 
 ### Filter Engine
 ```
-GET  /api/filters/status                ← Filter status
-POST /api/filters/apply                 ← Apply filters
+GET  /api/feeds/filters/status          ← Filter status
+POST /api/feeds/filters/apply           ← Apply filters
 ```
 
 ### Nessus Configuration
@@ -325,7 +325,7 @@ curl -X POST http://localhost:8000/api/config/nessus/credentials \
 curl http://localhost:8000/api/config/status
 
 # Get scheduler status
-curl http://localhost:8000/api/scheduler/status
+curl http://localhost:8000/api/feeds/scheduler/status
 
 # Trigger DShield poll
 curl -X POST "http://localhost:8000/api/feeds/dshield/poll?poll_type=all"
@@ -456,7 +456,7 @@ tail -f /Users/wo/code/data/logs/cig.log
 ### Testing
 ```bash
 # Test endpoints via curl
-curl http://localhost:8000/api/scheduler/status
+curl http://localhost:8000/api/feeds/scheduler/status
 curl http://localhost:8000/api/config/status
 curl -X POST "http://localhost:8000/api/feeds/dshield/poll?poll_type=all"
 ```
