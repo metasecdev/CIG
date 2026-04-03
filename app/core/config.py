@@ -76,6 +76,9 @@ class Settings:
     shadowserver_update_interval: int = 86400  # seconds
     enable_cve_news: bool = True
     cve_news_update_interval: int = 600  # 10 minutes
+    nvd_api_key: str = (
+        "c135b24d-fa92-48fc-81f8-74e6821dc4ed"  # NVD API key for CVE fetching
+    )
     enable_sans_isc: bool = True
     sans_isc_update_interval: int = 3600  # 1 hour
     sans_api_key: str = ""
@@ -176,6 +179,9 @@ class Settings:
             # CVE News
             enable_cve_news=os.getenv("ENABLE_CVE_NEWS", "true").lower() == "true",
             cve_news_update_interval=int(os.getenv("CVE_NEWS_UPDATE_INTERVAL", "600")),
+            nvd_api_key=os.getenv(
+                "NVD_API_KEY", "c135b24d-fa92-48fc-81f8-74e6821dc4ed"
+            ),
             # SANS ISC
             enable_sans_isc=os.getenv("ENABLE_SANS_ISC", "true").lower() == "true",
             sans_isc_update_interval=int(os.getenv("SANS_ISC_UPDATE_INTERVAL", "3600")),
