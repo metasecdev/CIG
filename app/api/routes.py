@@ -1217,7 +1217,7 @@ async def events_dashboard(request: Request):
 async def news_dashboard(request: Request):
     """Cybersecurity news dashboard - curated threat intelligence"""
     try:
-        news_items = get_feed().get_latest()
+        news_items = get_feed().get_latest(limit=50)
         return templates.TemplateResponse(
             "news.html",
             {
