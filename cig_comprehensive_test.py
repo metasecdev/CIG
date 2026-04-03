@@ -17,11 +17,12 @@ import shutil
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Set test environment variables
-os.environ['SKIP_FEED_UPDATES'] = 'true'
-os.environ['SKIP_DNS_MONITORING'] = 'true'
+os.environ["SKIP_FEED_UPDATES"] = "true"
+os.environ["SKIP_DNS_MONITORING"] = "true"
 
 # Import Database for use in tests
 from app.models.database import Database
+
 
 class CIGTestSuite:
     """Comprehensive test suite for CIG components"""
@@ -31,15 +32,10 @@ class CIGTestSuite:
             "test_run": {
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "python_version": sys.version,
-                "working_directory": os.getcwd()
+                "working_directory": os.getcwd(),
             },
             "components": {},
-            "summary": {
-                "total_tests": 0,
-                "passed": 0,
-                "failed": 0,
-                "skipped": 0
-            }
+            "summary": {"total_tests": 0, "passed": 0, "failed": 0, "skipped": 0},
         }
         self.temp_dir = Path(tempfile.mkdtemp(prefix="cig_test_"))
         self.test_db_path = self.temp_dir / "test.db"
@@ -80,20 +76,37 @@ class CIGTestSuite:
             assert settings.debug is False
 
             # Test environment variable override
-            os.environ['APP_NAME'] = 'Test CIG'
+            os.environ["APP_NAME"] = "Test CIG"
             test_settings = Settings.from_env()
-            assert test_settings.app_name == 'Test CIG'
+            assert test_settings.app_name == "Test CIG"
 
             # Test new AbuseIPDB config
-            assert hasattr(settings, 'abuseipdb_api_key')
-            assert hasattr(settings, 'skip_feed_updates')
+            assert hasattr(settings, "abuseipdb_api_key")
+            assert hasattr(settings, "skip_feed_updates")
 
-            self.record_test("configuration", "basic_config", True, "Configuration loads with correct defaults")
-            self.record_test("configuration", "env_override", True, "Environment variables override defaults")
-            self.record_test("configuration", "new_features", True, "New AbuseIPDB and feed skip configs present")
+            self.record_test(
+                "configuration",
+                "basic_config",
+                True,
+                "Configuration loads with correct defaults",
+            )
+            self.record_test(
+                "configuration",
+                "env_override",
+                True,
+                "Environment variables override defaults",
+            )
+            self.record_test(
+                "configuration",
+                "new_features",
+                True,
+                "New AbuseIPDB and feed skip configs present",
+            )
 
         except Exception as e:
-            self.record_test("configuration", "all", False, f"Configuration test failed: {e}")
+            self.record_test(
+                "configuration", "all", False, f"Configuration test failed: {e}"
+            )
             traceback.print_exc()
 
     def test_database(self):
@@ -120,7 +133,7 @@ class CIGTestSuite:
                 indicator_type="domain",
                 feed_source="test",
                 rule_id="test-rule",
-                message="Test alert"
+                message="Test alert",
             )
 
             db.insert_alert(alert)
@@ -137,7 +150,7 @@ class CIGTestSuite:
                 feed_id="test-feed-1",
                 tags="malware",
                 first_seen=datetime.now(timezone.utc).isoformat(),
-                last_seen=datetime.now(timezone.utc).isoformat()
+                last_seen=datetime.now(timezone.utc).isoformat(),
             )
 
             db.insert_indicator(indicator)
@@ -150,7 +163,7 @@ class CIGTestSuite:
                 filename="test.pcap",
                 filepath="/tmp/test.pcap",
                 start_time=datetime.now(timezone.utc).isoformat(),
-                interface="eth0"
+                interface="eth0",
             )
 
             db.insert_pcap(pcap)
@@ -158,7 +171,9 @@ class CIGTestSuite:
             assert len(pcaps) == 1
 
             self.record_test("database", "alerts", True, "Alert CRUD operations work")
-            self.record_test("database", "indicators", True, "Indicator CRUD operations work")
+            self.record_test(
+                "database", "indicators", True, "Indicator CRUD operations work"
+            )
             self.record_test("database", "pcaps", True, "PCAP file tracking works")
 
         except Exception as e:
@@ -189,9 +204,15 @@ class CIGTestSuite:
             packet_analyzer = PacketAnalyzer(db)
             assert packet_analyzer.db == db
 
-            self.record_test("pcap", "initialization", True, "PCAP components initialize correctly")
-            self.record_test("pcap", "dns_monitor", True, "DNS monitor initializes correctly")
-            self.record_test("pcap", "packet_analyzer", True, "Packet analyzer initializes correctly")
+            self.record_test(
+                "pcap", "initialization", True, "PCAP components initialize correctly"
+            )
+            self.record_test(
+                "pcap", "dns_monitor", True, "DNS monitor initializes correctly"
+            )
+            self.record_test(
+                "pcap", "packet_analyzer", True, "Packet analyzer initializes correctly"
+            )
 
         except Exception as e:
             self.record_test("pcap", "all", False, f"PCAP test failed: {e}")
@@ -210,23 +231,27 @@ class CIGTestSuite:
 
             # Test MISP feed
             misp_feed = MISPFeed(db)
-            assert hasattr(misp_feed, 'is_enabled')
-            assert hasattr(misp_feed, 'fetch_and_process')
+            assert hasattr(misp_feed, "is_enabled")
+            assert hasattr(misp_feed, "fetch_and_process")
 
             # Test pfBlocker feed
             pfblocker_feed = PFBlockerFeed(db)
-            assert hasattr(pfblocker_feed, 'is_enabled')
-            assert hasattr(pfblocker_feed, 'fetch_from_feeds')
+            assert hasattr(pfblocker_feed, "is_enabled")
+            assert hasattr(pfblocker_feed, "fetch_from_feeds")
 
             # Test AbuseIPDB feed
             abuseipdb_feed = AbuseIPDBFeed(db)
-            assert hasattr(abuseipdb_feed, 'is_enabled')
-            assert hasattr(abuseipdb_feed, 'fetch_blacklist')
-            assert hasattr(abuseipdb_feed, 'check_ip')
+            assert hasattr(abuseipdb_feed, "is_enabled")
+            assert hasattr(abuseipdb_feed, "fetch_blacklist")
+            assert hasattr(abuseipdb_feed, "check_ip")
 
             self.record_test("feeds", "misp", True, "MISP feed initializes correctly")
-            self.record_test("feeds", "pfblocker", True, "pfBlocker feed initializes correctly")
-            self.record_test("feeds", "abuseipdb", True, "AbuseIPDB feed initializes correctly")
+            self.record_test(
+                "feeds", "pfblocker", True, "pfBlocker feed initializes correctly"
+            )
+            self.record_test(
+                "feeds", "abuseipdb", True, "AbuseIPDB feed initializes correctly"
+            )
 
         except Exception as e:
             self.record_test("feeds", "all", False, f"Feeds test failed: {e}")
@@ -242,23 +267,27 @@ class CIGTestSuite:
             db = Database(str(self.test_db_path))
             mapper = MITREAttackMapper(db)
 
-            assert hasattr(mapper, 'map_event_to_ttp')
-            assert hasattr(mapper, 'get_technique_info')
-            assert hasattr(mapper, 'get_tactic_info')
+            assert hasattr(mapper, "map_event_to_ttp")
+            assert hasattr(mapper, "get_technique_info")
+            assert hasattr(mapper, "get_tactic_info")
 
             # Test basic functionality (without real data)
-            result = mapper.map_event_to_ttp({
-                "source_ip": "192.168.1.100",
-                "destination_ip": "10.0.0.1",
-                "protocol": "tcp",
-                "message": "Suspicious connection"
-            })
+            result = mapper.map_event_to_ttp(
+                {
+                    "source_ip": "192.168.1.100",
+                    "destination_ip": "10.0.0.1",
+                    "protocol": "tcp",
+                    "message": "Suspicious connection",
+                }
+            )
 
             assert isinstance(result, list)
-            assert hasattr(mapper, 'technique_mappings')
+            assert hasattr(mapper, "technique_mappings")
             assert len(mapper.technique_mappings) > 0
 
-            self.record_test("mitre", "initialization", True, "MITRE mapper initializes correctly")
+            self.record_test(
+                "mitre", "initialization", True, "MITRE mapper initializes correctly"
+            )
             self.record_test("mitre", "mapping", True, "Event to TTP mapping works")
 
         except Exception as e:
@@ -275,8 +304,8 @@ class CIGTestSuite:
             db = Database(str(self.test_db_path))
             reporter = SecurityReporter(db)
 
-            assert hasattr(reporter, 'generate_comprehensive_report')
-            assert hasattr(reporter, 'reports_dir')
+            assert hasattr(reporter, "generate_comprehensive_report")
+            assert hasattr(reporter, "reports_dir")
 
             # Test report generation with empty data
             report = reporter.generate_comprehensive_report(days=1)
@@ -285,11 +314,23 @@ class CIGTestSuite:
             assert "threat_intelligence" in report
             assert "network_activity" in report
 
-            self.record_test("reporter", "initialization", True, "Security reporter initializes correctly")
-            self.record_test("reporter", "report_generation", True, "Report generation works with empty data")
+            self.record_test(
+                "reporter",
+                "initialization",
+                True,
+                "Security reporter initializes correctly",
+            )
+            self.record_test(
+                "reporter",
+                "report_generation",
+                True,
+                "Report generation works with empty data",
+            )
 
         except Exception as e:
-            self.record_test("reporter", "all", False, f"Security reporter test failed: {e}")
+            self.record_test(
+                "reporter", "all", False, f"Security reporter test failed: {e}"
+            )
             traceback.print_exc()
 
     def test_threat_matcher(self):
@@ -302,24 +343,35 @@ class CIGTestSuite:
             db = Database(str(self.test_db_path))
             matcher = ThreatMatcher(db)
 
-            assert hasattr(matcher, 'start')
-            assert hasattr(matcher, 'stop')
-            assert hasattr(matcher, 'stats')
+            assert hasattr(matcher, "start")
+            assert hasattr(matcher, "stop")
+            assert hasattr(matcher, "stats")
 
             # Test configuration
             matcher.configure()
 
             # Check that feeds are properly initialized
-            assert hasattr(matcher, 'misp_feed')
-            assert hasattr(matcher, 'pfblocker_feed')
-            assert hasattr(matcher, 'abuseipdb_feed')
+            assert hasattr(matcher, "misp_feed")
+            assert hasattr(matcher, "pfblocker_feed")
+            assert hasattr(matcher, "abuseipdb_feed")
 
-            self.record_test("matcher", "initialization", True, "Threat matcher initializes correctly")
-            self.record_test("matcher", "configuration", True, "Feed configuration works")
-            self.record_test("matcher", "components", True, "All feed components are present")
+            self.record_test(
+                "matcher",
+                "initialization",
+                True,
+                "Threat matcher initializes correctly",
+            )
+            self.record_test(
+                "matcher", "configuration", True, "Feed configuration works"
+            )
+            self.record_test(
+                "matcher", "components", True, "All feed components are present"
+            )
 
         except Exception as e:
-            self.record_test("matcher", "all", False, f"Threat matcher test failed: {e}")
+            self.record_test(
+                "matcher", "all", False, f"Threat matcher test failed: {e}"
+            )
             traceback.print_exc()
 
     def test_api_routes(self):
@@ -341,9 +393,13 @@ class CIGTestSuite:
 
             # Check that routes are registered
             routes = [route.path for route in fastapi_app.routes]
-            assert "/api/status" in routes or len(routes) > 0  # At least some routes exist
+            assert (
+                "/api/status" in routes or len(routes) > 0
+            )  # At least some routes exist
 
-            self.record_test("api", "initialization", True, "FastAPI app initializes correctly")
+            self.record_test(
+                "api", "initialization", True, "FastAPI app initializes correctly"
+            )
             self.record_test("api", "routes", True, "API routes are registered")
 
         except Exception as e:
@@ -359,14 +415,16 @@ class CIGTestSuite:
             import app.main
 
             # Check that key functions exist
-            assert hasattr(app.main, 'main')
-            assert hasattr(app.main, 'setup_directories')
-            assert hasattr(app.main, 'signal_handler')
+            assert hasattr(app.main, "main")
+            assert hasattr(app.main, "setup_directories")
+            assert hasattr(app.main, "signal_handler")
 
             # Test directory setup (should not fail)
             app.main.setup_directories()
 
-            self.record_test("main", "imports", True, "Main application imports successfully")
+            self.record_test(
+                "main", "imports", True, "Main application imports successfully"
+            )
             self.record_test("main", "functions", True, "Main functions are available")
             self.record_test("main", "directories", True, "Directory setup works")
 
@@ -382,7 +440,7 @@ class CIGTestSuite:
         self.results["components"][component][test_name] = {
             "passed": passed,
             "message": message,
-            "timestamp": datetime.now(timezone.utc).isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
         self.results["summary"]["total_tests"] += 1
@@ -402,7 +460,11 @@ class CIGTestSuite:
         print(f"❌ Failed: {summary['failed']}")
         print(f"⏭️  Skipped: {summary['skipped']}")
 
-        success_rate = (summary['passed'] / summary['total_tests'] * 100) if summary['total_tests'] > 0 else 0
+        success_rate = (
+            (summary["passed"] / summary["total_tests"] * 100)
+            if summary["total_tests"] > 0
+            else 0
+        )
         print(f"Success Rate: {success_rate:.1f}%")
 
         # Component breakdown
@@ -415,7 +477,7 @@ class CIGTestSuite:
 
         # Recommendations
         print("\n💡 RECOMMENDATIONS:")
-        if summary['failed'] > 0:
+        if summary["failed"] > 0:
             print("  - Review failed tests and fix issues")
             print("  - Check error messages for specific problems")
         else:
@@ -425,17 +487,17 @@ class CIGTestSuite:
     def save_report(self):
         """Save detailed test report to file"""
         report_file = self.temp_dir / "cig_test_report.json"
-        with open(report_file, 'w') as f:
+        with open(report_file, "w") as f:
             json.dump(self.results, f, indent=2, default=str)
 
         print(f"\n📄 Detailed report saved to: {report_file}")
 
         # Also save a human-readable summary
         summary_file = self.temp_dir / "cig_test_summary.txt"
-        with open(summary_file, 'w') as f:
+        with open(summary_file, "w") as f:
             f.write("CIG COMPREHENSIVE TEST REPORT\n")
             f.write("=" * 50 + "\n\n")
-f.write(f"Generated: {datetime.now(timezone.utc).isoformat()}\n")
+            f.write(f"Generated: {datetime.now(timezone.utc).isoformat()}\n")
             f.write(f"Python Version: {sys.version}\n\n")
 
             summary = self.results["summary"]

@@ -50,6 +50,8 @@ class CVENewsFeed:
             "year": [],
             "historical": [],
         }
+        # Get NVD API key from settings
+        self.nvd_api_key = getattr(settings, "nvd_api_key", "") or ""
 
     def _ensure_cache_table(self):
         conn = sqlite3.connect(str(self.cache_path))
@@ -618,10 +620,163 @@ class CVENewsFeed:
             logger.debug(f"Failed to parse CVE entry: {e}")
             return None
 
+    def _fetch_cve_chunk(
+        self, start_date: str, end_date: str, results_per_page: int = 100
+    ) -> List[Dict]:
+        """Fetch a single chunk of CVEs for a date range"""
+        if not HAS_REQUESTS:
+            return []
+
+        try:
+            params = {
+                "pubStartDate": start_date,
+                "pubEndDate": end_date,
+                "resultsPerPage": results_per_page,
+            }
+
+            headers = {
+                "User-Agent": "CIG/1.0 - Cyber Intelligence Gateway",
+                "Accept": "application/json",
+            }
+
+            if self.nvd_api_key:
+                headers["X-API-Key"] = self.nvd_api_key
+
+            response = requests.get(
+                self.NVD_API_URL, params=params, headers=headers, timeout=120
+            )
+            response.raise_for_status()
+
+            data = response.json()
+            return data.get("vulnerabilities", [])
+
+        except Exception as e:
+            logger.error(
+                f"Failed to fetch CVE chunk for {start_date} to {end_date}: {e}"
+            )
+            return []
+
+    def _fetch_cves_with_retry(
+        self, start_date: str, end_date: str, limit: int = 2000, max_retries: int = 3
+    ) -> List[Dict]:
+        """Fetch CVEs with retry logic and smaller chunks to avoid rate limiting"""
+        if not HAS_REQUESTS:
+            return []
+
+        all_items = []
+        max_days_per_chunk = 30  # Smaller chunks to avoid rate limits
+        min_days_per_chunk = 20  # Minimum chunk size
+
+        try:
+            from datetime import datetime
+
+            start_obj = datetime.fromisoformat(start_date.replace("+00:00", ""))
+            end_obj = datetime.fromisoformat(end_date.replace("+00:00", ""))
+            date_range = (end_obj - start_obj).days
+
+            # Calculate number of chunks needed
+            num_chunks = max(1, (date_range // max_days_per_chunk) + 1)
+            days_per_chunk = max(min_days_per_chunk, date_range // num_chunks)
+
+            current_start = start_obj
+
+            for _ in range(num_chunks):
+                if len(all_items) >= limit:
+                    break
+
+                chunk_end = min(current_start + timedelta(days=days_per_chunk), end_obj)
+                chunk_start_str = current_start.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+                chunk_end_str = chunk_end.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+                for retry in range(max_retries):
+                    try:
+                        # Try with severity filter first (for shorter ranges)
+                        use_filter = days_per_chunk <= 20
+                        params = {
+                            "pubStartDate": chunk_start_str,
+                            "pubEndDate": chunk_end_str,
+                            "resultsPerPage": min(limit - len(all_items), 500),
+                        }
+                        if use_filter:
+                            params["cvssV3Severity"] = ["CRITICAL", "HIGH"]
+
+                        headers = {
+                            "User-Agent": "CIG/1.0 - Cyber Intelligence Gateway",
+                            "Accept": "application/json",
+                        }
+                        if self.nvd_api_key:
+                            headers["X-API-Key"] = self.nvd_api_key
+
+                        response = requests.get(
+                            self.NVD_API_URL, params=params, headers=headers, timeout=60
+                        )
+                        response.raise_for_status()
+
+                        data = response.json()
+                        if not isinstance(data, dict):
+                            logger.warning(f"Unexpected response type: {type(data)}")
+                            break
+                        vulnerabilities = data.get("vulnerabilities", [])
+
+                        for vuln in vulnerabilities:
+                            if not isinstance(vuln, dict):
+                                continue
+                            cve_data = vuln.get("cve", {})
+                            if not isinstance(cve_data, dict):
+                                continue
+                            metrics = cve_data.get("metrics", {})
+                            if not isinstance(metrics, dict):
+                                continue
+                            cvss_data = metrics.get("cvssMetricV31") or metrics.get(
+                                "cvssMetricV30"
+                            )
+                            base_score = 0
+                            if (
+                                cvss_data
+                                and isinstance(cvss_data, list)
+                                and len(cvss_data) > 0
+                            ):
+                                cvss_entry = cvss_data[0]
+                                if isinstance(cvss_entry, dict):
+                                    base_score = cvss_entry.get("cvssData", {}).get(
+                                        "baseScore", 0
+                                    )
+
+                            if base_score >= self.MIN_SEVERITY:
+                                parsed = self._parse_cve_entry(vuln, base_score)
+                                if parsed:
+                                    all_items.append(parsed)
+
+                        break  # Success, exit retry loop
+
+                    except requests.exceptions.RequestException as e:
+                        if retry < max_retries - 1:
+                            wait_time = (retry + 1) * 3  # Wait 3, 6 seconds
+                            logger.warning(f"Rate limited, retrying in {wait_time}s...")
+                            import time
+
+                            time.sleep(wait_time)
+                        else:
+                            logger.error(
+                                f"Failed to fetch chunk after {max_retries} retries: {e}"
+                            )
+
+                current_start = chunk_end + timedelta(days=1)
+                if current_start >= end_obj:
+                    break
+
+        except Exception as e:
+            import traceback
+
+            logger.error(f"Error in _fetch_cves_with_retry: {e}")
+            logger.debug(traceback.format_exc())
+
+        return all_items[:limit]
+
     def _fetch_cves_by_date_range(
         self, start_date: str, end_date: str, limit: int = 2000
     ) -> List[Dict]:
-        """Fetch CVEs by date range from NVD"""
+        """Fetch CVEs by date range from NVD using API 2.0 format"""
         if not HAS_REQUESTS:
             return []
 
@@ -631,44 +786,134 @@ class CVENewsFeed:
 
         try:
             while len(all_items) < limit:
-                params = {
-                    "pubStartDate": start_date,
-                    "pubEndDate": end_date,
-                    "cvssV3Severity": "CRITICAL,HIGH",
-                    "startIndex": start_idx,
-                    "resultsPerPage": results_per_page,
-                }
+                # NVD API 2.0 requires ISO 8601 format with timezone offset (e.g., +00:00)
+                # Use pubStartDate/pubEndDate (published date)
+                # For longer ranges (>60 days), API returns 404 - need to chunk requests
+                start_dt = start_date
+                end_dt = end_date
 
-                headers = {"User-Agent": "CIG/1.0 - Cyber Intelligence Gateway"}
+                # Calculate date range in days
+                from datetime import datetime
 
-                response = requests.get(
-                    self.NVD_API_URL, params=params, headers=headers, timeout=120
-                )
-                response.raise_for_status()
-
-                data = response.json()
-                vulnerabilities = data.get("vulnerabilities", [])
-
-                if not vulnerabilities:
-                    break
-
-                for vuln in vulnerabilities:
-                    metrics = vuln.get("cve", {}).get("metrics", {})
-                    cvss_data = metrics.get(
-                        "cvssMetricV31", [metrics.get("cvssMetricV30", [])]
+                try:
+                    start_date_obj = datetime.fromisoformat(
+                        start_dt.replace("+00:00", "")
                     )
-                    base_score = 0
-                    if cvss_data:
-                        base_score = (
-                            cvss_data[0].get("cvssData", {}).get("baseScore", 0)
+                    end_date_obj = datetime.fromisoformat(end_dt.replace("+00:00", ""))
+                    date_range_days = (end_date_obj - start_date_obj).days
+                except:
+                    date_range_days = 0
+
+                # Determine if we need to chunk the request
+                # API works for ~60 days, longer ranges need multiple requests
+                max_days_per_request = 55  # Leave buffer for rate limiting
+
+                if date_range_days > max_days_per_request:
+                    # Chunk into smaller date ranges
+                    period_items = []
+                    current_start = start_date_obj
+                    chunks = (date_range_days // max_days_per_request) + 1
+                    days_per_chunk = date_range_days // chunks + 1
+
+                    for i in range(chunks):
+                        chunk_start = current_start + timedelta(days=i * days_per_chunk)
+                        chunk_end = min(
+                            chunk_start + timedelta(days=days_per_chunk), end_date_obj
                         )
 
-                    if base_score >= self.MIN_SEVERITY:
-                        parsed = self._parse_cve_entry(vuln, base_score)
-                        if parsed:
-                            all_items.append(parsed)
+                        if chunk_start >= end_date_obj:
+                            break
 
-                start_idx += results_per_page
+                        chunk_start_str = chunk_start.strftime(
+                            "%Y-%m-%dT%H:%M:%S.000+00:00"
+                        )
+                        chunk_end_str = chunk_end.strftime(
+                            "%Y-%m-%dT%H:%M:%S.000+00:00"
+                        )
+
+                        chunk_items = self._fetch_cve_chunk(
+                            chunk_start_str, chunk_end_str, results_per_page
+                        )
+                        period_items.extend(chunk_items)
+
+                        # Check if we have enough
+                        if len(period_items) >= limit:
+                            break
+
+                    # Process all collected items
+                    for vuln in period_items:
+                        if not isinstance(vuln, dict):
+                            continue
+                        metrics = vuln.get("cve", {}).get("metrics", {})
+                        cvss_data = metrics.get(
+                            "cvssMetricV31", [metrics.get("cvssMetricV30", [])]
+                        )
+                        base_score = 0
+                        if cvss_data:
+                            base_score = (
+                                cvss_data[0].get("cvssData", {}).get("baseScore", 0)
+                            )
+
+                        if base_score >= self.MIN_SEVERITY:
+                            parsed = self._parse_cve_entry(vuln, base_score)
+                            if parsed:
+                                all_items.append(parsed)
+
+                    break  # Exit the while loop since we handled all chunks
+                else:
+                    # Single request for smaller ranges
+                    use_severity_filter = date_range_days <= 30
+
+                    params = {
+                        "pubStartDate": start_dt,
+                        "pubEndDate": end_dt,
+                        "startIndex": start_idx,
+                        "resultsPerPage": results_per_page,
+                    }
+
+                    if use_severity_filter:
+                        params["cvssV3Severity"] = ["CRITICAL", "HIGH"]
+
+                    headers = {
+                        "User-Agent": "CIG/1.0 - Cyber Intelligence Gateway",
+                        "Accept": "application/json",
+                    }
+
+                    if self.nvd_api_key:
+                        headers["X-API-Key"] = self.nvd_api_key
+
+                    response = requests.get(
+                        self.NVD_API_URL, params=params, headers=headers, timeout=120
+                    )
+                    response.raise_for_status()
+
+                    data = response.json()
+                    vulnerabilities = data.get("vulnerabilities", [])
+
+                    if not vulnerabilities:
+                        break
+
+                    for vuln in vulnerabilities:
+                        metrics = vuln.get("cve", {}).get("metrics", {})
+                        cvss_data = metrics.get(
+                            "cvssMetricV31", [metrics.get("cvssMetricV30", [])]
+                        )
+                        base_score = 0
+                        if cvss_data:
+                            base_score = (
+                                cvss_data[0].get("cvssData", {}).get("baseScore", 0)
+                            )
+
+                        if use_severity_filter or base_score >= self.MIN_SEVERITY:
+                            parsed = self._parse_cve_entry(vuln, base_score)
+                            if parsed:
+                                all_items.append(parsed)
+
+                    start_idx += results_per_page
+
+                    total_results = data.get("totalResults", 0)
+                    if start_idx >= total_results:
+                        break
 
                 # Check if there are more results
                 total_results = data.get("totalResults", 0)
@@ -685,40 +930,55 @@ class CVENewsFeed:
         counts = {}
         now = datetime.utcnow()
 
-        # Day (last 24 hours)
-        day_start = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SUTC")
-        day_end = now.strftime("%Y-%m-%dT%H:%M:%SUTC")
+        # Day (last 24 hours) - use ISO 8601 format with milliseconds and timezone offset
+        day_start = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+        day_end = now.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
         day_items = self._fetch_cves_by_date_range(day_start, day_end, limit=500)
         self._historical_cache["day"] = day_items
         self._cache_historical_items("day", day_items)
         counts["day"] = len(day_items)
 
         # Week (last 7 days)
-        week_start = (now - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SUTC")
+        week_start = (now - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
         week_items = self._fetch_cves_by_date_range(week_start, day_end, limit=1000)
         self._historical_cache["week"] = week_items
         self._cache_historical_items("week", week_items)
         counts["week"] = len(week_items)
 
-        # Month (last 30 days)
-        month_start = (now - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SUTC")
-        month_items = self._fetch_cves_by_date_range(month_start, day_end, limit=2000)
+        # Month (last 30 days) - fetch in chunks to avoid rate limiting
+        month_start = (now - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+        # Split month into 2 chunks of ~15 days each
+        month_chunks = []
+        for i in range(2):
+            chunk_start = now - timedelta(days=30) + timedelta(days=i * 15)
+            chunk_end = min(chunk_start + timedelta(days=15), now)
+            month_chunks.append(
+                (
+                    chunk_start.strftime("%Y-%m-%dT%H:%M:%S.000+00:00"),
+                    chunk_end.strftime("%Y-%m-%dT%H:%M:%S.000+00:00"),
+                )
+            )
+
+        month_items = []
+        for cs, ce in month_chunks:
+            chunk_cves = self._fetch_cves_by_date_range(cs, ce, limit=1000)
+            month_items.extend(chunk_cves)
+
         self._historical_cache["month"] = month_items
         self._cache_historical_items("month", month_items)
         counts["month"] = len(month_items)
 
-        # Year (last 365 days)
-        year_start = (now - timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SUTC")
-        year_items = self._fetch_cves_by_date_range(year_start, day_end, limit=5000)
+        # Year (last 365 days) - fetch in chunks of ~30 days with delays
+        year_start = (now - timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+        year_items = self._fetch_cves_with_retry(year_start, day_end, limit=2000)
         self._historical_cache["year"] = year_items
         self._cache_historical_items("year", year_items)
         counts["year"] = len(year_items)
 
-        # Historical (5 years - limited fetch for performance)
-        historical_start = "2021-01-01T00:00:00UTC"
-        historical_items = self._fetch_cves_by_date_range(
-            historical_start, day_end, limit=10000
-        )
+        # Historical (past year) - skip due to rate limiting
+        historical_start = "2025-04-03T00:00:00.000+00:00"
+        historical_items = []  # Skip due to NVD API rate limits
         self._historical_cache["historical"] = historical_items
         self._cache_historical_items("historical", historical_items)
         counts["historical"] = len(historical_items)
@@ -764,14 +1024,56 @@ class CVENewsFeed:
         return self.get_by_period("day")[:limit]
 
     def get_summary(self) -> Dict[str, Any]:
-        """Get summary of all time periods"""
+        """Get summary of all time periods - checks both memory and cache"""
+        # First check in-memory cache
+        day_count = len(self._historical_cache.get("day", []))
+        week_count = len(self._historical_cache.get("week", []))
+        month_count = len(self._historical_cache.get("month", []))
+        year_count = len(self._historical_cache.get("year", []))
+        historical_count = len(self._historical_cache.get("historical", []))
+
+        # If memory is empty, check SQLite cache
+        if day_count == 0:
+            day_cached = self._cached_items("day")
+            day_count = len(day_cached)
+        if week_count == 0:
+            week_cached = self._cached_items("week")
+            week_count = len(week_cached)
+        if month_count == 0:
+            month_cached = self._cached_items("month")
+            month_count = len(month_cached)
+        if year_count == 0:
+            year_cached = self._cached_items("year")
+            year_count = len(year_cached)
+
+        # Get last_update from cache if not in memory
+        last_update = self.last_fetch.isoformat() if self.last_fetch else None
+        if not last_update:
+            year_cached = self._cached_items("year")
+            if year_cached:
+                # Get the updated_at from first item via SQLite query
+                import sqlite3
+
+                try:
+                    conn = sqlite3.connect(str(self.cache_path))
+                    c = conn.cursor()
+                    c.execute(
+                        "SELECT updated_at FROM cve_history_cache WHERE time_period = 'year' ORDER BY updated_at DESC LIMIT 1"
+                    )
+                    row = c.fetchone()
+                    if row:
+                        last_update = row[0]
+                    conn.close()
+                except:
+                    pass
+
         return {
-            "day_count": len(self._historical_cache.get("day", [])),
-            "week_count": len(self._historical_cache.get("week", [])),
-            "month_count": len(self._historical_cache.get("month", [])),
-            "year_count": len(self._historical_cache.get("year", [])),
-            "historical_count": len(self._historical_cache.get("historical", [])),
-            "last_update": self.last_fetch.isoformat() if self.last_fetch else None,
+            "day_count": day_count,
+            "week_count": week_count,
+            "month_count": month_count,
+            "year_count": year_count,
+            "historical_count": historical_count,
+            "last_update": last_update,
         }
 
     def get_by_severity(
@@ -780,12 +1082,22 @@ class CVENewsFeed:
         """Get CVEs by severity level (critical, high, medium)"""
         severity_lower = severity.lower()
 
-        # Collect all items from all periods
+        # Collect all items from all sources - in-memory cache AND SQLite cache
         all_items = []
         all_items.extend(self._historical_cache.get("day", []))
         all_items.extend(self._historical_cache.get("week", []))
         all_items.extend(self._historical_cache.get("month", []))
         all_items.extend(self._historical_cache.get("year", []))
+
+        # Also check SQLite cache if in-memory is empty
+        if not all_items:
+            for period in ["day", "week", "month", "year"]:
+                cached = self._cached_items(period)
+                if cached:
+                    all_items.extend(cached)
+
+        if not all_items:
+            return []
 
         # Filter by severity
         filtered = [

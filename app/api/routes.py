@@ -104,10 +104,23 @@ def get_report_ingestion():
     return _report_ingestion
 
 
-def init_app(database: Database, matcher: ThreatMatcher, scheduler=None, filter_engine=None, 
-             dshield_poller=None, report_ingestion=None):
+def init_app(
+    database: Database,
+    matcher: ThreatMatcher,
+    scheduler=None,
+    filter_engine=None,
+    dshield_poller=None,
+    report_ingestion=None,
+):
     """Initialize global instances"""
-    global _db, _threat_matcher, threat_matcher, _scheduler, _filter_engine, _dshield_poller, _report_ingestion
+    global \
+        _db, \
+        _threat_matcher, \
+        threat_matcher, \
+        _scheduler, \
+        _filter_engine, \
+        _dshield_poller, \
+        _report_ingestion
     _db = database
     _threat_matcher = matcher
     threat_matcher = matcher
@@ -882,7 +895,7 @@ async def api_system_selfheal():
 async def api_health_monitor():
     """Get health monitoring status and last self-heal report"""
     from app.health_scheduler import get_health_report
-    
+
     report = get_health_report()
     return {
         "status": "success",
@@ -895,7 +908,7 @@ async def api_health_monitor():
 async def api_health_monitor_trigger():
     """Manually trigger a health check (outside the normal 60-second cycle)"""
     from app.health_scheduler import trigger_health_check
-    
+
     report = trigger_health_check()
     return {
         "status": "success",
@@ -968,9 +981,15 @@ async def dashboard(request: Request):
                 "misp": matcher.misp_feed.get_status(),
                 "pfblocker": matcher.pfblocker_feed.get_status(),
                 "abuseipdb": matcher.abuseipdb_feed.get_status(),
-                "cvedetails": getattr(matcher, "cvedetails_feed", None).get_status() if getattr(matcher, "cvedetails_feed", None) else {"status": "not_configured"},
-                "cisa_kev": getattr(matcher, "cisa_kev_feed", None).get_status() if getattr(matcher, "cisa_kev_feed", None) else {"status": "not_configured"},
-                "shadowserver": getattr(matcher, "shadowserver_feed", None).get_status() if getattr(matcher, "shadowserver_feed", None) else {"status": "not_configured"},
+                "cvedetails": getattr(matcher, "cvedetails_feed", None).get_status()
+                if getattr(matcher, "cvedetails_feed", None)
+                else {"status": "not_configured"},
+                "cisa_kev": getattr(matcher, "cisa_kev_feed", None).get_status()
+                if getattr(matcher, "cisa_kev_feed", None)
+                else {"status": "not_configured"},
+                "shadowserver": getattr(matcher, "shadowserver_feed", None).get_status()
+                if getattr(matcher, "shadowserver_feed", None)
+                else {"status": "not_configured"},
             },
             "captures": matcher.pcap_capture.get_active_captures(),
             "system": matcher.get_status(),
@@ -1238,9 +1257,20 @@ async def cve_dashboard(request: Request):
     """CVE vulnerability news dashboard with severity tracking"""
     try:
         cve_feed = get_cve_feed()
-        # Ensure most recent data is loaded
-        cve_feed.fetch_all_periods()
+        # Try to use cached data first, only refresh if cache is empty or very old
         cve_summary = cve_feed.get_summary()
+
+        # If cache is empty (all zeros), try to refresh
+        if (
+            cve_summary.get("year_count", 0) == 0
+            and cve_summary.get("month_count", 0) == 0
+        ):
+            try:
+                cve_feed.fetch_all_periods()
+                cve_summary = cve_feed.get_summary()
+            except Exception as refresh_err:
+                logger.warning(f"Could not refresh CVE feed: {refresh_err}")
+
         return templates.TemplateResponse(
             "cve_news.html",
             {
@@ -1349,12 +1379,14 @@ async def generate_security_report(days: int = Query(7, ge=1, le=90)):
 @app.get("/api/news")
 async def api_cyber_news(
     limit: int = Query(100, ge=1, le=100),
-    source: str = Query("", description="Filter by source: SANS, CVE, APT, or empty for all"),
+    source: str = Query(
+        "", description="Filter by source: SANS, CVE, APT, or empty for all"
+    ),
 ):
     """Latest curated cybersecurity news, IOC and mitigation signatures with optional source filtering"""
     try:
         news_items = get_feed().get_latest(limit=limit)
-        
+
         # Filter by source if specified
         if source:
             source_lower = source.lower()
@@ -1362,12 +1394,12 @@ async def api_cyber_news(
             for item in news_items:
                 item_source = item.get("source", "").lower()
                 item_id = item.get("id", "").lower()
-                
+
                 # Match by source field or ID prefix
                 if source_lower in item_source or source_lower in item_id:
                     filtered.append(item)
             news_items = filtered
-        
+
         return {
             "status": "success",
             "items": news_items,
@@ -1384,13 +1416,13 @@ async def api_news_sources():
     """Get available news feed sources"""
     try:
         news_items = get_feed().get_latest(limit=100)
-        
+
         # Extract unique sources
         sources = set()
         for item in news_items:
             source = item.get("source", "Unknown")
             sources.add(source)
-        
+
         # Detect feed types from IDs
         feed_types = set()
         for item in news_items:
@@ -1401,7 +1433,7 @@ async def api_news_sources():
                 feed_types.add("CVE")
             if "apt" in item.get("summary", "").lower():
                 feed_types.add("APT")
-        
+
         return {
             "status": "success",
             "sources": sorted(list(sources)),
@@ -1417,10 +1449,10 @@ async def api_dshield_threats():
     """Get real-time DShield honeypot threat summary"""
     try:
         from app.feeds.dshield_polling import get_dshield_poller
-        
+
         poller = get_dshield_poller()
         threats = poller.summarize_threats()
-        
+
         return {
             "status": "success",
             "dshield_threats": threats,
@@ -1436,15 +1468,17 @@ async def api_dshield_ssh(limit: int = Query(100, ge=1, le=500)):
     """Get latest DShield SSH honeypot attackers"""
     try:
         from app.feeds.dshield_polling import get_dshield_poller
-        
+
         poller = get_dshield_poller()
         attackers = poller.poll_ssh_attackers(limit=limit)
-        
+
         return {
             "status": "success",
             "ssh_attackers": attackers,
             "count": len(attackers),
-            "last_updated": poller.last_ssh_poll.isoformat() if poller.last_ssh_poll else None,
+            "last_updated": poller.last_ssh_poll.isoformat()
+            if poller.last_ssh_poll
+            else None,
         }
     except Exception as e:
         logger.error(f"Failed to fetch DShield SSH data: {e}")
@@ -1456,15 +1490,17 @@ async def api_dshield_web(limit: int = Query(100, ge=1, le=500)):
     """Get latest DShield web honeypot scanners"""
     try:
         from app.feeds.dshield_polling import get_dshield_poller
-        
+
         poller = get_dshield_poller()
         scanners = poller.poll_web_attackers(limit=limit)
-        
+
         return {
             "status": "success",
             "web_scanners": scanners,
             "count": len(scanners),
-            "last_updated": poller.last_web_poll.isoformat() if poller.last_web_poll else None,
+            "last_updated": poller.last_web_poll.isoformat()
+            if poller.last_web_poll
+            else None,
         }
     except Exception as e:
         logger.error(f"Failed to fetch DShield Web data: {e}")
@@ -1691,12 +1727,16 @@ async def api_cyber_news_verify(
                 try:
                     import requests
 
-                    http_head = lambda url: requests.head(url, timeout=5, allow_redirects=True)
+                    http_head = lambda url: requests.head(
+                        url, timeout=5, allow_redirects=True
+                    )
                 except ImportError:
                     import urllib.request
 
                     def urllib_head(url):
-                        req = urllib.request.Request(url, method='HEAD', headers={'User-Agent': 'CIG/1.0'})
+                        req = urllib.request.Request(
+                            url, method="HEAD", headers={"User-Agent": "CIG/1.0"}
+                        )
                         with urllib.request.urlopen(req, timeout=5) as resp:
                             return resp
 
@@ -1705,14 +1745,20 @@ async def api_cyber_news_verify(
                 if source_valid:
                     try:
                         r = http_head(source_url)
-                        source_reachable = (getattr(r, 'status', None) or getattr(r, 'getcode', lambda: None)()) < 400
+                        source_reachable = (
+                            getattr(r, "status", None)
+                            or getattr(r, "getcode", lambda: None)()
+                        ) < 400
                     except Exception:
                         source_reachable = False
 
                 if cve_url and cve_valid:
                     try:
                         r = http_head(cve_url)
-                        cve_reachable = (getattr(r, 'status', None) or getattr(r, 'getcode', lambda: None)()) < 400
+                        cve_reachable = (
+                            getattr(r, "status", None)
+                            or getattr(r, "getcode", lambda: None)()
+                        ) < 400
                     except Exception:
                         cve_reachable = False
 
@@ -1931,7 +1977,7 @@ async def scheduler_status():
             "status": "success",
             "scheduler_running": scheduler.scheduler_running,
             "feeds": status,
-            "config_file": str(scheduler.state_file)
+            "config_file": str(scheduler.state_file),
         }
     except Exception as e:
         logger.error(f"Failed to get scheduler status: {e}")
@@ -1948,7 +1994,7 @@ async def scheduler_start():
         return {
             "status": "success",
             "message": "Feed scheduler started",
-            "running": scheduler.scheduler_running
+            "running": scheduler.scheduler_running,
         }
     except Exception as e:
         logger.error(f"Failed to start scheduler: {e}")
@@ -1965,7 +2011,7 @@ async def scheduler_stop():
         return {
             "status": "success",
             "message": "Feed scheduler stopped",
-            "running": scheduler.scheduler_running
+            "running": scheduler.scheduler_running,
         }
     except Exception as e:
         logger.error(f"Failed to stop scheduler: {e}")
@@ -1982,7 +2028,7 @@ async def scheduler_update_feed(feed_id: str, force: bool = False):
         return {
             "status": "success" if success else "failed",
             "feed_id": feed_id,
-            "message": error if error else "Feed updated successfully"
+            "message": error if error else "Feed updated successfully",
         }
     except Exception as e:
         logger.error(f"Failed to update feed {feed_id}: {e}")
@@ -1996,11 +2042,7 @@ async def scheduler_update_all(force: bool = False):
     try:
         scheduler = get_scheduler()
         results = await scheduler.update_all_feeds(force=force)
-        return {
-            "status": "success",
-            "message": "All feeds updated",
-            "results": results
-        }
+        return {"status": "success", "message": "All feeds updated", "results": results}
     except Exception as e:
         logger.error(f"Failed to update all feeds: {e}")
         raise HTTPException(status_code=500, detail="Failed to update all feeds")
@@ -2022,8 +2064,8 @@ async def dshield_status():
                 "total_ssh_attacks": stats.total_ssh_attacks,
                 "total_web_attacks": stats.total_web_attacks,
                 "failed_polls": stats.failed_polls,
-                "last_error": stats.last_error
-            }
+                "last_error": stats.last_error,
+            },
         }
     except Exception as e:
         logger.error(f"Failed to get DShield status: {e}")
@@ -2035,14 +2077,14 @@ async def dshield_poll(poll_type: str = "all"):
     """Manually trigger DShield polling"""
     try:
         dshield = get_dshield_poller()
-        
+
         if poll_type == "ssh":
             attacks, success = dshield.poll_ssh_attackers()
             return {
                 "status": "success" if success else "failed",
                 "type": "ssh",
                 "count": len(attacks),
-                "attacks": attacks[:10]  # Return first 10
+                "attacks": attacks[:10],  # Return first 10
             }
         elif poll_type == "web":
             attacks, success = dshield.poll_web_attackers()
@@ -2050,7 +2092,7 @@ async def dshield_poll(poll_type: str = "all"):
                 "status": "success" if success else "failed",
                 "type": "web",
                 "count": len(attacks),
-                "attacks": attacks[:10]
+                "attacks": attacks[:10],
             }
         else:  # all
             ssh_attacks, ssh_success = dshield.poll_ssh_attackers()
@@ -2058,7 +2100,7 @@ async def dshield_poll(poll_type: str = "all"):
             return {
                 "status": "success" if (ssh_success or web_success) else "failed",
                 "ssh": {"count": len(ssh_attacks), "success": ssh_success},
-                "web": {"count": len(web_attacks), "success": web_success}
+                "web": {"count": len(web_attacks), "success": web_success},
             }
     except Exception as e:
         logger.error(f"Failed to poll DShield: {e}")
@@ -2071,10 +2113,7 @@ async def dshield_threat_summary():
     try:
         dshield = get_dshield_poller()
         summary = dshield.summarize_threats()
-        return {
-            "status": "success",
-            "summary": summary
-        }
+        return {"status": "success", "summary": summary}
     except Exception as e:
         logger.error(f"Failed to get DShield summary: {e}")
         raise HTTPException(status_code=500, detail="Failed to get threat summary")
@@ -2104,7 +2143,7 @@ async def filters_status():
             "status": "success",
             "active_filters": len([f for f in filters if f.get("enabled")]),
             "total_filters": len(filters),
-            "filters": filters
+            "filters": filters,
         }
     except Exception as e:
         logger.error(f"Failed to get filters status: {e}")
@@ -2119,18 +2158,18 @@ async def filters_apply(feed_id: str, filter_id: Optional[str] = None):
         filter_engine = get_filter_engine()
         db = get_db()
         indicators = db.get_indicators_by_feed(feed_id)
-        
+
         if filter_id:
             filtered = filter_engine.filter_indicators(indicators, filter_id=filter_id)
         else:
             filtered = filter_engine.filter_indicators(indicators, feed_id=feed_id)
-        
+
         return {
             "status": "success",
             "feed_id": feed_id,
             "original_count": len(indicators),
             "filtered_count": len(filtered),
-            "filtered_indicators": filtered[:20]  # Return first 20
+            "filtered_indicators": filtered[:20],  # Return first 20
         }
     except Exception as e:
         logger.error(f"Failed to apply filters: {e}")
@@ -2169,16 +2208,15 @@ async def config_status():
     """Get overall configuration status"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         status = cred_manager.get_status()
-        return {
-            "status": "success",
-            "configuration": status
-        }
+        return {"status": "success", "configuration": status}
     except Exception as e:
         logger.error(f"Failed to get config status: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get configuration status")
+        raise HTTPException(
+            status_code=500, detail="Failed to get configuration status"
+        )
 
 
 @app.post("/api/config/nessus/credentials")
@@ -2186,20 +2224,20 @@ async def config_nessus_credentials(request: NessusCredentialsRequest):
     """Set Nessus API credentials"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         success = cred_manager.set_nessus_credentials(
             api_key=request.api_key,
             api_secret=request.api_secret,
             host=request.host,
-            enabled=request.enabled
+            enabled=request.enabled,
         )
-        
+
         if success:
             return {
                 "status": "success",
                 "message": "Nessus credentials updated",
-                "enabled": request.enabled
+                "enabled": request.enabled,
             }
         else:
             raise HTTPException(status_code=500, detail="Failed to save credentials")
@@ -2213,19 +2251,17 @@ async def config_graynoise_credentials(request: GrayNoiseCredentialsRequest):
     """Set GrayNoise API credentials"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         success = cred_manager.set_graynoise_credentials(
-            api_key=request.api_key,
-            api_type=request.api_type,
-            enabled=request.enabled
+            api_key=request.api_key, api_type=request.api_type, enabled=request.enabled
         )
-        
+
         if success:
             return {
                 "status": "success",
                 "message": "GrayNoise credentials updated",
-                "enabled": request.enabled
+                "enabled": request.enabled,
             }
         else:
             raise HTTPException(status_code=500, detail="Failed to save credentials")
@@ -2239,16 +2275,19 @@ async def test_nessus_connection():
     """Test Nessus API connection with saved credentials"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         creds = cred_manager.get_nessus_credentials()
-        
+
         if not creds:
-            raise HTTPException(status_code=400, detail="No Nessus credentials configured")
-        
+            raise HTTPException(
+                status_code=400, detail="No Nessus credentials configured"
+            )
+
         # Try to connect to Nessus API
         try:
             import httpx
+
             async with httpx.AsyncClient(verify=False, timeout=10.0) as client:
                 headers = {
                     "X-API-Token": creds.get("api_key", ""),
@@ -2256,39 +2295,41 @@ async def test_nessus_connection():
                 # Try a simple API call to verify credentials
                 response = await client.get(
                     f"{creds.get('host', 'https://cloud.nessus.com')}/api/v2/scans",
-                    headers=headers
+                    headers=headers,
                 )
-                
+
                 if response.status_code == 200:
                     return {
                         "status": "success",
                         "message": "Nessus connection successful",
                         "host": creds.get("host", "https://cloud.nessus.com"),
-                        "credential_configured": True
+                        "credential_configured": True,
                     }
                 elif response.status_code == 401:
                     return {
                         "status": "failed",
                         "message": "Nessus credentials are invalid (401 Unauthorized)",
-                        "error": "Invalid API key or secret"
+                        "error": "Invalid API key or secret",
                     }
                 else:
                     return {
                         "status": "failed",
                         "message": f"Nessus API returned status code {response.status_code}",
-                        "error": response.text[:200] if response.text else "Unknown error"
+                        "error": response.text[:200]
+                        if response.text
+                        else "Unknown error",
                     }
         except httpx.TimeoutException:
             return {
                 "status": "failed",
                 "message": "Connection timeout - Nessus server not responding",
-                "error": "Timeout after 10 seconds"
+                "error": "Timeout after 10 seconds",
             }
         except Exception as conn_error:
             return {
                 "status": "failed",
                 "message": "Failed to connect to Nessus",
-                "error": str(conn_error)
+                "error": str(conn_error),
             }
     except HTTPException:
         raise
@@ -2302,68 +2343,73 @@ async def test_graynoise_connection():
     """Test GrayNoise API connection with saved credentials"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         creds = cred_manager.get_graynoise_credentials()
-        
+
         if not creds:
-            raise HTTPException(status_code=400, detail="No GrayNoise credentials configured")
-        
+            raise HTTPException(
+                status_code=400, detail="No GrayNoise credentials configured"
+            )
+
         # Try to connect to GrayNoise API
         try:
             import httpx
+
             api_type = creds.get("api_type", "community")
             api_key = creds.get("api_key", "")
-            
+
             async with httpx.AsyncClient(verify=False, timeout=10.0) as client:
                 headers = {
                     "Authorization": f"Bearer {api_key}",
                 }
-                
+
                 # Different endpoints for community vs enterprise
                 if api_type == "community":
                     url = "https://api.greynoise.io/v3/community/ip/8.8.8.8"
                 else:
                     url = "https://api.greynoise.io/v3/query/listLimited?limit=1"
-                
+
                 response = await client.get(url, headers=headers)
-                
+
                 if response.status_code == 200:
                     return {
                         "status": "success",
                         "message": "GrayNoise connection successful",
                         "api_type": api_type,
-                        "credential_configured": True
+                        "credential_configured": True,
                     }
                 elif response.status_code == 401:
                     return {
                         "status": "failed",
                         "message": "GrayNoise credentials are invalid (401 Unauthorized)",
-                        "error": "Invalid API key"
+                        "error": "Invalid API key",
                     }
                 elif response.status_code == 403:
                     return {
                         "status": "failed",
                         "message": "GrayNoise access forbidden (403 Forbidden)",
-                        "error": "API key does not have permission for this endpoint"
+                        "error": "API key does not have permission for this endpoint",
                     }
                 else:
                     return {
                         "status": "failed",
                         "message": f"GrayNoise API returned status code {response.status_code}",
-                        "error": response.text[:200] if response.text else "Unknown error"
+                        "error": response.text[:200]
+                        if response.text
+                        else "Unknown error",
                     }
         except httpx.TimeoutException:
             return {
                 "status": "failed",
                 "message": "Connection timeout - GrayNoise server not responding",
-                "error": "Timeout after 10 seconds"
+                "error": "Timeout after 10 seconds",
             }
         except Exception as conn_error:
             return {
                 "status": "failed",
                 "message": "Failed to connect to GrayNoise",
-                "error": str(conn_error)
+                "error": str(conn_error),
             }
     except HTTPException:
         raise
@@ -2377,15 +2423,15 @@ async def config_nessus_enabled():
     """Check if Nessus is enabled"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         enabled = cred_manager.is_nessus_enabled()
         configured = cred_manager.get_nessus_credentials() is not None
-        
+
         return {
             "status": "success",
             "nessus_enabled": enabled,
-            "nessus_configured": configured
+            "nessus_configured": configured,
         }
     except Exception as e:
         logger.error(f"Failed to check Nessus status: {e}")
@@ -2397,15 +2443,15 @@ async def config_graynoise_enabled():
     """Check if GrayNoise is enabled"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         enabled = cred_manager.is_graynoise_enabled()
         configured = cred_manager.get_graynoise_credentials() is not None
-        
+
         return {
             "status": "success",
             "graynoise_enabled": enabled,
-            "graynoise_configured": configured
+            "graynoise_configured": configured,
         }
     except Exception as e:
         logger.error(f"Failed to check GrayNoise status: {e}")
@@ -2417,7 +2463,7 @@ async def config_custom_api_add(request: CustomAPIFeedRequest):
     """Add or update a custom API feed"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         success = cred_manager.add_custom_api_feed(
             feed_id=request.feed_id,
@@ -2427,21 +2473,25 @@ async def config_custom_api_add(request: CustomAPIFeedRequest):
             auth_value=request.auth_value,
             custom_headers=request.custom_headers,
             polling_interval_hours=request.polling_interval_hours,
-            enabled=request.enabled
+            enabled=request.enabled,
         )
-        
+
         if success:
             return {
                 "status": "success",
                 "message": f"Custom API feed '{request.feed_id}' added/updated",
                 "feed_id": request.feed_id,
-                "enabled": request.enabled
+                "enabled": request.enabled,
             }
         else:
-            raise HTTPException(status_code=500, detail="Failed to save custom API feed")
+            raise HTTPException(
+                status_code=500, detail="Failed to save custom API feed"
+            )
     except Exception as e:
         logger.error(f"Failed to add custom API feed: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to add custom API feed: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to add custom API feed: {e}"
+        )
 
 
 @app.get("/api/config/custom-api/list")
@@ -2449,22 +2499,18 @@ async def config_custom_api_list():
     """List all custom API feeds"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         feeds = cred_manager.list_custom_api_feeds()
-        
+
         # Remove sensitive auth_value from response
         safe_feeds = {}
         for feed_id, config in feeds.items():
             safe_config = {**config}
-            safe_config['auth_value'] = '***' if config.get('auth_value') else ''
+            safe_config["auth_value"] = "***" if config.get("auth_value") else ""
             safe_feeds[feed_id] = safe_config
-        
-        return {
-            "status": "success",
-            "feeds": safe_feeds,
-            "count": len(feeds)
-        }
+
+        return {"status": "success", "feeds": safe_feeds, "count": len(feeds)}
     except Exception as e:
         logger.error(f"Failed to list custom API feeds: {e}")
         raise HTTPException(status_code=500, detail="Failed to list custom API feeds")
@@ -2475,21 +2521,23 @@ async def config_custom_api_remove(feed_id: str):
     """Remove a custom API feed"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         success = cred_manager.remove_custom_api_feed(feed_id)
-        
+
         if success:
             return {
                 "status": "success",
                 "message": f"Custom API feed '{feed_id}' removed",
-                "feed_id": feed_id
+                "feed_id": feed_id,
             }
         else:
             raise HTTPException(status_code=404, detail="Feed not found")
     except Exception as e:
         logger.error(f"Failed to remove custom API feed: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to remove custom API feed: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to remove custom API feed: {e}"
+        )
 
 
 # --- Report Ingestion Endpoints ---
@@ -2503,7 +2551,7 @@ async def reports_ingestion_status():
         return {
             "status": "success",
             "ingestion_ready": True,
-            "message": "Report ingestion service is ready"
+            "message": "Report ingestion service is ready",
         }
     except Exception as e:
         logger.error(f"Failed to get ingestion status: {e}")
@@ -2515,9 +2563,9 @@ async def reports_ingest_from_file(file_path: str, report_format: str = "json"):
     """Ingest a security report file"""
     try:
         from app.feeds.report_ingestion import ReportFormat
-        
+
         ingestion = get_report_ingestion()
-        
+
         # Map format string to ReportFormat enum
         format_map = {
             "json": ReportFormat.JSON,
@@ -2525,21 +2573,23 @@ async def reports_ingest_from_file(file_path: str, report_format: str = "json"):
             "text": ReportFormat.TEXT,
             "pdf": ReportFormat.PDF,
             "xml": ReportFormat.XML,
-            "stix": ReportFormat.STIX
+            "stix": ReportFormat.STIX,
         }
-        
+
         fmt = format_map.get(report_format.lower())
         if not fmt:
-            raise HTTPException(status_code=400, detail=f"Unsupported format: {report_format}")
-        
+            raise HTTPException(
+                status_code=400, detail=f"Unsupported format: {report_format}"
+            )
+
         indicators, success = ingestion.ingest_report(file_path, fmt)
-        
+
         return {
             "status": "success" if success else "partial",
             "file_path": file_path,
             "format": report_format,
             "indicators_extracted": len(indicators),
-            "indicators": indicators[:20]  # Return first 20
+            "indicators": indicators[:20],  # Return first 20
         }
     except Exception as e:
         logger.error(f"Failed to ingest report: {e}")
@@ -2554,10 +2604,10 @@ async def config_dashboard(request: Request):
     """Configuration management dashboard"""
     try:
         from app.config.feed_credentials import FeedCredentialManager
-        
+
         cred_manager = FeedCredentialManager()
         status = cred_manager.get_status()
-        
+
         return templates.TemplateResponse(
             "config.html",
             {
@@ -2579,7 +2629,7 @@ async def feeds_dashboard(request: Request):
     try:
         scheduler = get_scheduler()
         status = scheduler.get_feed_status()
-        
+
         return templates.TemplateResponse(
             "feeds.html",
             {
