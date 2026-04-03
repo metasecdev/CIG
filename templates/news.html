@@ -137,21 +137,6 @@
                                 </div>
                                 {% endif %}
                                 
-                                <!-- Signatures -->
-                                {% if news.signatures %}
-                                <div class="mb-2">
-                                    <strong><i class="fas fa-signature"></i> Detection Signatures:</strong>
-                                    <div class="mt-1">
-                                        {% for sig in news.signatures[:3] %}
-                                        <div class="sig-code p-1 mb-1">{{ sig[:120] }}</div>
-                                        {% endfor %}
-                                        {% if news.signatures|length > 3 %}
-                                        <span class="text-muted">+{{ news.signatures|length - 3 }} more signatures</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
                                 <!-- Mitigations -->
                                 {% if news.mitigation %}
                                 <div class="mb-2">
