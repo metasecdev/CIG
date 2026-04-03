@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CIG - Events & Alerts</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap/5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="/static/dashboard.css" rel="stylesheet">
 </head>
@@ -181,9 +181,17 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/dashboard.js"></script>
     <script>
+        // Helper function to escape HTML to prevent XSS attacks
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function refreshAlerts() {
             location.reload();
         }
@@ -194,32 +202,34 @@
                 .then(response => response.json())
                 .then(data => {
                     const content = document.getElementById('alertDetailsContent');
+                    const severityClass = data.severity === 'high' ? 'danger' : data.severity === 'medium' ? 'warning' : 'info';
+                    
                     content.innerHTML = `
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>Basic Information</h6>
-                                <p><strong>ID:</strong> ${data.id}</p>
-                                <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+                                <p><strong>ID:</strong> ${escapeHtml(data.id)}</p>
+                                <p><strong>Timestamp:</strong> ${escapeHtml(data.timestamp)}</p>
                                 <p><strong>Severity:</strong>
-                                    <span class="badge bg-${data.severity === 'high' ? 'danger' : data.severity === 'medium' ? 'warning' : 'info'}">
-                                        ${data.severity.toUpperCase()}
+                                    <span class="badge bg-${severityClass}">
+                                        ${escapeHtml(data.severity.toUpperCase())}
                                     </span>
                                 </p>
-                                <p><strong>Protocol:</strong> ${data.protocol}</p>
+                                <p><strong>Protocol:</strong> ${escapeHtml(data.protocol)}</p>
                             </div>
                             <div class="col-md-6">
                                 <h6>Network Information</h6>
-                                <p><strong>Source:</strong> ${data.source_ip}:${data.source_port}</p>
-                                <p><strong>Destination:</strong> ${data.destination_ip}:${data.destination_port}</p>
-                                <p><strong>Indicator:</strong> <code>${data.indicator}</code></p>
-                                <p><strong>Type:</strong> ${data.indicator_type}</p>
-                                <p><strong>Feed Source:</strong> ${data.feed_source}</p>
+                                <p><strong>Source:</strong> ${escapeHtml(data.source_ip)}:${escapeHtml(data.source_port)}</p>
+                                <p><strong>Destination:</strong> ${escapeHtml(data.destination_ip)}:${escapeHtml(data.destination_port)}</p>
+                                <p><strong>Indicator:</strong> <code>${escapeHtml(data.indicator)}</code></p>
+                                <p><strong>Type:</strong> ${escapeHtml(data.indicator_type)}</p>
+                                <p><strong>Feed Source:</strong> ${escapeHtml(data.feed_source)}</p>
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12">
                                 <h6>Message</h6>
-                                <p>${data.message}</p>
+                                <p>${escapeHtml(data.message)}</p>
                             </div>
                         </div>
                     `;

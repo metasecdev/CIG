@@ -112,18 +112,18 @@
                 
                 <!-- Tabs -->
                 <ul class="nav nav-tabs mb-3" id="cveTabs" role="tablist">
-                    <li class="nav-item">
-                        <button class="nav-link active bg-danger text-white" id="critical-tab" data-bs-toggle="tab" data-bs-target="#critical" type="button" onclick="showSeverityTab('critical')">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active bg-danger text-white" id="critical-tab" data-bs-toggle="tab" data-bs-target="#critical-list" type="button" role="tab" aria-controls="critical-list" aria-selected="true" onclick="showSeverityTab('critical')">
                             <i class="fas fa-exclamation-triangle"></i> Critical (<span id="tab-critical-count">0</span>)
                         </button>
                     </li>
-                    <li class="nav-item">
-                        <button class="nav-link bg-warning" id="high-tab" data-bs-toggle="tab" data-bs-target="#high" type="button" onclick="showSeverityTab('high')">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link bg-warning" id="high-tab" data-bs-toggle="tab" data-bs-target="#high-list" type="button" role="tab" aria-controls="high-list" aria-selected="false" onclick="showSeverityTab('high')">
                             <i class="fas fa-exclamation-circle"></i> High (<span id="tab-high-count">0</span>)
                         </button>
                     </li>
-                    <li class="nav-item">
-                        <button class="nav-link bg-info" id="medium-tab" data-bs-toggle="tab" data-bs-target="#medium" type="button" onclick="showSeverityTab('medium')">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link bg-info" id="medium-tab" data-bs-toggle="tab" data-bs-target="#medium-list" type="button" role="tab" aria-controls="medium-list" aria-selected="false" onclick="showSeverityTab('medium')">
                             <i class="fas fa-info-circle"></i> Medium (<span id="tab-medium-count">0</span>)
                         </button>
                     </li>
@@ -145,9 +145,11 @@
                 
                 <!-- CVE Content -->
                 <div id="cve-content" style="display: none;">
-                    <div id="critical-list" class="tab-pane fade show active"></div>
-                    <div id="high-list" class="tab-pane fade"></div>
-                    <div id="medium-list" class="tab-pane fade"></div>
+                    <div class="tab-content" id="cveTabContent">
+                        <div id="critical-list" class="tab-pane fade show active" role="tabpanel" aria-labelledby="critical-tab"></div>
+                        <div id="high-list" class="tab-pane fade" role="tabpanel" aria-labelledby="high-tab"></div>
+                        <div id="medium-list" class="tab-pane fade" role="tabpanel" aria-labelledby="medium-tab"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -172,11 +174,11 @@
                         medium: data.medium || []
                     };
                     
-                    // Update time period stats
-                    document.getElementById('stat-day').textContent = {{ cve_summary.day_count|default(0) }};
-                    document.getElementById('stat-week').textContent = {{ cve_summary.week_count|default(0) }};
-                    document.getElementById('stat-month').textContent = {{ cve_summary.month_count|default(0) }};
-                    document.getElementById('stat-year').textContent = {{ cve_summary.year_count|default(0) }};
+                    // Update time period stats (using Jinja2 template variables)
+                    document.getElementById('stat-day').textContent = {{ cve_summary.day_count|default(0)|int }};
+                    document.getElementById('stat-week').textContent = {{ cve_summary.week_count|default(0)|int }};
+                    document.getElementById('stat-month').textContent = {{ cve_summary.month_count|default(0)|int }};
+                    document.getElementById('stat-year').textContent = {{ cve_summary.year_count|default(0)|int }};
                     
                     // Update severity stats
                     document.getElementById('stat-critical').textContent = data.critical_count;
@@ -204,6 +206,14 @@
             renderCVElist('medium', cveData.medium);
         }
 
+        // Helper function to escape HTML to prevent XSS attacks
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function renderCVElist(severity, items) {
             let filtered = filterItems(items);
             let sorted = sortItems(filtered);
@@ -224,28 +234,28 @@
                         <div class="row align-items-center">
                             <div class="col-md-8">
                                 <h5 class="mb-0">
-                                    <a href="${item.cve_url || '#'}" target="_blank" class="text-decoration-none text-${severityClass}">
-                                        ${item.cve || 'N/A'}
+                                    <a href="${escapeHtml(item.cve_url) || '#'}" target="_blank" class="text-decoration-none text-${severityClass}">
+                                        ${escapeHtml(item.cve) || 'N/A'}
                                     </a>
                                     <span class="badge bg-${severityClass} ms-2">
-                                        CVSS ${item.cvss_score?.toFixed(1) || 'N/A'}
+                                        CVSS ${item.cvss_score != null ? item.cvss_score.toFixed(1) : 'N/A'}
                                     </span>
                                 </h5>
-                                <small class="text-muted">${item.vendor || ''} ${item.product || ''}</small>
+                                <small class="text-muted">${escapeHtml(item.vendor) || ''} ${escapeHtml(item.product) || ''}</small>
                             </div>
                             <div class="col-md-4 text-end">
-                                <small class="text-muted">${item.published_at || ''}</small>
+                                <small class="text-muted">${escapeHtml(item.published_at) || ''}</small>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>${item.summary || 'No description available.'}</p>
+                        <p>${escapeHtml(item.summary) || 'No description available.'}</p>
                         
                         <!-- MITRE Techniques -->
                         ${item.mitre_techniques && item.mitre_techniques.length > 0 ? `
                             <div class="mb-2">
                                 <strong><i class="fas fa-bullseye"></i> MITRE ATT&CK:</strong>
-                                ${item.mitre_techniques.map(t => `<span class="mitre-tag me-1">${t}</span>`).join('')}
+                                ${item.mitre_techniques.map(t => `<span class="mitre-tag me-1">${escapeHtml(t)}</span>`).join('')}
                             </div>
                         ` : ''}
                         
@@ -254,7 +264,7 @@
                             <div class="mb-2">
                                 <strong><i class="fas fa-crosshairs"></i> IOCs:</strong>
                                 <div class="mt-1">
-                                    ${item.iocs.slice(0, 10).map(ioc => `<span class="badge bg-secondary ioc-tag me-1">${ioc}</span>`).join('')}
+                                    ${item.iocs.slice(0, 10).map(ioc => `<span class="badge bg-secondary ioc-tag me-1">${escapeHtml(ioc)}</span>`).join('')}
                                     ${item.iocs.length > 10 ? `<span class="text-muted">+${item.iocs.length - 10} more</span>` : ''}
                                 </div>
                             </div>
@@ -265,7 +275,7 @@
                             <div class="mb-2">
                                 <strong><i class="fas fa-signature"></i> Detection Signatures:</strong>
                                 <div class="mt-1">
-                                    ${item.signatures.slice(0, 3).map(sig => `<div class="sig-code p-1 mb-1">${sig.substring(0, 120)}</div>`).join('')}
+                                    ${item.signatures.slice(0, 3).map(sig => `<div class="sig-code p-1 mb-1">${escapeHtml(sig.substring(0, 120))}</div>`).join('')}
                                     ${item.signatures.length > 3 ? `<span class="text-muted">+${item.signatures.length - 3} more signatures</span>` : ''}
                                 </div>
                             </div>
@@ -276,7 +286,7 @@
                             <div class="mb-2">
                                 <strong><i class="fas fa-shield-alt"></i> Mitigations:</strong>
                                 <ul class="mb-0">
-                                    ${item.mitigations.map(m => `<li>${m}</li>`).join('')}
+                                    ${item.mitigations.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
                                 </ul>
                             </div>
                         ` : ''}
@@ -284,11 +294,11 @@
                         <!-- Additional Details -->
                         ${item.cwes && item.cwes.length > 0 ? `
                             <div class="mt-2">
-                                <small class="text-muted"><strong>CWE:</strong> ${item.cwes.join(', ')}</small>
+                                <small class="text-muted"><strong>CWE:</strong> ${item.cwes.map(c => escapeHtml(c)).join(', ')}</small>
                             </div>
                         ` : ''}
                         ${item.attack_vector ? `
-                            <div><small class="text-muted"><strong>Attack Vector:</strong> ${item.attack_vector}</small></div>
+                            <div><small class="text-muted"><strong>Attack Vector:</strong> ${escapeHtml(item.attack_vector)}</small></div>
                         ` : ''}
                     </div>
                 </div>
