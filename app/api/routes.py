@@ -1311,7 +1311,7 @@ async def cve_dashboard(request: Request):
 
 
 @app.get("/dashboard/actors")
-async def threat_actors_dashboard(request: Request):
+async def threat_actors_dashboard(request: Request, refresh: bool = False):
     """Threat actors dashboard - organized by country"""
     try:
         from app.threat_intel.actors import get_threat_intelligence
@@ -1321,9 +1321,9 @@ async def threat_actors_dashboard(request: Request):
 
         threat_intel = get_threat_intelligence(db)
 
-        # Initialize default actors if none exist
+        # Initialize default actors if none exist or refresh requested
         existing_actors = db.get_threat_actors_by_country()
-        if not existing_actors:
+        if not existing_actors or refresh:
             threat_intel.initialize_default_actors(db)
             existing_actors = db.get_threat_actors_by_country()
 
