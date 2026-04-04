@@ -1237,11 +1237,35 @@ async def news_dashboard(request: Request):
     """Cybersecurity news dashboard - curated threat intelligence"""
     try:
         news_items = get_feed().get_latest(limit=50)
+
+        # Get GrayNoise recent activity if configured
+        graynoise_items = []
+        graynoise_error = None
+        try:
+            from app.config.feed_credentials import FeedCredentialManager
+            from app.feeds.greynoise import get_greynoise_connector
+
+            cred_manager = FeedCredentialManager()
+            creds = cred_manager.get_graynoise_credentials()
+
+            if creds and creds.get("api_key") and creds.get("enabled"):
+                connector = get_greynoise_connector(
+                    api_key=creds.get("api_key", ""),
+                    use_community=(creds.get("api_type") == "community"),
+                    database=None,
+                )
+                gn_results, _ = connector.query_ips_by_age(days=2, limit=20)
+                graynoise_items = gn_results
+        except Exception as e:
+            graynoise_error = str(e)
+
         return templates.TemplateResponse(
             "news.html",
             {
                 "request": request,
                 "news_items": news_items,
+                "graynoise_items": graynoise_items,
+                "graynoise_error": graynoise_error,
                 "timestamp": datetime.utcnow().isoformat(),
             },
         )
@@ -1281,6 +1305,107 @@ async def cve_dashboard(request: Request):
         )
     except Exception as e:
         logger.error(f"CVE dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
+@app.get("/dashboard/actors")
+async def threat_actors_dashboard(request: Request):
+    """Threat actors dashboard - organized by country"""
+    try:
+        from app.threat_intel.actors import get_threat_intelligence
+        from app.models.database import Database
+
+        db = Database(db_path=getattr(settings, "database_path", "data/cig.db"))
+
+        threat_intel = get_threat_intelligence(db)
+
+        # Initialize default actors if none exist
+        existing_actors = db.get_threat_actors_by_country()
+        if not existing_actors:
+            threat_intel.initialize_default_actors(db)
+            existing_actors = db.get_threat_actors_by_country()
+
+        # Get stats
+        stats = threat_intel.get_stats()
+
+        # Get countries
+        countries = db.get_all_countries_with_actors()
+
+        # Group actors by country
+        actors_by_country = {}
+        for actor in existing_actors:
+            country = actor.get("country", "Unknown")
+            if country not in actors_by_country:
+                actors_by_country[country] = []
+            actors_by_country[country].append(actor)
+
+        return templates.TemplateResponse(
+            "threat_actors.html",
+            {
+                "request": request,
+                "actors_by_country": actors_by_country,
+                "countries": countries,
+                "stats": stats,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except Exception as e:
+        logger.error(f"Threat actors dashboard error: {e}")
+        import traceback
+
+        traceback.print_exc()
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
+@app.get("/dashboard/actors/{actor_id}")
+async def threat_actor_detail(request: Request, actor_id: str):
+    """Threat actor detail page with activities and assessment"""
+    try:
+        from app.threat_intel.actors import get_threat_intelligence
+        from app.models.database import Database
+
+        db = Database(db_path=getattr(settings, "database_path", "data/cig.db"))
+        threat_intel = get_threat_intelligence(db)
+
+        # Get actor details
+        actor = threat_intel.get_actor_by_id(actor_id)
+        if not actor:
+            raise HTTPException(status_code=404, detail="Threat actor not found")
+
+        # Get activities
+        activities = threat_intel.get_actor_activities(actor_id, limit=50)
+
+        # Generate assessment
+        assessment = threat_intel.generate_assessment(actor_id)
+
+        # Get related alerts based on actor indicators
+        related_alerts = []
+        if actor.get("associated_malware"):
+            # Could query alerts for related indicators
+            pass
+
+        return templates.TemplateResponse(
+            "actor_detail.html",
+            {
+                "request": request,
+                "actor": actor,
+                "activities": activities,
+                "assessment": assessment,
+                "related_alerts": related_alerts,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Threat actor detail error: {e}")
+        import traceback
+
+        traceback.print_exc()
         return templates.TemplateResponse(
             "error.html", {"request": request, "error": str(e)}
         )
@@ -2416,6 +2541,95 @@ async def test_graynoise_connection():
     except Exception as e:
         logger.error(f"Failed to test GrayNoise connection: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to test connection: {e}")
+
+
+@app.get("/api/threats/graynoise/recent")
+async def api_graynoise_recent(
+    days: int = Query(2, ge=1, le=30, description="Days to look back (1-30)"),
+    limit: int = Query(100, ge=1, le=500, description="Max results to return"),
+):
+    """Get recent malicious IPs from GrayNoise - similar to viz.greynoise.io query"""
+    try:
+        from app.feeds.greynoise import get_greynoise_connector
+        from app.config.feed_credentials import FeedCredentialManager
+
+        cred_manager = FeedCredentialManager()
+        creds = cred_manager.get_graynoise_credentials()
+
+        if not creds or not creds.get("api_key"):
+            raise HTTPException(
+                status_code=400, detail="GrayNoise API key not configured"
+            )
+
+        connector = get_greynoise_connector(
+            api_key=creds.get("api_key", ""),
+            use_community=(creds.get("api_type") == "community"),
+            database=None,
+        )
+
+        # Query for recent malicious IPs
+        results, success = connector.query_ips_by_age(days=days, limit=limit)
+
+        if not success:
+            return {
+                "status": "partial",
+                "message": "Some errors occurred during query",
+                "days": days,
+                "count": len(results),
+                "items": results,
+            }
+
+        return {
+            "status": "success",
+            "query": f"last_seen:{days}d classification:malicious",
+            "days": days,
+            "count": len(results),
+            "items": results[:limit],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to query GrayNoise recent activity: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to query GrayNoise: {e}")
+
+
+@app.get("/api/threats/graynoise/query")
+async def api_graynoise_query(
+    query: str = Query("last_seen:2d", description="GrayNoise query string"),
+    limit: int = Query(100, ge=1, le=500, description="Max results"),
+):
+    """Execute custom GrayNoise query"""
+    try:
+        from app.feeds.greynoise import get_greynoise_connector
+        from app.config.feed_credentials import FeedCredentialManager
+
+        cred_manager = FeedCredentialManager()
+        creds = cred_manager.get_graynoise_credentials()
+
+        if not creds or not creds.get("api_key"):
+            raise HTTPException(
+                status_code=400, detail="GrayNoise API key not configured"
+            )
+
+        connector = get_greynoise_connector(
+            api_key=creds.get("api_key", ""),
+            use_community=(creds.get("api_type") == "community"),
+            database=None,
+        )
+
+        results, success = connector.get_query_results(query=query, limit=limit)
+
+        return {
+            "status": "success" if success else "error",
+            "query": query,
+            "count": len(results),
+            "items": results[:limit],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"GrayNoise query failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Query failed: {e}")
 
 
 @app.get("/api/config/nessus/enabled")
