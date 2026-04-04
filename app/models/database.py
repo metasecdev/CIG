@@ -151,6 +151,64 @@ class Database:
             "CREATE INDEX IF NOT EXISTS idx_alert_indicator ON alerts(indicator)"
         )
 
+        # Threat Actors table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS threat_actors (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                alias TEXT,
+                mitre_id TEXT,
+                country TEXT NOT NULL,
+                country_region TEXT,
+                actor_type TEXT,
+                motivation TEXT,
+                capabilities TEXT,
+                first_observed TEXT,
+                last_activity TEXT,
+                target_sectors TEXT,
+                target_geo TEXT,
+                ttps TEXT,
+                associated_malware TEXT,
+                associated_tools TEXT,
+                description TEXT,
+                risk_level TEXT,
+                active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        """)
+
+        # Threat Actor Activities table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS threat_actor_activities (
+                id TEXT PRIMARY KEY,
+                actor_id TEXT NOT NULL,
+                timestamp TEXT NOT NULL,
+                activity_type TEXT,
+                description TEXT,
+                target TEXT,
+                malware_used TEXT,
+                cve_id TEXT,
+                source TEXT,
+                severity TEXT,
+                FOREIGN KEY (actor_id) REFERENCES threat_actors(id)
+            )
+        """)
+
+        # Create indexes for threat actors
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_actor_country ON threat_actors(country)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_actor_name ON threat_actors(name)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_activity_actor ON threat_actor_activities(actor_id)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_activity_timestamp ON threat_actor_activities(timestamp)"
+        )
+
         conn.commit()
         conn.close()
 
@@ -540,3 +598,170 @@ class Database:
         counts = {row[0]: row[1] for row in cursor.fetchall()}
         conn.close()
         return counts
+
+    def add_threat_actor(self, actor: Dict[str, Any]) -> str:
+        """Add or update a threat actor"""
+        import uuid
+        from datetime import datetime
+
+        actor_id = actor.get("id", str(uuid.uuid4()))
+        now = datetime.utcnow().isoformat()
+
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO threat_actors (
+                id, name, alias, mitre_id, country, country_region, actor_type, motivation,
+                capabilities, first_observed, last_activity, target_sectors, target_geo,
+                ttps, associated_malware, associated_tools, description, risk_level,
+                active, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                actor_id,
+                actor.get("name", ""),
+                actor.get("alias", ""),
+                actor.get("mitre_id", ""),
+                actor.get("country", ""),
+                actor.get("country_region", ""),
+                actor.get("actor_type", ""),
+                actor.get("motivation", ""),
+                actor.get("capabilities", ""),
+                actor.get("first_observed", now),
+                actor.get("last_activity", now),
+                actor.get("target_sectors", ""),
+                actor.get("target_geo", ""),
+                actor.get("ttps", ""),
+                actor.get("associated_malware", ""),
+                actor.get("associated_tools", ""),
+                actor.get("description", ""),
+                actor.get("risk_level", "medium"),
+                actor.get("active", 1),
+                now,
+                now,
+            ),
+        )
+        conn.commit()
+        conn.close()
+        return actor_id
+
+    def add_threat_actor_activity(self, activity: Dict[str, Any]) -> str:
+        """Add a threat actor activity"""
+        import uuid
+        from datetime import datetime
+
+        activity_id = activity.get("id", str(uuid.uuid4()))
+
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO threat_actor_activities (
+                id, actor_id, timestamp, activity_type, description, target,
+                malware_used, cve_id, source, severity
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                activity_id,
+                activity.get("actor_id", ""),
+                activity.get("timestamp", datetime.utcnow().isoformat()),
+                activity.get("activity_type", ""),
+                activity.get("description", ""),
+                activity.get("target", ""),
+                activity.get("malware_used", ""),
+                activity.get("cve_id", ""),
+                activity.get("source", ""),
+                activity.get("severity", "medium"),
+            ),
+        )
+        conn.commit()
+        conn.close()
+        return activity_id
+
+    def get_threat_actors_by_country(self, country: str = None) -> List[Dict[str, Any]]:
+        """Get threat actors filtered by country"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        if country:
+            cursor.execute(
+                "SELECT * FROM threat_actors WHERE country = ? ORDER BY risk_level DESC",
+                (country,),
+            )
+        else:
+            cursor.execute(
+                "SELECT * FROM threat_actors ORDER BY country, risk_level DESC"
+            )
+
+        rows = cursor.fetchall()
+        conn.close()
+
+        return [dict(row) for row in rows]
+
+    def get_threat_actor_by_id(self, actor_id: str) -> Optional[Dict[str, Any]]:
+        """Get a specific threat actor by ID"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM threat_actors WHERE id = ?", (actor_id,))
+        row = cursor.fetchone()
+        conn.close()
+        return dict(row) if row else None
+
+    def get_threat_actor_activities(
+        self, actor_id: str, limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """Get activities for a specific threat actor"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM threat_actor_activities WHERE actor_id = ? ORDER BY timestamp DESC LIMIT ?",
+            (actor_id, limit),
+        )
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+
+    def get_threat_actor_stats(self) -> Dict[str, Any]:
+        """Get threat actor statistics"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT country, COUNT(*) as count FROM threat_actors GROUP BY country"
+        )
+        by_country = {row[0]: row[1] for row in cursor.fetchall()}
+
+        cursor.execute(
+            "SELECT risk_level, COUNT(*) as count FROM threat_actors GROUP BY risk_level"
+        )
+        by_risk = {row[0]: row[1] for row in cursor.fetchall()}
+
+        cursor.execute("SELECT COUNT(*) as active FROM threat_actors WHERE active = 1")
+        active = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT COUNT(*) as total FROM threat_actor_activities WHERE timestamp > datetime('now', '-30 days')"
+        )
+        recent_activities = cursor.fetchone()[0]
+
+        conn.close()
+
+        return {
+            "by_country": by_country,
+            "by_risk_level": by_risk,
+            "active_actors": active,
+            "recent_activities_30d": recent_activities,
+        }
+
+    def get_all_countries_with_actors(self) -> List[str]:
+        """Get list of all countries with threat actors"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT country FROM threat_actors ORDER BY country")
+        countries = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return countries

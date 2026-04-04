@@ -60,6 +60,9 @@
                         <a href="/dashboard/reports" class="list-group-item list-group-item-action">
                             <i class="fas fa-chart-bar"></i> Reports
                         </a>
+                        <a href="/dashboard/actors" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user-secret"></i> Threat Actors
+                        </a>
                     </div>
                 </div>
                 
@@ -74,6 +77,36 @@
                         </div>
                     </div>
                 </div>
+                
+                {% if graynoise_items %}
+                <div class="card mt-3">
+                    <div class="card-header"><h6 class="mb-0"><i class="fas fa-shield-alt"></i> GrayNoise Recent</h6></div>
+                    <div class="card-body">
+                        <p class="mb-2 small text-muted">Malicious IPs seen in last 2 days</p>
+                        {% for gn in graynoise_items[:10] %}
+                        <div class="mb-1">
+                            <span class="badge bg-danger">{{ gn.ip|default('N/A') }}</span>
+                            <span class="badge bg-secondary">{{ gn.classification|default('unknown') }}</span>
+                            {% if gn.tags %}
+                            {% for tag in gn.tags[:2] %}
+                            <span class="badge bg-info">{{ tag }}</span>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% if graynoise_items|length > 10 %}
+                        <small class="text-muted">+{{ graynoise_items|length - 10 }} more IPs</small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% elif graynoise_error %}
+                <div class="card mt-3">
+                    <div class="card-header"><h6 class="mb-0"><i class="fas fa-shield-alt"></i> GrayNoise</h6></div>
+                    <div class="card-body">
+                        <small class="text-muted">Configure in settings</small>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             
             <div class="col-md-10">

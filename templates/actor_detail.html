@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIG - {{ actor.name }} - Threat Actor Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/dashboard.css" rel="stylesheet">
+    <style>
+        .risk-critical { border-left: 4px solid #dc3545; }
+        .risk-high { border-left: 4px solid #ffc107; }
+        .risk-medium { border-left: 4px solid #0dcaf0; }
+        .risk-low { border-left: 4px solid #198754; }
+        .activity-card { margin-bottom: 1rem; }
+        .severity-critical { background: #dc3545; color: white; }
+        .severity-high { background: #ffc107; color: black; }
+        .severity-medium { background: #0dcaf0; color: black; }
+        .severity-low { background: #198754; color: white; }
+        .mitigation-tag { font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> Cyber Intelligence Gateway
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a href="/dashboard/actors" class="btn btn-outline-light btn-sm me-2">
+                    <i class="fas fa-arrow-left"></i> Back to Actors
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <!-- Actor Header -->
+                <div class="card risk-{{ actor.risk_level }} mb-4">
+                    <div class="card-header bg-{{ 'danger' if actor.risk_level == 'critical' else 'warning' if actor.risk_level == 'high' else 'info' if actor.risk_level == 'medium' else 'success' }} bg-opacity-10">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="mb-0">
+                                    <i class="fas fa-user-secret"></i> {{ actor.name }}
+                                    {% if actor.alias %}
+                                    <small class="text-muted">({{ actor.alias }})</small>
+                                    {% endif %}
+                                </h2>
+                                <span class="badge bg-{{ 'danger' if actor.risk_level == 'critical' else 'warning' if actor.risk_level == 'high' else 'info' if actor.risk_level == 'medium' else 'success' }}">
+                                    {{ actor.risk_level|upper }} RISK
+                                </span>
+                                <span class="badge bg-secondary">{{ actor.country }}</span>
+                                {% if actor.active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-dark">Inactive</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">{{ actor.description }}</p>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-bullseye"></i> Targeting</h5>
+                                <p><strong>Sectors:</strong> {{ actor.target_sectors }}</p>
+                                <p><strong>Geographic Focus:</strong> {{ actor.target_geo }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-cog"></i> Capabilities</h5>
+                                <p><strong>Type:</strong> {{ actor.actor_type }}</p>
+                                <p><strong>Motivation:</strong> {{ actor.motivation }}</p>
+                                <p><strong>Capabilities:</strong> {{ actor.capabilities }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if actor.associated_malware or actor.associated_tools %}
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <h5><i class="fas fa-bug"></i> Associated Tools</h5>
+                                {% if actor.associated_malware %}
+                                <p><strong>Malware:</strong> {{ actor.associated_malware }}</p>
+                                {% endif %}
+                                {% if actor.associated_tools %}
+                                <p><strong>Tools:</strong> {{ actor.associated_tools }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Threat Assessment -->
+                {% if assessment %}
+                <div class="card mb-4">
+                    <div class="card-header bg-primary bg-opacity-10">
+                        <h4 class="mb-0"><i class="fas fa-shield-alt"></i> Projected Threat Assessment</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h5>Activity Trend</h5>
+                                    <span class="badge bg-{{ 'danger' if assessment.activity_trend == 'increasing' else 'warning' if assessment.activity_trend == 'stable' else 'success' }}-subtle fs-5">
+                                        {{ assessment.activity_trend|upper }}
+                                    </span>
+                                    <p class="small text-muted">{{ assessment.recent_activity_count }} activities in last 30 days</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h5>Projected Threat</h5>
+                                    <span class="badge bg-{{ 'danger' if 'critical' in assessment.projected_threat else 'warning' if 'high' in assessment.projected_threat else 'info' }} fs-5">
+                                        {{ assessment.projected_threat }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h5>Risk Level</h5>
+                                    <span class="badge bg-{{ 'danger' if actor.risk_level == 'critical' else 'warning' if actor.risk_level == 'high' else 'info' }}-subtle fs-5">
+                                        {{ actor.risk_level|upper }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if assessment.likely_attack_vectors %}
+                        <div class="mt-4">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Likely Attack Vectors</h5>
+                            <ul>
+                                {% for vector in assessment.likely_attack_vectors %}
+                                <li>{{ vector }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        {% if assessment.risk_factors %}
+                        <div class="mt-3">
+                            <h5><i class="fas fa-exclamation-circle"></i> Risk Factors</h5>
+                            <ul>
+                                {% for factor in assessment.risk_factors %}
+                                <li>{{ factor }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        {% if assessment.recommended_mitigations %}
+                        <div class="mt-3">
+                            <h5><i class="fas fa-shield-alt"></i> Recommended Mitigations</h5>
+                            <div class="row">
+                                {% for mitigation in assessment.recommended_mitigations %}
+                                <div class="col-md-4 mb-2">
+                                    <span class="badge bg-success mitigation-tag">
+                                        <i class="fas fa-check"></i> {{ mitigation }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Recent Activities -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info bg-opacity-10">
+                        <h4 class="mb-0"><i class="fas fa-history"></i> Recent Activities</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if activities %}
+                            {% for activity in activities %}
+                            <div class="card activity-card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h6>{{ activity.description|default('Unknown activity') }}</h6>
+                                            {% if activity.target %}
+                                            <p class="mb-1"><strong>Target:</strong> {{ activity.target }}</p>
+                                            {% endif %}
+                                            {% if activity.malware_used %}
+                                            <p class="mb-1"><strong>Malware:</strong> {{ activity.malware_used }}</p>
+                                            {% endif %}
+                                            {% if activity.cve_id %}
+                                            <p class="mb-1"><strong>CVE:</strong> <a href="/dashboard/cves">{{ activity.cve_id }}</a></p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <span class="badge severity-{{ activity.severity|default('medium') }}">{{ activity.severity|default('medium')|upper }}</span>
+                                            <br>
+                                            <small class="text-muted">{{ activity.timestamp[:10] }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No recent activities recorded. Activity data is dynamically populated from threat intelligence feeds.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- TTPs -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary bg-opacity-10">
+                        <h4 class="mb-0"><i class="fas fa-crosshairs"></i> Known TTPs (MITRE ATT&CK)</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if actor.ttps %}
+                            {% for ttp in actor.ttps.split(',') %}
+                            <span class="badge bg-primary me-2 mb-2">{{ ttp }}</span>
+                            {% endfor %}
+                        {% else %}
+                        <p class="text-muted">No specific TTPs documented.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Related Events -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning bg-opacity-10">
+                        <h4 class="mb-0"><i class="fas fa-bell"></i> Related Events & Alerts</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if related_alerts %}
+                            {% for alert in related_alerts[:20] %}
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div>
+                                    <span class="badge bg-{{ 'danger' if alert.severity == 'critical' else 'warning' if alert.severity == 'high' else 'info' }}">
+                                        {{ alert.severity|upper }}
+                                    </span>
+                                    {{ alert.message|default('Alert from ' + alert.feed_source) }}
+                                </div>
+                                <small class="text-muted">{{ alert.timestamp[:10] }}</small>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No related events found. Events are dynamically correlated based on actor indicators.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
