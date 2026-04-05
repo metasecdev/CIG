@@ -134,6 +134,20 @@
                                 <p class="mb-1"><strong>Target Sectors:</strong> {{ actor.target_sectors|default('Unknown') }}</p>
                                 {% if actor.associated_malware %}
                                 <p class="mb-1"><strong>Malware:</strong> {{ actor.associated_malware }}</p>
+                                {% set first_malware = actor.associated_malware.split(',')[0].strip() %}
+                                {% if first_malware %}
+                                <div class="mt-1">
+                                    <a href="https://www.virustotal.com/gui/search?query={{ first_malware|urlencode }}" target="_blank" class="btn btn-sm btn-outline-danger me-1" title="VirusTotal">
+                                        <i class="fas fa-shield-alt"></i> VT
+                                    </a>
+                                    <a href="https://bazaar.abuse.ch/browse.php?search=tag:{{ first_malware|urlencode }}" target="_blank" class="btn btn-sm btn-outline-dark me-1" title="MalwareBazaar">
+                                        <i class="fas fa-bug"></i> Bazaar
+                                    </a>
+                                    <a href="https://www.hybrid-analysis.com/search?search={{ first_malware|urlencode }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Hybrid Analysis">
+                                        <i class="fas fa-flask"></i>
+                                    </a>
+                                </div>
+                                {% endif %}
                                 {% endif %}
                                 {% if actor.ttps %}
                                 <div class="mt-2">

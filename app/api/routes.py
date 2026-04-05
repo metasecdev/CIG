@@ -1382,6 +1382,12 @@ async def threat_actor_detail(request: Request, actor_id: str):
         # Generate assessment
         assessment = threat_intel.generate_assessment(actor_id)
 
+        # Get malware links for associated malware
+        malware_links = threat_intel.get_all_malware_links(actor)
+
+        # Get OpenCTI status
+        opencti_status = threat_intel.get_opencti_status()
+
         # Get related alerts based on actor indicators
         related_alerts = []
         if actor.get("associated_malware"):
@@ -1396,6 +1402,8 @@ async def threat_actor_detail(request: Request, actor_id: str):
                 "activities": activities,
                 "assessment": assessment,
                 "related_alerts": related_alerts,
+                "malware_links": malware_links,
+                "opencti_status": opencti_status,
                 "timestamp": datetime.utcnow().isoformat(),
             },
         )

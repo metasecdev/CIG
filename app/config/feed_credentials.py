@@ -15,15 +15,20 @@ logger = logging.getLogger(__name__)
 
 class FeedCredentialType(str, Enum):
     """Types of credential storage"""
+
     NESSUS = "nessus"
     GRAYNOISE = "graynoise"
     CUSTOM_API = "custom_api"
     REPORT_INGESTION = "report_ingestion"
+    VIRUSTOTAL = "virustotal"
+    MALWAREBazaar = "malwarebazaar"
+    URLHAUS = "urlhaus"
 
 
 @dataclass
 class NessusCredentials:
     """Nessus API credentials"""
+
     api_key: str
     api_secret: str
     host: str = "https://cloud.nessus.com"
@@ -33,14 +38,40 @@ class NessusCredentials:
 @dataclass
 class GrayNoiseCredentials:
     """GrayNoise API credentials"""
+
     api_key: str
     api_type: str = "enterprise"  # 'community' or 'enterprise'
     enabled: bool = False
 
 
 @dataclass
+class VirusTotalCredentials:
+    """VirusTotal API credentials"""
+
+    api_key: str
+    enabled: bool = True
+
+
+@dataclass
+class MalwareBazaarCredentials:
+    """MalwareBazaar API credentials"""
+
+    api_key: str
+    enabled: bool = True
+
+
+@dataclass
+class URLhausCredentials:
+    """URLhaus API credentials"""
+
+    api_key: str
+    enabled: bool = True
+
+
+@dataclass
 class CustomAPIFeedConfig:
     """Custom API feed configuration"""
+
     feed_id: str
     feed_name: str
     api_url: str
@@ -54,6 +85,7 @@ class CustomAPIFeedConfig:
 @dataclass
 class FilterConfiguration:
     """Feed filter configuration"""
+
     filter_id: str
     filter_name: str
     indicator_types: list = None  # e.g., ['IP', 'DOMAIN', 'URL']
@@ -87,7 +119,7 @@ class FeedCredentialManager:
         """Load credentials from file"""
         if self.credentials_file.exists():
             try:
-                with open(self.credentials_file, 'r') as f:
+                with open(self.credentials_file, "r") as f:
                     return json.load(f)
             except Exception as e:
                 logger.error(f"Failed to load credentials: {e}")
@@ -97,17 +129,25 @@ class FeedCredentialManager:
     def _get_default_credentials(self) -> Dict[str, Any]:
         """Get default empty credentials structure"""
         return {
-            "nessus": {"api_key": "", "api_secret": "", "host": "https://cloud.nessus.com", "enabled": False},
+            "nessus": {
+                "api_key": "",
+                "api_secret": "",
+                "host": "https://cloud.nessus.com",
+                "enabled": False,
+            },
             "graynoise": {"api_key": "", "api_type": "enterprise", "enabled": False},
+            "virustotal": {"api_key": "", "enabled": True},
+            "malwarebazaar": {"api_key": "", "enabled": True},
+            "urlhaus": {"api_key": "", "enabled": True},
             "custom_apis": {},
-            "filters": {}
+            "filters": {},
         }
 
     def _load_filters(self) -> Dict[str, Any]:
         """Load filter configurations from file"""
         if self.filters_file.exists():
             try:
-                with open(self.filters_file, 'r') as f:
+                with open(self.filters_file, "r") as f:
                     return json.load(f)
             except Exception as e:
                 logger.error(f"Failed to load filters: {e}")
@@ -120,11 +160,15 @@ class FeedCredentialManager:
             # Ensure sensitive data isn't logged
             safe_creds = {k: v for k, v in self.credentials.items()}
             if "nessus" in safe_creds:
-                safe_creds["nessus"] = {**safe_creds["nessus"], "api_key": "***", "api_secret": "***"}
+                safe_creds["nessus"] = {
+                    **safe_creds["nessus"],
+                    "api_key": "***",
+                    "api_secret": "***",
+                }
             if "graynoise" in safe_creds:
                 safe_creds["graynoise"] = {**safe_creds["graynoise"], "api_key": "***"}
 
-            with open(self.credentials_file, 'w') as f:
+            with open(self.credentials_file, "w") as f:
                 json.dump(self.credentials, f, indent=2)
             logger.info("Credentials saved successfully")
         except Exception as e:
@@ -133,20 +177,26 @@ class FeedCredentialManager:
     def _save_filters(self):
         """Save filters to file"""
         try:
-            with open(self.filters_file, 'w') as f:
+            with open(self.filters_file, "w") as f:
                 json.dump(self.filters, f, indent=2)
             logger.info("Filters saved successfully")
         except Exception as e:
             logger.error(f"Failed to save filters: {e}")
 
-    def set_nessus_credentials(self, api_key: str, api_secret: str, host: str = "https://cloud.nessus.com", enabled: bool = False) -> bool:
+    def set_nessus_credentials(
+        self,
+        api_key: str,
+        api_secret: str,
+        host: str = "https://cloud.nessus.com",
+        enabled: bool = False,
+    ) -> bool:
         """Set Nessus API credentials"""
         try:
             self.credentials["nessus"] = {
                 "api_key": api_key,
                 "api_secret": api_secret,
                 "host": host,
-                "enabled": enabled
+                "enabled": enabled,
             }
             self._save_credentials()
             logger.info(f"Nessus credentials updated (enabled={enabled})")
@@ -155,16 +205,20 @@ class FeedCredentialManager:
             logger.error(f"Failed to set Nessus credentials: {e}")
             return False
 
-    def set_graynoise_credentials(self, api_key: str, api_type: str = "enterprise", enabled: bool = False) -> bool:
+    def set_graynoise_credentials(
+        self, api_key: str, api_type: str = "enterprise", enabled: bool = False
+    ) -> bool:
         """Set GrayNoise API credentials"""
         try:
             self.credentials["graynoise"] = {
                 "api_key": api_key,
                 "api_type": api_type,
-                "enabled": enabled
+                "enabled": enabled,
             }
             self._save_credentials()
-            logger.info(f"GrayNoise credentials updated (enabled={enabled}, type={api_type})")
+            logger.info(
+                f"GrayNoise credentials updated (enabled={enabled}, type={api_type})"
+            )
             return True
         except Exception as e:
             logger.error(f"Failed to set GrayNoise credentials: {e}")
@@ -190,6 +244,36 @@ class FeedCredentialManager:
             logger.error(f"Failed to retrieve GrayNoise credentials: {e}")
         return None
 
+    def get_virustotal_credentials(self) -> Optional[VirusTotalCredentials]:
+        """Get VirusTotal credentials"""
+        try:
+            vt_data = self.credentials.get("virustotal", {})
+            if vt_data.get("api_key"):
+                return VirusTotalCredentials(**vt_data)
+        except Exception as e:
+            logger.error(f"Failed to retrieve VirusTotal credentials: {e}")
+        return None
+
+    def get_malwarebazaar_credentials(self) -> Optional[MalwareBazaarCredentials]:
+        """Get MalwareBazaar credentials"""
+        try:
+            mb_data = self.credentials.get("malwarebazaar", {})
+            if mb_data.get("api_key"):
+                return MalwareBazaarCredentials(**mb_data)
+        except Exception as e:
+            logger.error(f"Failed to retrieve MalwareBazaar credentials: {e}")
+        return None
+
+    def get_urlhaus_credentials(self) -> Optional[URLhausCredentials]:
+        """Get URLhaus credentials"""
+        try:
+            uh_data = self.credentials.get("urlhaus", {})
+            if uh_data.get("api_key"):
+                return URLhausCredentials(**uh_data)
+        except Exception as e:
+            logger.error(f"Failed to retrieve URLhaus credentials: {e}")
+        return None
+
     def is_nessus_enabled(self) -> bool:
         """Check if Nessus is enabled"""
         return self.credentials.get("nessus", {}).get("enabled", False)
@@ -198,11 +282,29 @@ class FeedCredentialManager:
         """Check if GrayNoise is enabled"""
         return self.credentials.get("graynoise", {}).get("enabled", False)
 
-    def add_custom_api_feed(self, feed_id: str, feed_name: str, api_url: str, 
-                           auth_type: str, auth_value: str, 
-                           custom_headers: Optional[Dict] = None, 
-                           polling_interval_hours: int = 24,
-                           enabled: bool = False) -> bool:
+    def is_virustotal_enabled(self) -> bool:
+        """Check if VirusTotal is enabled"""
+        return self.credentials.get("virustotal", {}).get("enabled", False)
+
+    def is_malwarebazaar_enabled(self) -> bool:
+        """Check if MalwareBazaar is enabled"""
+        return self.credentials.get("malwarebazaar", {}).get("enabled", False)
+
+    def is_urlhaus_enabled(self) -> bool:
+        """Check if URLhaus is enabled"""
+        return self.credentials.get("urlhaus", {}).get("enabled", False)
+
+    def add_custom_api_feed(
+        self,
+        feed_id: str,
+        feed_name: str,
+        api_url: str,
+        auth_type: str,
+        auth_value: str,
+        custom_headers: Optional[Dict] = None,
+        polling_interval_hours: int = 24,
+        enabled: bool = False,
+    ) -> bool:
         """Add or update a custom API feed configuration"""
         try:
             if "custom_apis" not in self.credentials:
@@ -216,10 +318,12 @@ class FeedCredentialManager:
                 "auth_value": auth_value,
                 "custom_headers": custom_headers or {},
                 "polling_interval_hours": polling_interval_hours,
-                "enabled": enabled
+                "enabled": enabled,
             }
             self._save_credentials()
-            logger.info(f"Custom API feed '{feed_id}' added/updated (enabled={enabled})")
+            logger.info(
+                f"Custom API feed '{feed_id}' added/updated (enabled={enabled})"
+            )
             return True
         except Exception as e:
             logger.error(f"Failed to add custom API feed: {e}")
@@ -280,11 +384,15 @@ class FeedCredentialManager:
         """Get overall configuration status"""
         return {
             "nessus_enabled": self.is_nessus_enabled(),
-            "nessus_configured": bool(self.credentials.get("nessus", {}).get("api_key")),
+            "nessus_configured": bool(
+                self.credentials.get("nessus", {}).get("api_key")
+            ),
             "graynoise_enabled": self.is_graynoise_enabled(),
-            "graynoise_configured": bool(self.credentials.get("graynoise", {}).get("api_key")),
+            "graynoise_configured": bool(
+                self.credentials.get("graynoise", {}).get("api_key")
+            ),
             "custom_api_feeds": len(self.credentials.get("custom_apis", {})),
             "filter_configs": len(self.filters),
             "credentials_file": str(self.credentials_file),
-            "filters_file": str(self.filters_file)
+            "filters_file": str(self.filters_file),
         }
