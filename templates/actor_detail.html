@@ -48,14 +48,19 @@
                                     <small class="text-muted">({{ actor.alias }})</small>
                                     {% endif %}
                                 </h2>
-                                <span class="badge bg-{{ 'danger' if actor.risk_level == 'critical' else 'warning' if actor.risk_level == 'high' else 'info' if actor.risk_level == 'medium' else 'success' }}">
+                                {% if actor.mitre_id %}
+                                <a href="https://attack.mitre.org/groups/{{ actor.mitre_id }}/" target="_blank" class="btn btn-sm btn-outline-dark mt-2">
+                                    <i class="fas fa-external-link-alt"></i> MITRE ATT&CK: {{ actor.mitre_id }}
+                                </a>
+                                {% endif %}
+                                <span class="badge bg-{{ 'danger' if actor.risk_level == 'critical' else 'warning' if actor.risk_level == 'high' else 'info' if actor.risk_level == 'medium' else 'success' }} ms-2">
                                     {{ actor.risk_level|upper }} RISK
                                 </span>
-                                <span class="badge bg-secondary">{{ actor.country }}</span>
+                                <span class="badge bg-secondary ms-1">{{ actor.country }}</span>
                                 {% if actor.active %}
-                                <span class="badge bg-success">Active</span>
+                                <span class="badge bg-success ms-1">Active</span>
                                 {% else %}
-                                <span class="badge bg-dark">Inactive</span>
+                                <span class="badge bg-dark ms-1">Inactive</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -190,6 +195,16 @@
                                             {% if activity.cve_id %}
                                             <p class="mb-1"><strong>CVE:</strong> <a href="/dashboard/cves">{{ activity.cve_id }}</a></p>
                                             {% endif %}
+                                            {% if activity.source %}
+                                            <p class="mb-1">
+                                                <strong>Source:</strong> 
+                                                {% if activity.source_url %}
+                                                <a href="{{ activity.source_url }}" target="_blank" rel="noopener">{{ activity.source }}</a>
+                                                {% else %}
+                                                {{ activity.source }}
+                                                {% endif %}
+                                            </p>
+                                            {% endif %}
                                         </div>
                                         <div class="col-md-4 text-end">
                                             <span class="badge severity-{{ activity.severity|default('medium') }}">{{ activity.severity|default('medium')|upper }}</span>
@@ -216,7 +231,11 @@
                     <div class="card-body">
                         {% if actor.ttps %}
                             {% for ttp in actor.ttps.split(',') %}
-                            <span class="badge bg-primary me-2 mb-2">{{ ttp }}</span>
+                            {% set ttp_clean = ttp.strip() %}
+                            {% set ttp_id = ttp_clean.split(' - ')[0] if ' - ' in ttp_clean else '' %}
+                            <span class="badge bg-primary me-2 mb-2">
+                                {% if ttp_id %}<a href="https://attack.mitre.org/techniques/{{ ttp_id }}/" target="_blank" style="color: white;">{{ ttp_clean }}</a>{% else %}{{ ttp_clean }}{% endif %}
+                            </span>
                             {% endfor %}
                         {% else %}
                         <p class="text-muted">No specific TTPs documented.</p>

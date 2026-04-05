@@ -8,7 +8,7 @@ from typing import Optional, List
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query, Response, Request
+from fastapi import FastAPI, HTTPException, Query, Response, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
@@ -1709,32 +1709,92 @@ async def api_cve_news(
         raise HTTPException(status_code=500, detail="Failed to load CVE news")
 
 
-@app.post("/api/news/cve/refresh")
-async def api_cve_news_refresh():
-    """Refresh all CVE news data (day/week/month/year/historical)"""
+import asyncio
+import threading
+
+# Background fetch state
+cve_fetch_in_progress = False
+cve_fetch_status = {"status": "idle", "message": "", "progress": 0}
+
+
+def fetch_cve_data_background():
+    """Background thread function to fetch CVE data"""
+    global cve_fetch_in_progress, cve_fetch_status
     try:
         cve_feed = get_cve_feed()
+        cve_fetch_status = {
+            "status": "fetching",
+            "message": "Fetching CVE data...",
+            "progress": 10,
+        }
+
         counts = cve_feed.fetch_all_periods()
 
-        return {
-            "status": "success",
-            "message": "CVE news data refreshed",
-            "counts": counts,
-            "summary": cve_feed.get_summary(),
+        cve_fetch_status = {
+            "status": "complete",
+            "message": "CVE data refreshed successfully",
+            "progress": 100,
         }
     except Exception as e:
-        logger.error(f"Failed to refresh CVE news: {e}")
-        raise HTTPException(status_code=500, detail="Failed to refresh CVE news")
+        logger.error(f"Background CVE fetch failed: {e}")
+        cve_fetch_status = {"status": "error", "message": str(e), "progress": 0}
+    finally:
+        cve_fetch_in_progress = False
+
+
+@app.get("/api/news/cve/status")
+async def api_cve_status():
+    """Get CVE background fetch status"""
+    return {
+        "status": "success",
+        "in_progress": cve_fetch_in_progress,
+        "fetch_status": cve_fetch_status,
+        "summary": get_cve_feed().get_summary(),
+    }
+
+
+@app.post("/api/news/cve/refresh")
+async def api_cve_news_refresh(background_tasks: BackgroundTasks):
+    """Refresh all CVE news data in background (day/week/month/year/historical)"""
+    global cve_fetch_in_progress, cve_fetch_status
+
+    if cve_fetch_in_progress:
+        return {
+            "status": "already_running",
+            "message": "CVE refresh already in progress",
+            "fetch_status": cve_fetch_status,
+        }
+
+    cve_fetch_in_progress = True
+    cve_fetch_status = {
+        "status": "starting",
+        "message": "Starting CVE data refresh...",
+        "progress": 0,
+    }
+
+    # Run in background
+    background_tasks.add_task(run_cve_refresh)
+
+    return {
+        "status": "started",
+        "message": "CVE data refresh started in background",
+    }
+
+
+async def run_cve_refresh():
+    """Async wrapper to run CVE refresh"""
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, fetch_cve_data_background)
 
 
 @app.get("/api/news/cve/severity")
 async def api_cve_by_severity(
-    limit: int = Query(50, ge=1, le=100),
+    limit: int = Query(500, ge=1, le=2000),
     severity: str = Query(
         "", description="Optional: critical, high, medium (leave empty for all)"
     ),
 ):
-    """Get last 50 CVEs by severity level - returns critical, high, medium each with up to 50 CVEs"""
+    """Get CVEs by severity level - default 500 per severity, up to 2000 (API key required for >100)"""
     try:
         cve_feed = get_cve_feed()
 
@@ -1748,7 +1808,7 @@ async def api_cve_by_severity(
                 "count": len(items),
             }
         else:
-            # Return all severities (last 50 each)
+            # Return all severities with the requested limit each
             result = cve_feed.get_all_severities(limit_per_severity=limit)
             return {
                 "status": "success",
