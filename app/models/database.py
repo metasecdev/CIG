@@ -190,6 +190,7 @@ class Database:
                 malware_used TEXT,
                 cve_id TEXT,
                 source TEXT,
+                source_url TEXT,
                 severity TEXT,
                 FOREIGN KEY (actor_id) REFERENCES threat_actors(id)
             )
@@ -659,8 +660,8 @@ class Database:
             """
             INSERT INTO threat_actor_activities (
                 id, actor_id, timestamp, activity_type, description, target,
-                malware_used, cve_id, source, severity
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                malware_used, cve_id, source, source_url, severity
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 activity_id,
@@ -672,6 +673,7 @@ class Database:
                 activity.get("malware_used", ""),
                 activity.get("cve_id", ""),
                 activity.get("source", ""),
+                activity.get("source_url", ""),
                 activity.get("severity", "medium"),
             ),
         )

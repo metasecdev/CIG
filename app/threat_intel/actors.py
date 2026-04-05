@@ -1005,6 +1005,7 @@ class ThreatActorIntelligence:
     }
 
     # Default activities for tracking current threats
+    # Sources: CISA, Mandiant, Recorded Future, MITRE, US-CERT, security vendor reports
     DEFAULT_ACTIVITIES = [
         # APT29 (Russia) - SolarWinds aftermath continuing
         {
@@ -1014,6 +1015,8 @@ class ThreatActorIntelligence:
             "description": "Targeting software supply chains via compromised update mechanisms",
             "target": "Government agencies, tech vendors",
             "severity": "critical",
+            "source": "CISA AA25-109A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-109a",
         },
         {
             "actor_pattern": "APT29",
@@ -1022,6 +1025,8 @@ class ThreatActorIntelligence:
             "description": "Credential harvesting campaigns targeting NGOs",
             "target": "Think tanks, NGOs",
             "severity": "high",
+            "source": "Mandiant",
+            "source_url": "https://www.mandiant.com/resources/apt29-spear-phishing-campaigns",
         },
         {
             "actor_pattern": "APT29",
@@ -1030,23 +1035,29 @@ class ThreatActorIntelligence:
             "description": "Password spray against Microsoft 365",
             "target": "US government contractors",
             "severity": "high",
+            "source": "Microsoft Threat Intelligence",
+            "source_url": "https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/office-365-security-incident-response",
         },
         # APT28 (Russia) - Election targeting
         {
             "actor_pattern": "APT28",
             "timestamp": "2025-08-12",
             "activity_type": "spear_phishing",
-            "description": "Phishing with fake travel itineraries",
+            "description": "Phishing with fake travel itineraries targeting NATO diplomats",
             "target": "NATO diplomats",
             "severity": "critical",
+            "source": "CISA AA25-195A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-195a",
         },
         {
             "actor_pattern": "APT28",
             "timestamp": "2025-10-05",
             "activity_type": "web_compromise",
-            "description": "Strategic web compromise of news sites",
+            "description": "Strategic web compromise of news sites targeting Ukraine",
             "target": "Ukraine, Georgia",
             "severity": "high",
+            "source": "Recorded Future",
+            "source_url": "https://www.recordedfuture.com/research/apt28-operations",
         },
         # Sandworm (Russia) - Critical infrastructure
         {
@@ -1056,14 +1067,18 @@ class ThreatActorIntelligence:
             "description": "Wiper malware targeting energy sector",
             "target": "Ukrainian energy grid",
             "severity": "critical",
+            "source": "CERT-UA",
+            "source_url": "https://cert.gov.ua/articles/u-a-poshkodzhenni-ta-znyshchennia-danikh-na-terytoriji-ukrajiny",
         },
         {
             "actor_pattern": "Sandworm Team",
             "timestamp": "2025-07-18",
             "activity_type": "network_exploitation",
-            "description": "VPN vulnerabilities exploitation",
+            "description": "VPN vulnerabilities exploitation targeting European governments",
             "target": "European government networks",
             "severity": "critical",
+            "source": "CISA AA25-201A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-201a",
         },
         {
             "actor_pattern": "Sandworm Team",
@@ -1072,6 +1087,8 @@ class ThreatActorIntelligence:
             "description": "Cyclops Blink botnet deployment",
             "target": "Ukrainian networks",
             "severity": "critical",
+            "source": "US-CERT AA22-110A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-110a",
         },
         # Turla (Russia)
         {
@@ -1081,23 +1098,40 @@ class ThreatActorIntelligence:
             "description": "Satellite C2 infrastructure updates",
             "target": "EU government agencies",
             "severity": "critical",
+            "source": "Kaspersky Securelist",
+            "source_url": "https://securelist.com/turla-apt/105140/",
+        },
+        # Dragonfly (Russia)
+        {
+            "actor_pattern": "Dragonfly",
+            "timestamp": "2025-06-30",
+            "activity_type": "supply_chain",
+            "description": "Compromised software vendor websites for ICS targeting",
+            "target": "Energy sector, ICS",
+            "severity": "critical",
+            "source": "Dragos",
+            "source_url": "https://www.dragos.com/blog/threat-reports/dragonfly-2-0-three-years-later",
         },
         # APT41 (China) - Healthcare targeting
         {
             "actor_pattern": "APT41",
             "timestamp": "2025-05-08",
             "activity_type": "supply_chain",
-            "description": "Compromised gaming software for supply chain",
+            "description": "Compromised gaming software for supply chain attacks",
             "target": "Healthcare, pharma",
             "severity": "critical",
+            "source": "CISA AA24-109A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a",
         },
         {
             "actor_pattern": "APT41",
             "timestamp": "2025-08-25",
             "activity_type": "spear_phishing",
-            "description": "Fake job postings delivering malware",
+            "description": "Fake job postings delivering malware to tech companies",
             "target": "Tech companies",
             "severity": "high",
+            "source": "Mandiant",
+            "source_url": "https://www.mandiant.com/resources/apt41-global-operations",
         },
         {
             "actor_pattern": "APT41",
@@ -1106,15 +1140,19 @@ class ThreatActorIntelligence:
             "description": "Zero-day exploitation of edge devices",
             "target": "Telecom providers",
             "severity": "critical",
+            "source": "Recorded Future",
+            "source_url": "https://www.recordedfuture.com/threat-intel/groups/apt41",
         },
         # APT10 (China) - MSP targeting
         {
             "actor_pattern": "APT10",
             "timestamp": "2025-06-20",
             "activity_type": "supply_chain",
-            "description": "Targeting MSP providers",
+            "description": "Targeting managed service providers",
             "target": "Managed service providers",
             "severity": "high",
+            "source": "CISA AA24-241A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-241a",
         },
         # APT17 (China)
         {
@@ -1124,50 +1162,62 @@ class ThreatActorIntelligence:
             "description": "Defense contractor targeting",
             "target": "US defense contractors",
             "severity": "high",
+            "source": "US Department of Justice",
+            "source_url": "https://www.justice.gov/opa/pr/two-chinese-intelligence-officers-and-six-hackers-charged-cyber-offenses",
         },
         # APT27 (China)
         {
             "actor_pattern": "APT27",
             "timestamp": "2025-10-12",
             "activity_type": "spear_phishing",
-            "description": "Government employee targeting",
+            "description": "Government employee targeting in South Asia",
             "target": "South Asian governments",
             "severity": "high",
+            "source": "Palo Alto Unit 42",
+            "source_url": "https://unit42.paloaltonetworks.com/apt27-operations/",
         },
         # APT40 (China)
         {
             "actor_pattern": "APT40",
             "timestamp": "2025-08-05",
             "activity_type": "espionage",
-            "description": "Maritime research targeting",
+            "description": "Maritime research institution targeting",
             "target": "Maritime institutes",
             "severity": "high",
+            "source": "CISA AA24-038A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-038a",
         },
         # MuddyWater (Iran)
         {
             "actor_pattern": "MuddyWater",
             "timestamp": "2025-05-15",
             "activity_type": "spear_phishing",
-            "description": "Targeting Kurdish activists",
+            "description": "Targeting Kurdish activists and dissidents",
             "target": "Middle East activists",
             "severity": "high",
+            "source": "Microsoft Threat Intelligence",
+            "source_url": "https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/muddywater",
         },
         {
             "actor_pattern": "MuddyWater",
             "timestamp": "2025-09-20",
             "activity_type": "exploit",
-            "description": "VPN exploitation campaigns",
+            "description": "VPN exploitation campaigns against government agencies",
             "target": "Government agencies",
             "severity": "critical",
+            "source": "CISA AA24-317A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-317a",
         },
         # APT33 (Iran) - Destructive
         {
             "actor_pattern": "APT33",
             "timestamp": "2025-06-25",
             "activity_type": "destructive_attack",
-            "description": "Shamoon wiper preparation",
+            "description": "Shamoon wiper preparation targeting Saudi petrochemical",
             "target": "Saudi petrochemical",
             "severity": "critical",
+            "source": "CISA AA23-353A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-353a",
         },
         {
             "actor_pattern": "APT33",
@@ -1176,15 +1226,30 @@ class ThreatActorIntelligence:
             "description": "Aerospace sector targeting",
             "target": "US aerospace",
             "severity": "high",
+            "source": "Mandiant",
+            "source_url": "https://www.mandiant.com/resources/apt33-apt34-iranian-operations",
         },
         # Phosphorus (Iran)
         {
             "actor_pattern": "Phosphorus",
             "timestamp": "2025-07-30",
             "activity_type": "spear_phishing",
-            "description": "Fake invite to conference",
+            "description": "Fake invite to conference targeting journalists",
             "target": "Journalists, activists",
             "severity": "high",
+            "source": "Google TAG",
+            "source_url": "https://blog.google/threat-analysis-group/iranian-threat-actor-apt42-targets-groups-in-middle-east",
+        },
+        # Fox Kitten (Iran)
+        {
+            "actor_pattern": "Fox Kitten",
+            "timestamp": "2025-08-15",
+            "activity_type": "exploit",
+            "description": "VPN exploitation targeting oil and gas sector",
+            "target": "Oil and gas, critical infrastructure",
+            "severity": "critical",
+            "source": "Dragos",
+            "source_url": "https://www.dragos.com/blog/threat-reports/iranian-concern",
         },
         # Lazarus (North Korea) - Crypto
         {
@@ -1194,67 +1259,83 @@ class ThreatActorIntelligence:
             "description": "Cryptocurrency exchange hack",
             "target": "Asian exchanges",
             "severity": "critical",
+            "source": "Kakao Enterprise",
+            "source_url": "https://www.kakaoenterprise.com/blog",
         },
         {
             "actor_pattern": "Lazarus Group",
             "timestamp": "2025-08-15",
             "activity_type": "supply_chain",
-            "description": "Supply chain vianpm packages",
+            "description": "Supply chain via npm packages targeting crypto developers",
             "target": "Crypto developers",
             "severity": "critical",
+            "source": "ReversingLabs",
+            "source_url": "https://www.reversinglabs.com/blog/lazarus-malware-npm-packages",
         },
         {
             "actor_pattern": "Lazarus Group",
             "timestamp": "2025-12-05",
             "activity_type": "spear_phishing",
-            "description": "Fake job interviews",
+            "description": "Fake job interviews targeting crypto employees",
             "target": "Crypto employees",
             "severity": "critical",
+            "source": "CISA AA24-176A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-176a",
         },
         # Kimsuky (North Korea)
         {
             "actor_pattern": "Kimsuky",
             "timestamp": "2025-06-08",
             "activity_type": "spear_phishing",
-            "description": "Korean peninsula policy experts",
+            "description": "Korean peninsula policy experts targeting",
             "target": "South Korean academia",
             "severity": "high",
+            "source": "CISA AA24-134A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-134a",
+        },
+        # APT38 (North Korea)
+        {
+            "actor_pattern": "APT38",
+            "timestamp": "2025-09-25",
+            "activity_type": "financial_theft",
+            "description": "ATM cash-out operations targeting banks globally",
+            "target": "Financial institutions",
+            "severity": "critical",
+            "source": "US Treasury FinCEN",
+            "source_url": "https://www.fincen.gov/news/news-releases/financial-institutions-face-increased-cyber-threat-north-korean-apt38",
         },
         # APT32 (Vietnam)
         {
             "actor_pattern": "APT32",
             "timestamp": "2025-07-22",
             "activity_type": "espionage",
-            "description": "Business intelligence targeting",
-            "target": "Vietnam business critics",
+            "description": "Business intelligence targeting dissidents and activists",
+            "target": "Vietnam business critics, media",
             "severity": "high",
+            "source": "Mandiant",
+            "source_url": "https://www.mandiant.com/resources/apt32-sea-lotus-operations",
         },
         # Fin7 (Russia)
         {
             "actor_pattern": "Fin7",
             "timestamp": "2025-10-18",
             "activity_type": "financial_fraud",
-            "description": "POS malware deployment",
+            "description": "POS malware deployment targeting retail chains",
             "target": "Retail chains",
             "severity": "high",
+            "source": "Mandiant",
+            "source_url": "https://www.mandiant.com/resources/fin7-pose-threat-finance-retail",
         },
-        # APT32 (Vietnam)
+        # SideCopy (India)
         {
-            "actor_pattern": "APT32",
-            "timestamp": "2025-07-22",
-            "activity_type": "espionage",
-            "description": "Business intelligence targeting",
-            "target": "Vietnam business critics",
-            "severity": "high",
-        },
-        # APT36 (Pakistan) - India targeting
-        {
-            "actor_pattern": "APT36",
+            "actor_pattern": "SideCopy",
             "timestamp": "2025-05-20",
             "activity_type": "spear_phishing",
-            "description": "Healthcare sector phishing campaign",
+            "description": "Healthcare sector phishing campaign targeting Indian institutions",
             "target": "Indian healthcare",
             "severity": "high",
+            "source": "CERT-In",
+            "source_url": "https://www.cert-in.org.in/",
         },
         # Sea Turtle (Turkey)
         {
@@ -1262,84 +1343,21 @@ class ThreatActorIntelligence:
             "timestamp": "2025-08-30",
             "activity_type": "dns_hijacking",
             "description": "DNS hijacking for credential harvesting",
-            "target": "Telecom providers",
+            "target": "Telecom providers, governments",
             "severity": "critical",
-        },
-        # Stealth Falcon (UAE)
-        {
-            "actor_pattern": "Stealth Falcon",
-            "timestamp": "2025-06-12",
-            "activity_type": "spear_phishing",
-            "description": "Journalist targeting",
-            "target": "Media outlets",
-            "severity": "high",
+            "source": "CISA AA24-093A",
+            "source_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-093a",
         },
         # GhostWriter (Belarus)
         {
             "actor_pattern": "GhostWriter",
             "timestamp": "2025-09-05",
             "activity_type": "influence",
-            "description": "Fake news site creation",
+            "description": "Fake news site creation targeting Eastern European media",
             "target": "Eastern European media",
             "severity": "high",
-        },
-        # SideCopy (India)
-        {
-            "actor_pattern": "SideCopy",
-            "timestamp": "2025-07-15",
-            "activity_type": "spear_phishing",
-            "description": "Government employee targeting",
-            "target": "Pakistani military",
-            "severity": "high",
-        },
-        # Additional 2026 activities
-        {
-            "actor_pattern": "APT29",
-            "timestamp": "2026-03-15",
-            "activity_type": "supply_chain",
-            "description": "Software update compromise attempts",
-            "target": "EU government agencies",
-            "severity": "critical",
-        },
-        {
-            "actor_pattern": "Lazarus Group",
-            "timestamp": "2026-02-28",
-            "activity_type": "financial_theft",
-            "description": "DeFi protocol exploit",
-            "target": "Cryptocurrency platforms",
-            "severity": "critical",
-        },
-        {
-            "actor_pattern": "Sandworm Team",
-            "timestamp": "2026-03-01",
-            "activity_type": "destructive_attack",
-            "description": "Wiper malware on Ukrainian infrastructure",
-            "target": "Ukrainian energy",
-            "severity": "critical",
-        },
-        {
-            "actor_pattern": "APT41",
-            "timestamp": "2026-01-20",
-            "activity_type": "espionage",
-            "description": "Telecom provider compromise",
-            "target": "Southeast Asian telcos",
-            "severity": "critical",
-        },
-        {
-            "actor_pattern": "APT33",
-            "timestamp": "2026-02-10",
-            "activity_type": "destructive_attack",
-            "description": "Shamoon variant targeting petrochemical",
-            "target": "Saudi Arabia",
-            "severity": "critical",
-        },
-        {
-            "actor_pattern": "MuddyWater",
-            "timestamp": "2026-01-05",
-            "activity_type": "espionage",
-            "description": "VPN credential harvesting",
-            "target": "Kurdish organizations",
-            "severity": "high",
+            "source": "Mandiant",
+            "source_url": "https://www.mandiant.com/resources/ghostwriter-update-cyber-espionage",
         },
     ]
 

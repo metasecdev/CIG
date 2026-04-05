@@ -84,8 +84,11 @@
                         <div class="mb-2">
                             <span class="badge bg-info text-dark">Month: <span id="stat-month">0</span></span>
                         </div>
-                        <div>
+                        <div class="mb-2">
                             <span class="badge bg-secondary">Year: <span id="stat-year">0</span></span>
+                        </div>
+                        <div>
+                            <span class="badge bg-dark">10-Year: <span id="stat-historical">0</span></span>
                         </div>
                     </div>
                 </div>
@@ -170,7 +173,7 @@
 
         async function loadCVEData() {
             try {
-                const response = await fetch('/api/news/cve/severity?limit=100');
+                const response = await fetch('/api/news/cve/severity?limit=500');
                 const data = await response.json();
                 
                 if (data.status === 'success') {
@@ -185,6 +188,7 @@
                     document.getElementById('stat-week').textContent = {{ cve_summary.week_count|default(0)|int }};
                     document.getElementById('stat-month').textContent = {{ cve_summary.month_count|default(0)|int }};
                     document.getElementById('stat-year').textContent = {{ cve_summary.year_count|default(0)|int }};
+                    document.getElementById('stat-historical').textContent = {{ cve_summary.historical_count|default(0)|int }};
                     
                     // Update severity stats
                     document.getElementById('stat-critical').textContent = data.critical_count;
@@ -346,16 +350,56 @@
         }
 
         async function refreshCVEData() {
+            document.getElementById('loading').innerHTML = '<div class="spinner-border text-primary" role="status"></div><p class="mt-2">Refreshing CVE data in background...</p><div id="fetch-progress" class="progress" style="max-width: 300px; margin: 0 auto;"><div class="progress-bar" role="progressbar" style="width: 0%"></div></div>';
             document.getElementById('loading').style.display = 'block';
             document.getElementById('cve-content').style.display = 'none';
             
             try {
-                await fetch('/api/news/cve/refresh', { method: 'POST' });
-                await loadCVEData();
+                // Start background refresh
+                const refreshResp = await fetch('/api/news/cve/refresh', { method: 'POST' });
+                const refreshData = await refreshResp.json();
+                
+                // Poll for status
+                await pollCVEStatus();
             } catch (error) {
                 console.error('Failed to refresh:', error);
                 document.getElementById('loading').innerHTML = '<p class="text-danger">Failed to refresh. Try again.</p>';
             }
+        }
+        
+        async function pollCVEStatus() {
+            let attempts = 0;
+            const maxAttempts = 120; // 2 minutes max
+            
+            while (attempts < maxAttempts) {
+                try {
+                    const statusResp = await fetch('/api/news/cve/status');
+                    const statusData = await statusResp.json();
+                    
+                    if (statusData.fetch_status && statusData.fetch_status.status === 'complete') {
+                        // Done - reload data
+                        await loadCVEData();
+                        return;
+                    } else if (statusData.fetch_status && statusData.fetch_status.status === 'error') {
+                        document.getElementById('loading').innerHTML = '<p class="text-danger">Error: ' + statusData.fetch_status.message + '</p>';
+                        return;
+                    } else {
+                        // Update progress
+                        const progress = statusData.fetch_status?.progress || 0;
+                        const message = statusData.fetch_status?.message || 'Loading...';
+                        document.getElementById('fetch-progress').innerHTML = `<div class="progress-bar" role="progressbar" style="width: ${progress}%">${message}</div>`;
+                    }
+                } catch (e) {
+                    console.error('Status check error:', e);
+                }
+                
+                await new Promise(r => setTimeout(r, 1000));
+                attempts++;
+            }
+            
+            // Timeout - try to load anyway
+            document.getElementById('loading').innerHTML = '<p class="text-warning">Refresh taking longer than expected. Showing cached data...</p>';
+            await loadCVEData();
         }
 
         // Load on page load

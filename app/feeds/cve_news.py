@@ -926,7 +926,7 @@ class CVENewsFeed:
         return all_items[:limit]
 
     def fetch_all_periods(self) -> Dict[str, int]:
-        """Fetch CVEs for all time periods"""
+        """Fetch CVEs for all time periods - day/week/month/year + 10 year historical"""
         counts = {}
         now = datetime.utcnow()
 
@@ -976,14 +976,57 @@ class CVENewsFeed:
         self._cache_historical_items("year", year_items)
         counts["year"] = len(year_items)
 
-        # Historical (past year) - skip due to rate limiting
-        historical_start = "2025-04-03T00:00:00.000+00:00"
-        historical_items = []  # Skip due to NVD API rate limits
+        # Historical (past 10 years: 2016-2025) - fetch in chunks to avoid rate limiting
+        # First, get items from last year that might already be in cache
+        historical_items = []
+
+        # Fetch 10 years of historical data in chunks of ~60 days
+        ten_years_ago = now - timedelta(days=3650)  # ~10 years
+        historical_chunks = []
+
+        # Split 10 years into ~60 day chunks = ~60 chunks total
+        chunk_days = 60
+        num_chunks = (3650 // chunk_days) + 1
+
+        for i in range(num_chunks):
+            chunk_start = ten_years_ago + timedelta(days=i * chunk_days)
+            if chunk_start >= now:
+                break
+            chunk_end = min(
+                chunk_start + timedelta(days=chunk_days), now - timedelta(days=365)
+            )  # Don't overlap with year
+            if chunk_start < chunk_end:
+                historical_chunks.append(
+                    (
+                        chunk_start.strftime("%Y-%m-%dT%H:%M:%S.000+00:00"),
+                        chunk_end.strftime("%Y-%m-%dT%H:%M:%S.000+00:00"),
+                    )
+                )
+
+        logger.info(
+            f"Fetching {len(historical_chunks)} historical chunks going back 10 years..."
+        )
+
+        for idx, (cs, ce) in enumerate(historical_chunks):
+            try:
+                chunk_cves = self._fetch_cves_by_date_range(cs, ce, limit=500)
+                historical_items.extend(chunk_cves)
+                logger.info(
+                    f"Historical chunk {idx + 1}/{len(historical_chunks)}: {len(chunk_cves)} CVEs (total: {len(historical_items)})"
+                )
+                # Small delay to avoid rate limiting
+                import time
+
+                time.sleep(0.5)
+            except Exception as e:
+                logger.warning(f"Failed to fetch historical chunk {idx + 1}: {e}")
+                continue
+
         self._historical_cache["historical"] = historical_items
         self._cache_historical_items("historical", historical_items)
         counts["historical"] = len(historical_items)
 
-        self.news_items = day_items + week_items + month_items
+        self.news_items = day_items + week_items + month_items + year_items
         self._cache_items(self.news_items)
         self.last_fetch = now
 
@@ -1045,6 +1088,9 @@ class CVENewsFeed:
         if year_count == 0:
             year_cached = self._cached_items("year")
             year_count = len(year_cached)
+        if historical_count == 0:
+            historical_cached = self._cached_items("historical")
+            historical_count = len(historical_cached)
 
         # Get last_update from cache if not in memory
         last_update = self.last_fetch.isoformat() if self.last_fetch else None
@@ -1079,19 +1125,21 @@ class CVENewsFeed:
     def get_by_severity(
         self, severity: str = "critical", limit: int = 50
     ) -> List[Dict]:
-        """Get CVEs by severity level (critical, high, medium)"""
+        """Get CVEs by severity level (critical, high, medium) - includes 10 year historical"""
         severity_lower = severity.lower()
 
         # Collect all items from all sources - in-memory cache AND SQLite cache
+        # Include ALL periods: day, week, month, year, AND historical (10 years)
         all_items = []
         all_items.extend(self._historical_cache.get("day", []))
         all_items.extend(self._historical_cache.get("week", []))
         all_items.extend(self._historical_cache.get("month", []))
         all_items.extend(self._historical_cache.get("year", []))
+        all_items.extend(self._historical_cache.get("historical", []))
 
         # Also check SQLite cache if in-memory is empty
         if not all_items:
-            for period in ["day", "week", "month", "year"]:
+            for period in ["day", "week", "month", "year", "historical"]:
                 cached = self._cached_items(period)
                 if cached:
                     all_items.extend(cached)
@@ -1111,8 +1159,10 @@ class CVENewsFeed:
 
         return filtered[:limit]
 
-    def get_all_severities(self, limit_per_severity: int = 50) -> Dict[str, List[Dict]]:
-        """Get last 50 CVEs for each severity level"""
+    def get_all_severities(
+        self, limit_per_severity: int = 500
+    ) -> Dict[str, List[Dict]]:
+        """Get CVEs for each severity level - default 500 per severity, up to 2000"""
         return {
             "critical": self.get_by_severity("critical", limit_per_severity),
             "high": self.get_by_severity("high", limit_per_severity),
