@@ -1277,14 +1277,12 @@ async def news_dashboard(request: Request):
 
 
 @app.get("/dashboard/cves")
-async def cve_dashboard(request: Request):
+async def cve_dashboard(request: Request, limit: int = 50):
     """CVE vulnerability news dashboard with severity tracking"""
     try:
         cve_feed = get_cve_feed()
-        # Try to use cached data first, only refresh if cache is empty or very old
         cve_summary = cve_feed.get_summary()
 
-        # If cache is empty (all zeros), try to refresh
         if (
             cve_summary.get("year_count", 0) == 0
             and cve_summary.get("month_count", 0) == 0
@@ -1300,6 +1298,7 @@ async def cve_dashboard(request: Request):
             {
                 "request": request,
                 "cve_summary": cve_summary,
+                "cve_limit": limit,
                 "timestamp": datetime.utcnow().isoformat(),
             },
         )

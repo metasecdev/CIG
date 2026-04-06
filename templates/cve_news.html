@@ -25,6 +25,9 @@
                 <i class="fas fa-shield-alt"></i> Cyber Intelligence Gateway
             </a>
             <div class="navbar-nav ms-auto">
+                <button class="btn btn-success btn-sm me-2" onclick="fetchAllCVEs()" id="fetchAllBtn">
+                    <i class="fas fa-download"></i> Fetch All
+                </button>
                 <button class="btn btn-primary btn-sm me-2" onclick="refreshCVEData()">
                     <i class="fas fa-sync"></i> Refresh
                 </button>
@@ -32,6 +35,18 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Fetch Progress -->
+    <div id="fetch-progress" class="alert alert-info m-3" style="display: none;">
+        <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span id="fetch-status-text">Fetching CVE data...</span>
+        </div>
+        <div class="progress mt-2" style="max-width: 400px;">
+            <div id="fetch-progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+        <small class="text-muted mt-1" id="fetch-details"></small>
+    </div>
 
     <div class="container-fluid mt-4">
         <div class="row">
@@ -138,12 +153,21 @@
                     </li>
                 </ul>
                 
-                <!-- Search -->
+                <!-- Search & Limit -->
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <input type="text" id="cveSearch" class="form-control" placeholder="Search CVEs (CVE-ID, vendor, product, keyword)..." oninput="filterCVEs()">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <select class="form-select" id="cveLimit" onchange="updateLimit()">
+                            <option value="10" {% if cve_limit == 10 %}selected{% endif %}>10 per tab</option>
+                            <option value="25" {% if cve_limit == 25 %}selected{% endif %}>25 per tab</option>
+                            <option value="50" {% if cve_limit == 50 or not cve_limit %}selected{% endif %}>50 per tab</option>
+                            <option value="100" {% if cve_limit == 100 %}selected{% endif %}>100 per tab</option>
+                            <option value="200" {% if cve_limit == 200 %}selected{% endif %}>200 per tab</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <select class="form-select" id="sortOrder" onchange="sortCVEs()">
                             <option value="score">Sort by CVSS Score</option>
                             <option value="date">Sort by Date</option>
@@ -338,6 +362,13 @@
             currentFilter = document.getElementById('cveSearch').value;
             renderAllCVEs();
         }
+        
+        function updateLimit() {
+            const limit = parseInt(document.getElementById('cveLimit').value);
+            const url = new URL(window.location.href);
+            url.searchParams.set('limit', limit);
+            window.location.href = url.toString();
+        }
 
         function sortCVEs() {
             currentSort = document.getElementById('sortOrder').value;
@@ -399,6 +430,80 @@
             // Timeout - try to load anyway
             document.getElementById('loading').innerHTML = '<p class="text-warning">Refresh taking longer than expected. Showing cached data...</p>';
             await loadCVEData();
+        }
+        
+        let fetchAllInProgress = false;
+        
+        async function fetchAllCVEs() {
+            if (fetchAllInProgress) return;
+            
+            fetchAllInProgress = true;
+            const btn = document.getElementById('fetchAllBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Fetching...';
+            
+            const progressDiv = document.getElementById('fetch-progress');
+            const progressBar = document.getElementById('fetch-progress-bar');
+            const statusText = document.getElementById('fetch-status-text');
+            const detailsText = document.getElementById('fetch-details');
+            
+            progressDiv.style.display = 'block';
+            
+            try {
+                // Start background fetch
+                const resp = await fetch('/api/news/cve/refresh', { method: 'POST' });
+                const data = await resp.json();
+                
+                if (data.status === 'started' || data.status === 'already_running') {
+                    statusText.textContent = data.message || 'Fetching CVE data in background...';
+                    
+                    // Poll for status
+                    let attempts = 0;
+                    while (attempts < 600) { // 10 minutes max
+                        await new Promise(r => setTimeout(r, 1000));
+                        
+                        const statusResp = await fetch('/api/news/cve/status');
+                        const statusData = await statusResp.json();
+                        
+                        const summary = statusData.summary || {};
+                        const total = summary.year_count || 0;
+                        const hist = summary.historical_count || 0;
+                        
+                        progressBar.style.width = (statusData.fetch_status?.progress || (attempts / 6)) + '%';
+                        statusText.textContent = statusData.fetch_status?.message || 'Fetching...';
+                        detailsText.textContent = `Day: ${summary.day_count || 0}, Week: ${summary.week_count || 0}, Month: ${summary.month_count || 0}, Year: ${total}, Historical: ${hist}`;
+                        
+                        if (statusData.fetch_status?.status === 'complete') {
+                            statusText.textContent = 'All CVEs fetched! Loading...';
+                            progressBar.style.width = '100%';
+                            detailsText.textContent = `Total: ${total + hist} CVEs`;
+                            break;
+                        } else if (statusData.fetch_status?.status === 'error') {
+                            statusText.textContent = 'Error: ' + statusData.fetch_status.message;
+                            progressBar.classList.add('bg-danger');
+                            break;
+                        }
+                        
+                        attempts++;
+                    }
+                    
+                    if (attempts >= 600) {
+                        statusText.textContent = 'Taking longer than expected. Background fetch continues...';
+                    }
+                }
+                
+                // Reload the page to show all data
+                window.location.href = '/dashboard/cves?limit=200';
+                
+            } catch (e) {
+                console.error('Fetch all error:', e);
+                statusText.textContent = 'Error: ' + e.message;
+                progressBar.classList.add('bg-danger');
+            } finally {
+                fetchAllInProgress = false;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-download"></i> Fetch All';
+            }
         }
 
         // Load on page load
