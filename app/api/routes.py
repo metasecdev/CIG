@@ -5,7 +5,7 @@ FastAPI Routes for Cyber Intelligence Gateway
 import os
 import logging
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, Response, Request, BackgroundTasks
@@ -54,6 +54,10 @@ app.mount(
     StaticFiles(directory=Path(__file__).parent.parent.parent / "static"),
     name="static",
 )
+
+# Include malware analysis routes
+from app.malware.api.routes import router as malware_router
+app.include_router(malware_router)
 
 # Global instances (will be initialized in main.py)
 _db: Optional[Database] = None
@@ -247,7 +251,7 @@ class IntelRuleResponse(BaseModel):
 async def health_check():
     """Health check endpoint"""
     return HealthResponse(
-        status="healthy", version="1.0.0", timestamp=datetime.utcnow().isoformat()
+        status="healthy", version="1.0.0", timestamp=datetime.now(UTC).isoformat()
     )
 
 
@@ -292,7 +296,7 @@ async def dashboard_summary():
                 AlertResponse(**a.to_dict()).dict() for a in recent_alerts
             ],
             "latest_news": latest_news,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error(f"Failed to get dashboard summary: {e}")
@@ -830,7 +834,7 @@ async def create_intel_rule(request: IntelRuleRequest):
     """Add a new rule to the database."""
     rule_name = request.name
 
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(UTC).isoformat()
     rule_data = {
         "name": rule_name,
         "type": request.type,
@@ -889,7 +893,7 @@ async def delete_intel_rule(rule_name: str):
 
     # Disable instead of deleting
     _intel_rules[rule_name]["enabled"] = False
-    _intel_rules[rule_name]["updated_at"] = datetime.utcnow().isoformat()
+    _intel_rules[rule_name]["updated_at"] = datetime.now(UTC).isoformat()
 
     return {
         "status": "deleted",
@@ -905,7 +909,7 @@ async def enable_intel_rule(rule_name: str):
         raise HTTPException(status_code=404, detail="Rule not found")
 
     _intel_rules[rule_name]["enabled"] = True
-    _intel_rules[rule_name]["updated_at"] = datetime.utcnow().isoformat()
+    _intel_rules[rule_name]["updated_at"] = datetime.now(UTC).isoformat()
 
     return {
         "status": "enabled",
@@ -920,7 +924,7 @@ async def disable_intel_rule(rule_name: str):
         raise HTTPException(status_code=404, detail="Rule not found")
 
     _intel_rules[rule_name]["enabled"] = False
-    _intel_rules[rule_name]["updated_at"] = datetime.utcnow().isoformat()
+    _intel_rules[rule_name]["updated_at"] = datetime.now(UTC).isoformat()
 
     return {
         "status": "disabled",
@@ -1036,7 +1040,7 @@ async def api_health_monitor():
     return {
         "status": "success",
         "monitor": report,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -1049,7 +1053,7 @@ async def api_health_monitor_trigger():
     return {
         "status": "success",
         "manual_check": report,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -1089,7 +1093,7 @@ async def api_generate_report_html(days: int = Query(7, ge=1, le=30)):
 @app.get("/test")
 async def test_route():
     """Simple test route"""
-    return {"message": "Server is working", "timestamp": datetime.utcnow().isoformat()}
+    return {"message": "Server is working", "timestamp": datetime.now(UTC).isoformat()}
 
 
 @app.get("/")
@@ -1131,12 +1135,12 @@ async def dashboard(request: Request):
             "system": matcher.get_status(),
             "map": {
                 "status": "online",
-                "last_checked_at": datetime.utcnow().isoformat(),
+                "last_checked_at": datetime.now(UTC).isoformat(),
                 "known_threat_locations": [],
             },
             "indicators": {
                 "count": sum(database.get_indicator_counts().values()),
-                "last_checked_at": datetime.utcnow().isoformat(),
+                "last_checked_at": datetime.now(UTC).isoformat(),
             },
         }
 
@@ -1177,7 +1181,7 @@ async def dashboard(request: Request):
                 "health_components": health_components,
                 "latest_news": latest_news,
                 "arkime_status": arkime_info,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1221,7 +1225,7 @@ async def status_dashboard(request: Request):
             {
                 "request": request,
                 "status": status_data,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1240,7 +1244,7 @@ async def api_dashboard_health():
     health_data = get_health_status(_db, _threat_matcher)
     return {
         "status": "success",
-        "last_checked_at": datetime.utcnow().isoformat(),
+        "last_checked_at": datetime.now(UTC).isoformat(),
         "health": health_data,
     }
 
@@ -1285,7 +1289,7 @@ async def health_dashboard(request: Request):
             {
                 "request": request,
                 "health": health_data,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1326,7 +1330,7 @@ async def checks_dashboard(request: Request):
                 "request": request,
                 "health_status": health_status,
                 "checks": checks,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1358,7 +1362,7 @@ async def events_dashboard(request: Request):
                 "request": request,
                 "alerts": alerts_data,
                 "stats": stats,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1402,7 +1406,7 @@ async def news_dashboard(request: Request):
                 "news_items": news_items,
                 "graynoise_items": graynoise_items,
                 "graynoise_error": graynoise_error,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1435,7 +1439,7 @@ async def cve_dashboard(request: Request, limit: int = 50):
                 "request": request,
                 "cve_summary": cve_summary,
                 "cve_limit": limit,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1483,7 +1487,7 @@ async def threat_actors_dashboard(request: Request, refresh: bool = False):
                 "actors_by_country": actors_by_country,
                 "countries": countries,
                 "stats": stats,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1539,7 +1543,7 @@ async def threat_actor_detail(request: Request, actor_id: str):
                 "related_alerts": related_alerts,
                 "malware_links": malware_links,
                 "opencti_status": opencti_status,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except HTTPException:
@@ -1572,7 +1576,7 @@ async def arkime_dashboard(request: Request):
                 "arkime_status": arkime_status,
                 "so_info": so_info,
                 "arkime_info": arkime_info,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1617,7 +1621,7 @@ async def reports_dashboard(request: Request):
             {
                 "request": request,
                 "report_data": report_data,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -1724,7 +1728,7 @@ async def api_dshield_threats():
         return {
             "status": "success",
             "dshield_threats": threats,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error(f"Failed to fetch DShield threats: {e}")
@@ -3103,7 +3107,7 @@ async def config_dashboard(request: Request):
             {
                 "request": request,
                 "config": status,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:
@@ -3125,7 +3129,7 @@ async def feeds_dashboard(request: Request):
             {
                 "request": request,
                 "feeds": status,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     except Exception as e:

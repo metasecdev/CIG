@@ -167,3 +167,193 @@ body {
     background-color: #f8f9fa;
     border-bottom: 2px solid #dee2e6;
 }
+
+/* ============================================
+   CIG Dashboard - Enhanced Styles
+   ============================================ */
+
+/* Severity badge colors (Bootstrap overrides) */
+.badge.bg-severity-critical,
+.badge.bg-critical { background-color: #dc3545 !important; }
+.badge.bg-severity-high,
+.badge.bg-high { background-color: #fd7e14 !important; }
+.badge.bg-severity-medium,
+.badge.bg-medium { background-color: #ffc107 !important; color: #000 !important; }
+.badge.bg-severity-low,
+.badge.bg-low { background-color: #17a2b8 !important; }
+.badge.bg-severity-info,
+.badge.bg-info { background-color: #0dcaf0 !important; color: #000 !important; }
+
+/* Sidebar navigation - dark cyber theme */
+.list-group-item.active {
+    background-color: #1a1a2e !important;
+    border-left: 3px solid #00d4ff !important;
+    color: #00d4ff !important;
+    font-weight: 600;
+}
+
+.list-group-item {
+    border-left: 3px solid transparent !important;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f0f4f8 !important;
+    border-left-color: #00d4ff !important;
+}
+
+/* Nav icon alignment */
+.list-group-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+/* Sidebar card dark theme */
+.sidebar .card {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+.sidebar .card-header {
+    background-color: #16213e;
+    color: #00d4ff;
+    border-bottom: 1px solid #0f3460;
+}
+
+/* Quick stats badges in sidebar */
+.sidebar .badge {
+    font-size: 0.85em;
+}
+
+/* Card hover glow effect */
+.card:hover {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.15) !important;
+}
+
+/* Metric cards with gradient borders */
+.metric-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+}
+
+.metric-card.bg-primary::before {
+    background: linear-gradient(90deg, #007bff, #00d4ff);
+}
+
+.metric-card.bg-success::before {
+    background: linear-gradient(90deg, #28a745, #00d4ff);
+}
+
+.metric-card.bg-warning::before {
+    background: linear-gradient(90deg, #ffc107, #fd7e14);
+}
+
+.metric-card.bg-info::before {
+    background: linear-gradient(90deg, #17a2b8, #0dcaf0);
+}
+
+/* Alert severity row highlighting */
+.table tr.alert-row-high {
+    border-left: 3px solid #dc3545;
+}
+
+.table tr.alert-row-medium {
+    border-left: 3px solid #ffc107;
+}
+
+.table tr.alert-row-low {
+    border-left: 3px solid #17a2b8;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* CVE card scroll area styling */
+.cve-card-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.cve-card-scroll::-webkit-scrollbar-thumb {
+    background: #00d4ff;
+    border-radius: 2px;
+}
+
+/* Active nav link glow */
+.list-group-item.active i {
+    color: #00d4ff;
+}
+
+/* Feed status indicators */
+.feed-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.feed-status-dot.online { background-color: #28a745; box-shadow: 0 0 6px #28a745; }
+.feed-status-dot.offline { background-color: #dc3545; }
+.feed-status-dot.warning { background-color: #ffc107; box-shadow: 0 0 6px #ffc107; }
+
+/* Health check status indicators */
+.health-healthy { color: #28a745; }
+.health-degraded { color: #ffc107; }
+.health-unhealthy { color: #dc3545; }
+.health-unavailable { color: #6c757d; }
+
+/* MITRE technique badges - distinct colors per tactic */
+.badge.attack-execution { background-color: #dc3545 !important; }
+.badge.attack-persistence { background-color: #fd7e14 !important; }
+.badge.attack-defense-evasion { background-color: #ffc107 !important; color: #000 !important; }
+.badge.attack-c2 { background-color: #6f42c1 !important; }
+.badge.attack-exfiltration { background-color: #20c997 !important; color: #000 !important; }
+.badge.attack-discovery { background-color: #17a2b8 !important; }
+
+/* System status banner severity colors */
+.alert-status-healthy { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+.alert-status-degraded { background-color: #fff3cd; border-color: #ffeeba; color: #856404; }
+.alert-status-unhealthy { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+
+/* Pulse animation for live indicators */
+@keyframes pulse-live {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+.pulse-live {
+    animation: pulse-live 2s ease-in-out infinite;
+}
+
+/* Toast notifications - cyber theme */
+.toast-notification {
+    border-left: 4px solid #00d4ff;
+}
