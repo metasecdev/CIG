@@ -28,6 +28,9 @@ from app.integrations.arkime_setup import ArkimeSetupManager, SecurityOnionInteg
 
 logger = logging.getLogger(__name__)
 
+# Module-level rule store (temporary until DB migration)
+_intel_rules: Dict[str, dict] = {}
+
 # Create FastAPI app
 app = FastAPI(
     title="Cyber Intelligence Gateway API",
@@ -208,6 +211,33 @@ class DomainCheckResponse(BaseModel):
     domain: str
     matched: bool
     indicator: Optional[dict] = None
+
+
+# --- Intel Rules Models ---
+
+
+class IntelRuleRequest(BaseModel):
+    name: str
+    type: str  # yara, sigma, stix, snort
+    content: str
+    priority: int = 2  # 1-4
+    confidence: float = 0.5  # 0.0-1.0
+    attack_technique: Optional[str] = None
+    source_sample: Optional[str] = None
+    enabled: bool = True
+
+
+class IntelRuleResponse(BaseModel):
+    name: str
+    type: str
+    content: str
+    priority: int
+    confidence: float
+    attack_technique: Optional[str] = None
+    source_sample: Optional[str] = None
+    enabled: bool
+    created_at: str
+    updated_at: str
 
 
 # --- Health Endpoints ---
@@ -790,6 +820,112 @@ async def get_threatfox_status():
         return {"enabled": settings.enable_threatfox, "status": "not_configured"}
 
     return threat_matcher.abusech_feeds.get_status().get("threatfox", {})
+
+
+# --- Intel Rules Endpoints ---
+
+
+@app.post("/api/intel/rules")
+async def create_intel_rule(request: IntelRuleRequest):
+    """Add a new rule to the database."""
+    rule_name = request.name
+
+    now = datetime.utcnow().isoformat()
+    rule_data = {
+        "name": rule_name,
+        "type": request.type,
+        "content": request.content,
+        "priority": request.priority,
+        "confidence": request.confidence,
+        "attack_technique": request.attack_technique,
+        "source_sample": request.source_sample,
+        "enabled": request.enabled,
+        "created_at": now,
+        "updated_at": now,
+    }
+
+    _intel_rules[rule_name] = rule_data
+
+    logger.info(f"Created intel rule: {rule_name}")
+    return {
+        "status": "created",
+        "rule": IntelRuleResponse(**rule_data).dict(),
+    }
+
+
+@app.get("/api/intel/rules")
+async def list_intel_rules(
+    type: Optional[str] = Query(None, description="Filter by rule type"),
+    enabled: Optional[bool] = Query(None, description="Filter by enabled status"),
+):
+    """List all rules with optional filtering."""
+    rules = list(_intel_rules.values())
+
+    if type:
+        rules = [r for r in rules if r.get("type") == type]
+    if enabled is not None:
+        rules = [r for r in rules if r.get("enabled") == enabled]
+
+    return {
+        "rules": [IntelRuleResponse(**r).dict() for r in rules],
+        "total": len(rules),
+    }
+
+
+@app.get("/api/intel/rules/{rule_name}")
+async def get_intel_rule(rule_name: str):
+    """Get a specific rule by name."""
+    if rule_name not in _intel_rules:
+        raise HTTPException(status_code=404, detail="Rule not found")
+
+    return {"rule": IntelRuleResponse(**_intel_rules[rule_name]).dict()}
+
+
+@app.delete("/api/intel/rules/{rule_name}")
+async def delete_intel_rule(rule_name: str):
+    """Delete/disable a rule by name."""
+    if rule_name not in _intel_rules:
+        raise HTTPException(status_code=404, detail="Rule not found")
+
+    # Disable instead of deleting
+    _intel_rules[rule_name]["enabled"] = False
+    _intel_rules[rule_name]["updated_at"] = datetime.utcnow().isoformat()
+
+    return {
+        "status": "deleted",
+        "rule_name": rule_name,
+        "message": "Rule disabled (not permanently deleted)",
+    }
+
+
+@app.post("/api/intel/rules/{rule_name}/enable")
+async def enable_intel_rule(rule_name: str):
+    """Enable a rule."""
+    if rule_name not in _intel_rules:
+        raise HTTPException(status_code=404, detail="Rule not found")
+
+    _intel_rules[rule_name]["enabled"] = True
+    _intel_rules[rule_name]["updated_at"] = datetime.utcnow().isoformat()
+
+    return {
+        "status": "enabled",
+        "rule": IntelRuleResponse(**_intel_rules[rule_name]).dict(),
+    }
+
+
+@app.post("/api/intel/rules/{rule_name}/disable")
+async def disable_intel_rule(rule_name: str):
+    """Disable a rule."""
+    if rule_name not in _intel_rules:
+        raise HTTPException(status_code=404, detail="Rule not found")
+
+    _intel_rules[rule_name]["enabled"] = False
+    _intel_rules[rule_name]["updated_at"] = datetime.utcnow().isoformat()
+
+    return {
+        "status": "disabled",
+        "rule": IntelRuleResponse(**_intel_rules[rule_name]).dict(),
+    }
 
 
 @app.post("/api/feeds/update/urlhaus")
