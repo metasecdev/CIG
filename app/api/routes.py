@@ -1752,11 +1752,29 @@ def fetch_cve_data_background():
 @app.get("/api/news/cve/status")
 async def api_cve_status():
     """Get CVE background fetch status"""
+    cve_feed = get_cve_feed()
+    summary = cve_feed.get_summary()
+
+    # Get severity counts too
+    severity_counts = {"critical": 0, "high": 0, "medium": 0}
+    try:
+        all_severities = cve_feed.get_all_severities(limit_per_severity=5000)
+        severity_counts = {
+            "critical": len(all_severities.get("critical", [])),
+            "high": len(all_severities.get("high", [])),
+            "medium": len(all_severities.get("medium", [])),
+        }
+    except:
+        pass
+
     return {
         "status": "success",
         "in_progress": cve_fetch_in_progress,
         "fetch_status": cve_fetch_status,
-        "summary": get_cve_feed().get_summary(),
+        "summary": summary,
+        "critical_count": severity_counts["critical"],
+        "high_count": severity_counts["high"],
+        "medium_count": severity_counts["medium"],
     }
 
 
@@ -1788,20 +1806,75 @@ async def api_cve_news_refresh(background_tasks: BackgroundTasks):
     }
 
 
+@app.post("/api/news/cve/fetch-all")
+async def api_cve_fetch_all(background_tasks: BackgroundTasks):
+    """Fetch ALL CVEs from 1999 to present - comprehensive historical data"""
+    global cve_fetch_in_progress, cve_fetch_status
+
+    if cve_fetch_in_progress:
+        return {
+            "status": "already_running",
+            "message": "CVE fetch already in progress",
+            "fetch_status": cve_fetch_status,
+        }
+
+    cve_fetch_in_progress = True
+    cve_fetch_status = {
+        "status": "starting",
+        "message": "Starting comprehensive CVE fetch from 1999 to present...",
+        "progress": 0,
+    }
+
+    background_tasks.add_task(run_cve_comprehensive)
+
+    return {
+        "status": "started",
+        "message": "Comprehensive CVE fetch started in background - this will take some time but will fetch all historical CVEs",
+    }
+
+
 async def run_cve_refresh():
     """Async wrapper to run CVE refresh"""
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, fetch_cve_data_background)
 
 
+async def run_cve_comprehensive():
+    """Async wrapper to run comprehensive CVE fetch"""
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, fetch_cve_comprehensive_background)
+
+
+def fetch_cve_comprehensive_background():
+    """Background task to fetch ALL CVEs from 1999 to present"""
+    global cve_fetch_in_progress, cve_fetch_status
+    try:
+        cve_fetch_status = {
+            "status": "starting",
+            "message": "Starting comprehensive CVE fetch (1999-present)...",
+            "progress": 0,
+        }
+        cve_feed = get_cve_feed()
+        result = cve_feed.fetch_comprehensive()
+
+        cve_fetch_status = {
+            "status": "complete",
+            "message": f"Comprehensive CVE fetch complete: {result.get('total', 0)} total CVEs",
+            "progress": 100,
+        }
+    except Exception as e:
+        logger.error(f"Comprehensive CVE fetch failed: {e}")
+        cve_fetch_status = {"status": "error", "message": str(e), "progress": 0}
+    finally:
+        cve_fetch_in_progress = False
+
+
 @app.get("/api/news/cve/severity")
 async def api_cve_by_severity(
-    limit: int = Query(500, ge=1, le=2000),
-    severity: str = Query(
-        "", description="Optional: critical, high, medium (leave empty for all)"
-    ),
+    limit: int = Query(5000, ge=1),
+    severity: str = "",
 ):
-    """Get CVEs by severity level - default 500 per severity, up to 2000 (API key required for >100)"""
+    """Get CVEs by severity level - default 5000 per severity"""
     try:
         cve_feed = get_cve_feed()
 

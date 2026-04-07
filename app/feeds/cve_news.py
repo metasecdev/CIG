@@ -648,6 +648,12 @@ class CVENewsFeed:
             response.raise_for_status()
 
             data = response.json()
+            # Handle rate limiting (429) or unexpected response format
+            if isinstance(data, list):
+                return data
+            if not isinstance(data, dict):
+                logger.warning(f"Unexpected response type {type(data)}")
+                return []
             return data.get("vulnerabilities", [])
 
         except Exception as e:
@@ -713,10 +719,19 @@ class CVENewsFeed:
                         response.raise_for_status()
 
                         data = response.json()
-                        if not isinstance(data, dict):
-                            logger.warning(f"Unexpected response type: {type(data)}")
+                        # Handle rate limiting (429) or unexpected response format
+                        if isinstance(data, list):
+                            vulnerabilities = data
+                        elif not isinstance(data, dict):
+                            logger.warning(
+                                f"Unexpected response type: {type(data)}, may be rate limited"
+                            )
+                            import time
+
+                            time.sleep(30)  # Wait before retry (NVD is rate limited)
                             break
-                        vulnerabilities = data.get("vulnerabilities", [])
+                        else:
+                            vulnerabilities = data.get("vulnerabilities", [])
 
                         for vuln in vulnerabilities:
                             if not isinstance(vuln, dict):
@@ -888,7 +903,14 @@ class CVENewsFeed:
                     response.raise_for_status()
 
                     data = response.json()
-                    vulnerabilities = data.get("vulnerabilities", [])
+                    # Handle rate limiting or unexpected response
+                    if isinstance(data, list):
+                        vulnerabilities = data
+                    elif not isinstance(data, dict):
+                        logger.warning(f"Unexpected response type: {type(data)}")
+                        break
+                    else:
+                        vulnerabilities = data.get("vulnerabilities", [])
 
                     if not vulnerabilities:
                         break
@@ -911,12 +933,16 @@ class CVENewsFeed:
 
                     start_idx += results_per_page
 
-                    total_results = data.get("totalResults", 0)
+                    total_results = (
+                        data.get("totalResults", 0) if isinstance(data, dict) else 0
+                    )
                     if start_idx >= total_results:
                         break
 
                 # Check if there are more results
-                total_results = data.get("totalResults", 0)
+                total_results = (
+                    data.get("totalResults", 0) if isinstance(data, dict) else 0
+                )
                 if start_idx >= total_results:
                     break
 
@@ -933,7 +959,7 @@ class CVENewsFeed:
         # Day (last 24 hours) - use ISO 8601 format with milliseconds and timezone offset
         day_start = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
         day_end = now.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
-        day_items = self._fetch_cves_by_date_range(day_start, day_end, limit=500)
+        day_items = self._fetch_cves_by_date_range(day_start, day_end, limit=5000)
         self._historical_cache["day"] = day_items
         self._cache_historical_items("day", day_items)
         counts["day"] = len(day_items)
@@ -1009,7 +1035,7 @@ class CVENewsFeed:
 
         for idx, (cs, ce) in enumerate(historical_chunks):
             try:
-                chunk_cves = self._fetch_cves_by_date_range(cs, ce, limit=500)
+                chunk_cves = self._fetch_cves_by_date_range(cs, ce, limit=2000)
                 historical_items.extend(chunk_cves)
                 logger.info(
                     f"Historical chunk {idx + 1}/{len(historical_chunks)}: {len(chunk_cves)} CVEs (total: {len(historical_items)})"
@@ -1034,6 +1060,76 @@ class CVENewsFeed:
             f"CVE News: day={counts['day']}, week={counts['week']}, month={counts['month']}, year={counts['year']}, historical={counts['historical']}"
         )
         return counts
+
+    def fetch_comprehensive(self) -> Dict[str, Any]:
+        """Fetch ALL CVEs from 1999 to present - comprehensive historical data"""
+        now = datetime.utcnow()
+        total_fetched = 0
+        all_cves = []
+
+        # Fetch from 1999 (when CVEs started) to present in ~30 day chunks
+        start_date = datetime(1999, 1, 1)
+        days_per_chunk = 30
+
+        # Calculate number of chunks
+        total_days = (now - start_date).days
+        num_chunks = (total_days // days_per_chunk) + 1
+
+        logger.info(
+            f"Starting comprehensive CVE fetch: {num_chunks} chunks from 1999 to present"
+        )
+
+        for idx in range(num_chunks):
+            chunk_start = start_date + timedelta(days=idx * days_per_chunk)
+            chunk_end = min(chunk_start + timedelta(days=days_per_chunk), now)
+
+            start_str = chunk_start.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+            end_str = chunk_end.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+            try:
+                chunk_cves = self._fetch_cves_by_date_range(
+                    start_str, end_str, limit=2000
+                )
+                all_cves.extend(chunk_cves)
+                total_fetched += len(chunk_cves)
+
+                logger.info(
+                    f"Chunk {idx + 1}/{num_chunks}: {chunk_start.date()} to {chunk_end.date()} = {len(chunk_cves)} CVEs (total: {total_fetched})"
+                )
+
+                # Store periodically
+                if idx % 10 == 0:
+                    self._cache_items(
+                        all_cves[-5000:] if len(all_cves) > 5000 else all_cves
+                    )
+
+                # Rate limiting to avoid API throttling
+                import time
+
+                time.sleep(6)  # Longer delay to avoid 429
+
+            except Exception as e:
+                logger.warning(f"Failed to fetch chunk {idx + 1}: {e}")
+                import time
+
+                time.sleep(10)  # Longer delay on error
+                continue
+
+        # Final cache store
+        self._cache_items(all_cves)
+        self._historical_cache["all"] = all_cves
+
+        # Separate by year for easier access
+        for year in range(1999, now.year + 1):
+            year_cves = [
+                c for c in all_cves if c.get("published_at", "").startswith(str(year))
+            ]
+            if year_cves:
+                self._historical_cache[f"year_{year}"] = year_cves
+                self._cache_historical_items(f"year_{year}", year_cves)
+
+        logger.info(f"Comprehensive CVE fetch complete: {total_fetched} total CVEs")
+        return {"total": total_fetched, "years": now.year - 1999 + 1}
 
     def get_by_period(self, period: str = "all") -> List[Dict]:
         """Get CVEs by time period"""
@@ -1123,7 +1219,7 @@ class CVENewsFeed:
         }
 
     def get_by_severity(
-        self, severity: str = "critical", limit: int = 50
+        self, severity: str = "critical", limit: int = 2000
     ) -> List[Dict]:
         """Get CVEs by severity level (critical, high, medium) - includes 10 year historical"""
         severity_lower = severity.lower()

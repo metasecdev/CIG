@@ -194,10 +194,11 @@
         let currentFilter = '';
         let currentSort = 'score';
         let currentSeverity = 'critical';
+        let currentLimit = {{ cve_limit|default(2000) }};
 
         async function loadCVEData() {
             try {
-                const response = await fetch('/api/news/cve/severity?limit=500');
+                const response = await fetch('/api/news/cve/severity?limit=5000');
                 const data = await response.json();
                 
                 if (data.status === 'success') {
@@ -213,6 +214,20 @@
                     document.getElementById('stat-month').textContent = {{ cve_summary.month_count|default(0)|int }};
                     document.getElementById('stat-year').textContent = {{ cve_summary.year_count|default(0)|int }};
                     document.getElementById('stat-historical').textContent = {{ cve_summary.historical_count|default(0)|int }};
+                    
+                    // Also fetch summary for real-time counts
+                    try {
+                        const summaryResp = await fetch('/api/news/cve/status');
+                        const summaryData = await summaryResp.json();
+                        const summary = summaryData.summary || {};
+                        document.getElementById('stat-day').textContent = summary.day_count || {{ cve_summary.day_count|default(0)|int }};
+                        document.getElementById('stat-week').textContent = summary.week_count || {{ cve_summary.week_count|default(0)|int }};
+                        document.getElementById('stat-month').textContent = summary.month_count || {{ cve_summary.month_count|default(0)|int }};
+                        document.getElementById('stat-year').textContent = summary.year_count || {{ cve_summary.year_count|default(0)|int }};
+                        document.getElementById('stat-historical').textContent = summary.historical_count || {{ cve_summary.historical_count|default(0)|int }};
+                    } catch(e) {
+                        console.log('Using default summary');
+                    }
                     
                     // Update severity stats
                     document.getElementById('stat-critical').textContent = data.critical_count;
@@ -252,6 +267,9 @@
             let filtered = filterItems(items);
             let sorted = sortItems(filtered);
             
+            // Apply limit
+            const limitedItems = sorted.slice(0, currentLimit);
+            
             const container = document.getElementById(`${severity}-list`);
             
             if (sorted.length === 0) {
@@ -259,7 +277,7 @@
                 return;
             }
             
-            container.innerHTML = sorted.map((item, idx) => {
+            container.innerHTML = limitedItems.map((item, idx) => {
                 const severityClass = severity === 'critical' ? 'danger' : severity === 'high' ? 'warning' : 'info';
                 
                 return `
@@ -365,9 +383,8 @@
         
         function updateLimit() {
             const limit = parseInt(document.getElementById('cveLimit').value);
-            const url = new URL(window.location.href);
-            url.searchParams.set('limit', limit);
-            window.location.href = url.toString();
+            currentLimit = limit;
+            renderAllCVEs();
         }
 
         function sortCVEs() {
@@ -468,10 +485,13 @@
                         const summary = statusData.summary || {};
                         const total = summary.year_count || 0;
                         const hist = summary.historical_count || 0;
+                        const critical = statusData.critical_count || 0;
+                        const high = statusData.high_count || 0;
+                        const medium = statusData.medium_count || 0;
                         
                         progressBar.style.width = (statusData.fetch_status?.progress || (attempts / 6)) + '%';
                         statusText.textContent = statusData.fetch_status?.message || 'Fetching...';
-                        detailsText.textContent = `Day: ${summary.day_count || 0}, Week: ${summary.week_count || 0}, Month: ${summary.month_count || 0}, Year: ${total}, Historical: ${hist}`;
+                        detailsText.textContent = `Day: ${summary.day_count || 0}, Week: ${summary.week_count || 0}, Month: ${summary.month_count || 0}, Year: ${total}, Historical: ${hist} | Critical: ${critical}, High: ${high}, Medium: ${medium}`;
                         
                         if (statusData.fetch_status?.status === 'complete') {
                             statusText.textContent = 'All CVEs fetched! Loading...';

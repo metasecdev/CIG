@@ -64,7 +64,7 @@ def signal_handler(signum, frame):
     """Handle shutdown signals"""
     logger.info("Received shutdown signal, stopping...")
     from app.health_scheduler import stop_health_scheduler
-    
+
     stop_health_scheduler()
     global threat_matcher
     if threat_matcher:
@@ -75,12 +75,7 @@ def signal_handler(signum, frame):
 def self_heal_from_logs():
     """Scan cig.log for known errors and apply straightforward corrections."""
     log_file = LOG_DIR / "cig.log"
-    report = {
-        "checked": False,
-        "issues_found": [],
-        "actions_taken": [],
-        "message": ""
-    }
+    report = {"checked": False, "issues_found": [], "actions_taken": [], "message": ""}
 
     if not log_file.exists():
         report["message"] = "No log file found; nothing to heal."
@@ -94,26 +89,33 @@ def self_heal_from_logs():
     for line in lines:
         if "No module named 'typing.io'" in line:
             report["issues_found"].append("typing.io import error")
-            report["actions_taken"].append("MITRE fallback mapping active; no further action required")
+            report["actions_taken"].append(
+                "MITRE fallback mapping active; no further action required"
+            )
 
         if "database is locked" in line.lower():
             report["issues_found"].append("database locked")
             try:
                 import sqlite3
+
                 conn = sqlite3.connect(settings.database_path)
                 conn.execute("PRAGMA journal_mode=WAL;")
                 conn.execute("VACUUM;")
                 conn.commit()
                 conn.close()
                 report["actions_taken"].append("Performed WAL and VACUUM cleanup")
-                logger.info("Self-heal: performed database WAL/VACUUM to resolve lock conditions")
+                logger.info(
+                    "Self-heal: performed database WAL/VACUUM to resolve lock conditions"
+                )
             except Exception as e:
                 report["actions_taken"].append(f"Failed to perform DB cleanup: {e}")
                 logger.warning(f"Self-heal unable to fix database lock: {e}")
 
         if "failed to fetch news" in line.lower():
             report["issues_found"].append("news fetch failure")
-            report["actions_taken"].append("User notified that external network may be unavailable; no automatic fix")
+            report["actions_taken"].append(
+                "User notified that external network may be unavailable; no automatic fix"
+            )
 
     if not report["issues_found"]:
         report["message"] = "No auto-fixable issues found; system is healthy."
@@ -157,8 +159,9 @@ def main():
     logger.info("Initializing feed scheduler...")
     from app.scheduling.feed_scheduler import FeedScheduler, FeedPriority
     from app.feeds.dshield_polling import poll_dshield_feed
+
     scheduler = FeedScheduler()
-    
+
     # Register DShield feed with midnight UTC refresh
     scheduler.register_feed(
         feed_id="dshield",
@@ -173,39 +176,43 @@ def main():
     # Initialize Feed Filter Engine
     logger.info("Initializing feed filter engine...")
     from app.feeds.filtering import FeedFilterEngine
+
     filter_engine = FeedFilterEngine()
     logger.info("Feed filter engine initialized")
 
     # Initialize Report Ingestion Connector
     logger.info("Initializing report ingestion connector...")
     from app.feeds.report_ingestion import ReportIngestionConnector
+
     report_ingestion = ReportIngestionConnector(database=database)
     logger.info("Report ingestion connector initialized")
 
     # Initialize DShield Poller
     logger.info("Initializing DShield poller...")
     from app.feeds.dshield_polling import get_dshield_poller
+
     dshield_poller = get_dshield_poller(database=database)
     logger.info("DShield poller initialized")
 
-    # Pre-fetch CVE data on startup
+    # Pre-fetch CVE data on startup (lazy load)
     logger.info("Pre-fetching CVE news data...")
     from app.feeds.cve_news import get_cve_feed
 
     cve_feed = get_cve_feed()
+    # Just get summary without fetching - do fetch on-demand
     try:
-        cve_counts = cve_feed.fetch_all_periods()
+        cve_summary = cve_feed.get_summary()
         logger.info(
-            f"CVE data loaded: day={cve_counts.get('day', 0)}, week={cve_counts.get('week', 0)}, month={cve_counts.get('month', 0)}"
+            f"CVE data initialized: {cve_summary.get('year_count', 0)} year_count"
         )
     except Exception as e:
-        logger.warning(f"Initial CVE fetch failed (will retry on demand): {e}")
+        logger.warning(f"CVE init check failed (will fetch on demand): {e}")
 
     # Initialize the API routes with the instances
     from app.api.routes import init_app
 
     init_app(
-        database, 
+        database,
         threat_matcher,
         scheduler=scheduler,
         filter_engine=filter_engine,
