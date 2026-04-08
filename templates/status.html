@@ -60,7 +60,7 @@
                         <a href="/dashboard/actors" class="list-group-item list-group-item-action">
                             <i class="fas fa-user-secret"></i> Threat Actors
                         </a>
-                        <a href="/feeds" class="list-group-item list-group-item-action">
+                        <a href="/dashboard/feeds" class="list-group-item list-group-item-action">
                             <i class="fas fa-rss"></i> Feed Mgmt
                         </a>
                         <a href="/dashboard/malware" class="list-group-item list-group-item-action">
@@ -192,18 +192,53 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function callSystemEndpoint(endpoint, action) {
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function setButtonLoading(btn, loading) {
+            if (loading) {
+                btn.disabled = true;
+                btn.dataset.originalHtml = btn.innerHTML;
+                btn.innerHTML = '<span class="fas fa-spinner fa-spin me-1"></span> Working...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+            }
+        }
+
+        async function callSystemEndpoint(endpoint, action, btn) {
             const resultEl = document.getElementById('system-action-result');
+            resultEl.innerHTML = '';
+            if (btn) setButtonLoading(btn, true);
+
             try {
                 const resp = await fetch(endpoint, { method: 'POST' });
-                const body = await resp.json();
+                let body;
+                try {
+                    body = await resp.json();
+                } catch {
+                    body = {};
+                }
+
                 if (!resp.ok) {
-                    resultEl.innerHTML = `<div class="alert alert-danger">${action} failed: ${body.detail || JSON.stringify(body)}</div>`;
+                    const msg = body.detail || body.message || JSON.stringify(body) || `HTTP ${resp.status}`;
+                    resultEl.innerHTML = `<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i> ${action} failed: ${escapeHtml(msg)}</div>`;
                 } else {
-                    resultEl.innerHTML = `<div class="alert alert-success">${action} succeeded: ${body.message || body.status || 'OK'}</div>`;
+                    const msg = body.message || body.status || 'Completed';
+                    const severity = action === 'Shutdown' ? 'warning' : 'success';
+                    resultEl.innerHTML = `<div class="alert alert-${severity}"><i class="fas fa-check-circle me-1"></i> ${action} ${msg}: ${escapeHtml(body.status || 'OK')}</div>`;
+                    if (action === 'Shutdown') {
+                        resultEl.innerHTML += '<div class="mt-2"><small class="text-muted">The API server is shutting down. Restart it to continue.</small></div>';
+                    }
                 }
             } catch (err) {
-                resultEl.innerHTML = `<div class="alert alert-danger">${action} error: ${err.message}</div>`;
+                resultEl.innerHTML = `<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i> ${action} error: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                if (btn) setButtonLoading(btn, false);
             }
         }
 
@@ -213,13 +248,15 @@
 
             if (restartBtn) {
                 restartBtn.addEventListener('click', function () {
-                    callSystemEndpoint('/api/system/restart', 'Restart');
+                    if (!confirm('Restart the threat matching engine? Active captures will be briefly interrupted.')) return;
+                    callSystemEndpoint('/api/system/restart', 'Restart', restartBtn);
                 });
             }
 
             if (shutdownBtn) {
                 shutdownBtn.addEventListener('click', function () {
-                    callSystemEndpoint('/api/system/shutdown', 'Shutdown');
+                    if (!confirm('WARNING: Shutdown will stop the threat matching engine and DNS monitoring. Active captures will stop. Are you sure?')) return;
+                    callSystemEndpoint('/api/system/shutdown', 'Shutdown', shutdownBtn);
                 });
             }
         });

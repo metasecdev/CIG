@@ -3137,3 +3137,45 @@ async def feeds_dashboard(request: Request):
         return templates.TemplateResponse(
             "error.html", {"request": request, "error": str(e)}
         )
+
+
+@app.get("/dashboard/malware")
+async def malware_dashboard(request: Request):
+    """Malware analysis dashboard"""
+    try:
+        return templates.TemplateResponse(
+            "malware.html",
+            {
+                "request": request,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "stats": {
+                    "total_samples": 0,
+                    "analyzed": 0,
+                    "pending": 0,
+                    "total_iocs": 0,
+                },
+            },
+        )
+    except Exception as e:
+        logger.error(f"Malware dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
+
+
+@app.get("/dashboard/malware/hunt")
+async def malware_hunt_dashboard(request: Request):
+    """Threat hunt dashboard"""
+    try:
+        return templates.TemplateResponse(
+            "malware_hunt.html",
+            {
+                "request": request,
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+        )
+    except Exception as e:
+        logger.error(f"Threat hunt dashboard error: {e}")
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "error": str(e)}
+        )
