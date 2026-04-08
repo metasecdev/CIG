@@ -2380,7 +2380,7 @@ async def scheduler_status():
         status = scheduler.get_feed_status()
         return {
             "status": "success",
-            "scheduler_running": scheduler.scheduler_running,
+            "scheduler_running": scheduler.is_running,
             "feeds": status,
             "config_file": str(scheduler.state_file),
         }
@@ -2399,7 +2399,7 @@ async def scheduler_start():
         return {
             "status": "success",
             "message": "Feed scheduler started",
-            "running": scheduler.scheduler_running,
+            "running": scheduler.is_running,
         }
     except Exception as e:
         logger.error(f"Failed to start scheduler: {e}")
@@ -2416,7 +2416,7 @@ async def scheduler_stop():
         return {
             "status": "success",
             "message": "Feed scheduler stopped",
-            "running": scheduler.scheduler_running,
+            "running": scheduler.is_running,
         }
     except Exception as e:
         logger.error(f"Failed to stop scheduler: {e}")
