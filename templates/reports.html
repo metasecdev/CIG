@@ -57,7 +57,7 @@
                         <a href="/dashboard/reports" class="list-group-item list-group-item-action active">
                             <i class="fas fa-chart-bar"></i> Reports
                         </a>
-                        <a href="/feeds" class="list-group-item list-group-item-action">
+                        <a href="/dashboard/feeds" class="list-group-item list-group-item-action">
                             <i class="fas fa-rss"></i> Feed Mgmt
                         </a>
                         <a href="/dashboard/malware" class="list-group-item list-group-item-action">
@@ -226,10 +226,10 @@
                                         <td>{{ report.period }}</td>
                                         <td><span class="badge bg-success">Complete</span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-primary">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewReport('{{ report.period }}')">
                                                 <i class="fas fa-eye"></i> View
                                             </button>
-                                            <button class="btn btn-sm btn-outline-secondary">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="downloadReport('{{ report.period }}')">
                                                 <i class="fas fa-download"></i> Download
                                             </button>
                                         </td>
@@ -287,6 +287,29 @@
             location.reload();
         }
 
+        function viewReport(period) {
+            // Extract days from period string (e.g., "7 days" -> 7)
+            const days = parseInt(period) || 7;
+            window.open(`/api/reports/html?days=${days}`, '_blank');
+        }
+
+        function downloadReport(period) {
+            // Extract days from period string (e.g., "7 days" -> 7)
+            const days = parseInt(period) || 7;
+            fetch(`/api/reports/html?days=${days}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html_report_path) {
+                        window.open(data.html_report_path, '_blank');
+                    } else {
+                        alert('Report generation not yet implemented. Please generate a report first.');
+                    }
+                })
+                .catch(error => {
+                    alert('Error downloading report: ' + error.message);
+                });
+        }
+
         function generateQuickReport(days) {
             const modal = new bootstrap.Modal(document.getElementById('reportModal'));
             modal.show();
@@ -327,8 +350,68 @@
         }
 
         function exportAlerts() {
-            // This would typically call an export endpoint
-            alert('Export functionality would be implemented here');
+            const days = document.getElementById('reportDays')?.value || '7';
+            showExportModal();
+
+            fetch(`/api/alerts?limit=1000&severity=${document.getElementById('alertSeverity')?.value || ''}`)
+                .then(response => response.json())
+                .then(data => {
+                    hideExportModal();
+                    if (data.alerts && data.alerts.length > 0) {
+                        downloadAlertsCSV(data.alerts);
+                    } else {
+                        alert('No alerts found to export.');
+                    }
+                })
+                .catch(error => {
+                    hideExportModal();
+                    alert('Error exporting alerts: ' + error.message);
+                });
+        }
+
+        function showExportModal() {
+            const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            document.querySelector('#reportModal .modal-title').textContent = 'Exporting Alerts...';
+            document.querySelector('#reportModal .modal-body').innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                    <span>Exporting alerts to CSV...</span>
+                </div>
+            `;
+            modal.show();
+        }
+
+        function hideExportModal() {
+            bootstrap.Modal.getInstance(document.getElementById('reportModal'))?.hide();
+        }
+
+        function downloadAlertsCSV(alerts) {
+            const headers = ['Timestamp', 'Severity', 'Source IP', 'Dest IP', 'Source Port', 'Dest Port', 'Protocol', 'Indicator', 'Type', 'Feed', 'Message'];
+            const rows = alerts.map(a => [
+                a.timestamp || '',
+                a.severity || '',
+                a.source_ip || '',
+                a.destination_ip || '',
+                a.source_port || '',
+                a.destination_port || '',
+                a.protocol || '',
+                a.indicator || '',
+                a.indicator_type || '',
+                a.feed_source || '',
+                (a.message || '').replace(/"/g, '""')
+            ]);
+
+            const csvContent = [headers, ...rows]
+                .map(row => row.map(cell => `"${cell}"`).join(','))
+                .join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cig-alerts-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // Handle form submission

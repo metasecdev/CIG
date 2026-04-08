@@ -421,7 +421,31 @@
         }
 
         function viewFeedDetails(feedId) {
-            alert(`Feed Details for: ${feedId}\n\nThis would open a detailed view with historical data and statistics.`);
+            fetch(`/api/feeds/scheduler/status`)
+                .then(response => response.json())
+                .then(data => {
+                    const feeds = data.feeds || {};
+                    const feed = Object.values(feeds).find(f =>
+                        f.feed_id === feedId || f.name === feedId || feedId.includes(f.feed_id || '')
+                    );
+                    if (feed) {
+                        const details = `
+Feed: ${feed.name || feedId}
+Status: ${feed.enabled ? 'Enabled' : 'Disabled'}
+Source: ${feed.source || 'N/A'}
+Indicators: ${feed.indicator_count || feed.indicators || 0}
+Last Update: ${feed.last_update || 'Never'}
+Next Update: ${feed.next_update || 'N/A'}
+Error: ${feed.error || 'None'}
+                        `.trim();
+                        alert(details);
+                    } else {
+                        alert(`Feed Details for: ${feedId}\n\nNo additional details available.`);
+                    }
+                })
+                .catch(error => {
+                    alert(`Feed Details for: ${feedId}\n\nError fetching details: ${error.message}`);
+                });
         }
 
         function refreshDashboard() {
