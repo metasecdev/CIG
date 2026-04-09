@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-04-08T04:09:13.595127+00:00",
+  "timestamp": "2026-04-09T00:00:32.044452+00:00",
   "feeds": {
     "dshield": {
       "feed_id": "dshield",
       "feed_name": "DShield Honeypot",
       "update_interval": 300,
       "priority": "CRITICAL",
-      "last_update": "2026-04-08T04:09:13.594651+00:00",
-      "next_update": "2026-04-09T00:00:00+00:00",
+      "last_update": "2026-04-09T00:00:32.040287+00:00",
+      "next_update": "2026-04-10T00:00:00+00:00",
       "enabled": true,
       "refresh_at_midnight_utc": true,
       "max_retries": 3,
