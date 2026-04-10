@@ -76,6 +76,8 @@ class Settings:
     shadowserver_update_interval: int = 86400  # seconds
     enable_cve_news: bool = True
     cve_news_update_interval: int = 600  # 10 minutes
+    cve_news_use_cache: bool = False  # Use cached dataset if available (skips NVD API calls)
+    cve_news_rate_limit_delay: float = 6.0  # Seconds between NVD API requests (NVD allows 10 req/sec with API key, 5 req/sec without)
     nvd_api_key: str = (
         "c135b24d-fa92-48fc-81f8-74e6821dc4ed"  # NVD API key for CVE fetching
     )
@@ -184,6 +186,8 @@ class Settings:
             # CVE News
             enable_cve_news=os.getenv("ENABLE_CVE_NEWS", "true").lower() == "true",
             cve_news_update_interval=int(os.getenv("CVE_NEWS_UPDATE_INTERVAL", "600")),
+            cve_news_use_cache=os.getenv("CVE_NEWS_USE_CACHE", "false").lower() == "true",
+            cve_news_rate_limit_delay=float(os.getenv("CVE_NEWS_RATE_LIMIT_DELAY", "6.0")),
             nvd_api_key=os.getenv(
                 "NVD_API_KEY", "c135b24d-fa92-48fc-81f8-74e6821dc4ed"
             ),

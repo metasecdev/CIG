@@ -50,8 +50,10 @@ class CVENewsFeed:
             "year": [],
             "historical": [],
         }
-        # Get NVD API key from settings
+        # Get NVD API key and rate limiting settings from settings
         self.nvd_api_key = getattr(settings, "nvd_api_key", "") or ""
+        self.use_cache = getattr(settings, "cve_news_use_cache", False)
+        self.rate_limit_delay = getattr(settings, "cve_news_rate_limit_delay", 6.0)
 
     def _ensure_cache_table(self):
         conn = sqlite3.connect(str(self.cache_path))
@@ -642,6 +644,10 @@ class CVENewsFeed:
             if self.nvd_api_key:
                 headers["X-API-Key"] = self.nvd_api_key
 
+            # Rate limiting delay before request
+            import time
+            time.sleep(self.rate_limit_delay)
+
             response = requests.get(
                 self.NVD_API_URL, params=params, headers=headers, timeout=120
             )
@@ -712,6 +718,9 @@ class CVENewsFeed:
                         }
                         if self.nvd_api_key:
                             headers["X-API-Key"] = self.nvd_api_key
+
+                        # Rate limiting delay before request
+                        time.sleep(self.rate_limit_delay)
 
                         response = requests.get(
                             self.NVD_API_URL, params=params, headers=headers, timeout=60
@@ -897,6 +906,9 @@ class CVENewsFeed:
                     if self.nvd_api_key:
                         headers["X-API-Key"] = self.nvd_api_key
 
+                    # Rate limiting delay before request
+                    time.sleep(self.rate_limit_delay)
+
                     response = requests.get(
                         self.NVD_API_URL, params=params, headers=headers, timeout=120
                     )
@@ -917,9 +929,7 @@ class CVENewsFeed:
 
                     for vuln in vulnerabilities:
                         metrics = vuln.get("cve", {}).get("metrics", {})
-                        cvss_data = metrics.get(
-                            "cvssMetricV31", [metrics.get("cvssMetricV30", [])]
-                        )
+                        cvss_data = metrics.get("cvssMetricV31") or metrics.get("cvssMetricV30") or []
                         base_score = 0
                         if cvss_data:
                             base_score = (
@@ -954,6 +964,19 @@ class CVENewsFeed:
     def fetch_all_periods(self) -> Dict[str, int]:
         """Fetch CVEs for all time periods - day/week/month/year + 10 year historical"""
         counts = {}
+
+        # Use cached dataset if available (skips NVD API calls)
+        if self.use_cache:
+            logger.info("Using cached CVE dataset (use_cache=True)")
+            for period in ["day", "week", "month", "year", "historical"]:
+                cached = self._get_historical_cache(period)
+                if cached:
+                    self._historical_cache[period] = cached
+                    counts[period] = len(cached)
+                else:
+                    counts[period] = 0
+            return counts
+
         now = datetime.utcnow()
 
         # Day (last 24 hours) - use ISO 8601 format with milliseconds and timezone offset
