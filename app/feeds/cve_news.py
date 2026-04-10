@@ -869,9 +869,7 @@ class CVENewsFeed:
                         if not isinstance(vuln, dict):
                             continue
                         metrics = vuln.get("cve", {}).get("metrics", {})
-                        cvss_data = metrics.get(
-                            "cvssMetricV31", [metrics.get("cvssMetricV30", [])]
-                        )
+                        cvss_data = metrics.get("cvssMetricV31") or metrics.get("cvssMetricV30") or []
                         base_score = 0
                         if cvss_data:
                             base_score = (
