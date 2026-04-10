@@ -421,8 +421,8 @@ class CVENewsFeed:
 
         if "SSRF" in description or "server-side request" in description.lower():
             signatures.append(
-                f'alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"CVE-{cve_id} SSRF Attempt"; '
-                f'pcre:"/(http|https|ftp):\/\/[a-zA-Z0-9]/i"; http_uri; sid:{cve_year}0014; rev:1;)'
+                r'alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"CVE-' + cve_id + r' SSRF Attempt"; '
+                r'pcre:"/(http|https|ftp):\/\/[a-zA-Z0-9]/i"; http_uri; sid:' + str(cve_year) + r'0014; rev:1;)'
             )
 
         return signatures[:15]
@@ -506,8 +506,8 @@ class CVENewsFeed:
                     break
 
             metrics = cve.get("metrics", {})
-            cvss_data = metrics.get("cvssMetricV31", [metrics.get("cvssMetricV30", [])])
-            if cvss_data:
+            cvss_data = metrics.get("cvssMetricV31") or metrics.get("cvssMetricV30") or []
+            if cvss_data and len(cvss_data) > 0:
                 cvss = cvss_data[0].get("cvssData", {})
                 base_score = cvss.get("baseScore", base_score)
                 attack_vector = cvss.get("attackVector", "")

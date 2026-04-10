@@ -462,19 +462,43 @@ async def get_cisa_kev_status():
 @app.get("/api/intel/shadowserver")
 async def get_shadowserver_status():
     """Get Shadowserver feed status"""
-    if not threat_matcher:
+    if not _threat_matcher:
         raise HTTPException(status_code=503, detail="System not initialized")
 
-    return threat_matcher.shadowserver_feed.get_status()
+    return _threat_matcher.shadowserver_feed.get_status()
+
+
+@app.get("/api/intel/exploitdb")
+async def get_exploitdb_status():
+    """Get Exploit-DB feed status"""
+    if not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    if not hasattr(_threat_matcher, 'exploitdb_feed') or not _threat_matcher.exploitdb_feed:
+        return {"enabled": False, "error": "Exploit-DB feed not configured"}
+    return _threat_matcher.exploitdb_feed.get_status()
+
+
+@app.post("/api/intel/exploitdb/fetch")
+async def fetch_exploitdb():
+    """Fetch exploits from Exploit-DB"""
+    if not _threat_matcher:
+        raise HTTPException(status_code=503, detail="System not initialized")
+
+    if not hasattr(_threat_matcher, 'exploitdb_feed') or not _threat_matcher.exploitdb_feed:
+        raise HTTPException(status_code=503, detail="Exploit-DB feed not configured")
+
+    count = _threat_matcher.exploitdb_feed.fetch_exploits()
+    return {"status": "success", "exploits_fetched": count}
 
 
 @app.get("/api/intel/sans_isc")
 async def get_sans_isc_status():
     """Get SANS ISC feed status"""
-    if not threat_matcher:
+    if not _threat_matcher:
         raise HTTPException(status_code=503, detail="System not initialized")
 
-    return threat_matcher.sans_isc_feed.get_status()
+    return _threat_matcher.sans_isc_feed.get_status()
 
 
 @app.get("/api/intel/indicators")
@@ -1006,7 +1030,7 @@ async def api_system_restart():
     if not _db or not _threat_matcher:
         raise HTTPException(status_code=503, detail="System not initialized")
 
-    threat_matcher.restart()
+    _threat_matcher.restart()
     logger.info("API system restart invoked: threat matcher restarted")
     return {"status": "restarted"}
 
