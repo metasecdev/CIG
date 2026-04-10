@@ -656,7 +656,9 @@ class CVENewsFeed:
             data = response.json()
             # Handle rate limiting (429) or unexpected response format
             if isinstance(data, list):
-                return data
+                # NVD sometimes returns a list directly when rate limited
+                # Filter to only include valid dict entries
+                return [v for v in data if isinstance(v, dict)]
             if not isinstance(data, dict):
                 logger.warning(f"Unexpected response type {type(data)}")
                 return []
@@ -745,26 +747,19 @@ class CVENewsFeed:
                         for vuln in vulnerabilities:
                             if not isinstance(vuln, dict):
                                 continue
-                            cve_data = vuln.get("cve", {})
+                            cve_data = vuln.get("cve", {}) if isinstance(vuln, dict) else {}
                             if not isinstance(cve_data, dict):
                                 continue
-                            metrics = cve_data.get("metrics", {})
+                            metrics = cve_data.get("metrics", {}) if isinstance(cve_data, dict) else {}
                             if not isinstance(metrics, dict):
                                 continue
-                            cvss_data = metrics.get("cvssMetricV31") or metrics.get(
-                                "cvssMetricV30"
-                            )
+                            cvss_data = metrics.get("cvssMetricV31") or metrics.get("cvssMetricV30") or []
                             base_score = 0
-                            if (
-                                cvss_data
-                                and isinstance(cvss_data, list)
-                                and len(cvss_data) > 0
-                            ):
+                            if cvss_data and isinstance(cvss_data, list) and len(cvss_data) > 0:
                                 cvss_entry = cvss_data[0]
                                 if isinstance(cvss_entry, dict):
-                                    base_score = cvss_entry.get("cvssData", {}).get(
-                                        "baseScore", 0
-                                    )
+                                    cvss_score_data = cvss_entry.get("cvssData", {}) if isinstance(cvss_entry, dict) else {}
+                                    base_score = cvss_score_data.get("baseScore", 0) if isinstance(cvss_score_data, dict) else 0
 
                             if base_score >= self.MIN_SEVERITY:
                                 parsed = self._parse_cve_entry(vuln, base_score)
@@ -868,13 +863,19 @@ class CVENewsFeed:
                     for vuln in period_items:
                         if not isinstance(vuln, dict):
                             continue
-                        metrics = vuln.get("cve", {}).get("metrics", {})
+                        cve_data = vuln.get("cve", {}) if isinstance(vuln, dict) else {}
+                        if not isinstance(cve_data, dict):
+                            continue
+                        metrics = cve_data.get("metrics", {}) if isinstance(cve_data, dict) else {}
+                        if not isinstance(metrics, dict):
+                            continue
                         cvss_data = metrics.get("cvssMetricV31") or metrics.get("cvssMetricV30") or []
                         base_score = 0
-                        if cvss_data:
-                            base_score = (
-                                cvss_data[0].get("cvssData", {}).get("baseScore", 0)
-                            )
+                        if cvss_data and isinstance(cvss_data, list) and len(cvss_data) > 0:
+                            cvss_entry = cvss_data[0]
+                            if isinstance(cvss_entry, dict):
+                                cvss_score_data = cvss_entry.get("cvssData", {}) if isinstance(cvss_entry, dict) else {}
+                                base_score = cvss_score_data.get("baseScore", 0) if isinstance(cvss_score_data, dict) else 0
 
                         if base_score >= self.MIN_SEVERITY:
                             parsed = self._parse_cve_entry(vuln, base_score)
