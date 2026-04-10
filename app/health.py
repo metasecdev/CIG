@@ -206,13 +206,19 @@ class CIGHealthChecker:
         except Exception as e:
             feeds_status["custom_feeds"] = {"status": "error", "message": str(e)}
 
-        all_healthy = all(f.get("status") != "error" for f in feeds_status.values())
+        # Check Exploit-DB
+        try:
+            from app.feeds.exploitdb import ExploitDBFeedManager
 
-        return {
-            "status": "healthy" if all_healthy else "degraded",
-            "message": "Threat feeds checked",
-            "details": feeds_status,
-        }
+            exploitdb_enabled = getattr(settings, "enable_exploitdb", True)
+            feeds_status["exploitdb"] = {
+                "enabled": exploitdb_enabled,
+                "status": "configured" if exploitdb_enabled else "disabled",
+            }
+        except Exception as e:
+            feeds_status["exploitdb"] = {"status": "error", "message": str(e)}
+
+        all_healthy = all(f.get("status") != "error" for f in feeds_status.values())
 
         return {
             "status": "healthy" if all_healthy else "degraded",

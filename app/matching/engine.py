@@ -19,6 +19,7 @@ from app.feeds.cisa_kev import CISAKevFeedManager
 from app.feeds.shadowserver import ShadowserverFeedManager
 from app.feeds.cve_news import CVENewsFeed
 from app.feeds.sans_isc import SANSISCFeedManager
+from app.feeds.exploitdb import ExploitDBFeedManager
 from app.capture.pcap import PCAPCapture, DNSQueryMonitor, PacketAnalyzer
 from app.mitre.attack_mapper import MITREAttackMapper
 from app.reporting.security_report import SecurityReporter
@@ -42,6 +43,7 @@ class ThreatMatcher:
         self.shadowserver_feed = ShadowserverFeedManager(db)
         self.cve_news_feed = CVENewsFeed(db)
         self.sans_isc_feed = SANSISCFeedManager(db)
+        self.exploitdb_feed = ExploitDBFeedManager(db)
         self.pcap_capture = PCAPCapture(db)
         self.dns_monitor = DNSQueryMonitor(db)
         self.packet_analyzer = PacketAnalyzer(db)
@@ -63,6 +65,8 @@ class ThreatMatcher:
             "shadowserver_indicators": 0,
             "cve_news_count": 0,
             "sans_isc_indicators": 0,
+            "exploitdb_exploits": 0,
+            "exploitdb_iocs": 0,
             "total_alerts": 0,
             "last_misp_update": None,
             "last_pfblocker_update": None,
@@ -74,6 +78,7 @@ class ThreatMatcher:
             "last_shadowserver_update": None,
             "last_cve_news_update": None,
             "last_sans_isc_update": None,
+            "last_exploitdb_update": None,
         }
 
     def configure(self) -> None:
@@ -145,6 +150,13 @@ class ThreatMatcher:
             api_key=getattr(settings, "sans_api_key", ""),
         )
         logger.info("Configured SANS ISC feed")
+
+        # Configure Exploit-DB
+        self.exploitdb_feed.configure(
+            enabled=getattr(settings, "enable_exploitdb", True),
+            update_interval=getattr(settings, "exploitdb_update_interval", 86400),
+        )
+        logger.info("Configured Exploit-DB feed")
 
     def start(self) -> None:
         """Start the threat matching engine"""
@@ -231,6 +243,7 @@ class ThreatMatcher:
         self._update_shadowserver()
         self._update_cve_news()
         self._update_sans_isc()
+        self._update_exploitdb()
         self._load_local_blocklist()
         self._cleanup_old_alerts()
 
@@ -353,6 +366,25 @@ class ThreatMatcher:
             return count
         except Exception as e:
             logger.error(f"Failed to update SANS ISC: {e}")
+            return 0
+
+    def _update_exploitdb(self) -> int:
+        """Update Exploit-DB exploits and create CVE indicators"""
+        if not self.exploitdb_feed.is_enabled():
+            return 0
+
+        try:
+            results = self.exploitdb_feed.update_all()
+            exploit_result = results.get("exploitdb", {})
+            exploits_count = exploit_result.get("exploits", 0)
+            cves_count = exploit_result.get("cves", 0)
+            self.stats["exploitdb_exploits"] = exploits_count
+            self.stats["exploitdb_iocs"] = cves_count
+            self.stats["last_exploitdb_update"] = datetime.utcnow().isoformat()
+            logger.info(f"Updated Exploit-DB: {exploits_count} exploits, {cves_count} CVEs")
+            return exploits_count
+        except Exception as e:
+            logger.error(f"Failed to update Exploit-DB: {e}")
             return 0
 
     def _load_local_blocklist(self) -> int:

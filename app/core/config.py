@@ -83,6 +83,11 @@ class Settings:
     sans_isc_update_interval: int = 3600  # 1 hour
     sans_api_key: str = ""
 
+    # Exploit-DB Configuration
+    enable_exploitdb: bool = True
+    exploitdb_update_interval: int = 86400  # 24 hours
+    exploitdb_csv_url: str = "https://gitlab.com/exploit-database/exploitdb/-/raw/main/files_exploits.csv"
+
     # Feed Update Configuration
     skip_feed_updates: bool = False  # Skip all feed updates for testing
 
@@ -186,6 +191,13 @@ class Settings:
             enable_sans_isc=os.getenv("ENABLE_SANS_ISC", "true").lower() == "true",
             sans_isc_update_interval=int(os.getenv("SANS_ISC_UPDATE_INTERVAL", "3600")),
             sans_api_key=os.getenv("SANS_API_KEY", ""),
+            # Exploit-DB
+            enable_exploitdb=os.getenv("ENABLE_EXPLOITDB", "true").lower() == "true",
+            exploitdb_update_interval=int(os.getenv("EXPLOITDB_UPDATE_INTERVAL", "86400")),
+            exploitdb_csv_url=os.getenv(
+                "EXPLOITDB_CSV_URL",
+                "https://gitlab.com/exploit-database/exploitdb/-/raw/main/files_exploits.csv",
+            ),
             # DNS
             dns_log_path=os.getenv("DNS_LOG_PATH", "data/logs/dns.log"),
             dns_query_log_enabled=os.getenv("DNS_QUERY_LOG_ENABLED", "true").lower()

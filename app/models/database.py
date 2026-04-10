@@ -74,6 +74,53 @@ class Indicator:
         return asdict(self)
 
 
+@dataclass
+class MalwareIOC:
+    """IOC from malware analysis linked to Exploit-DB"""
+
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    ioc_type: str = ""  # ip, domain, hash, url, cve, mutex, registry
+    value: str = ""
+    source: str = ""  # "exploitdb", "malware_analysis", "cve_match"
+    confidence: float = 0.5  # 0.0 - 1.0
+    tags: str = ""  # comma-separated (edb_id, platform, etc.)
+    linked_edb_id: str = ""  # EDB-ID if linked to exploit
+    linked_cve: str = ""  # CVE ID if exploit has CVE reference
+    first_seen: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    last_seen: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    exploit_description: str = ""  # Description from exploit if available
+    matched_count: int = 0
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class Exploit:
+    """Exploit-DB exploit model"""
+
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    edb_id: str = ""  # EDB-ID from Exploit-DB
+    file: str = ""  # Path to exploit file
+    description: str = ""  # Exploit title/description
+    date_added: str = ""
+    date_updated: str = ""
+    author: str = ""
+    platform: str = ""  # windows, linux, php, etc.
+    exploit_type: str = ""  # local, remote, webapps, dos, etc.
+    port: str = ""  # Target port (can be empty)
+    cve_id: str = ""  # CVE reference (if available)
+    aliases: str = ""
+    application_url: str = ""
+    source_url: str = ""
+    tags: str = ""
+    verified: str = ""  # Verified status
+    raw_data: str = ""  # JSON string of full record
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
 class Database:
     """SQLite database manager"""
 
@@ -208,6 +255,72 @@ class Database:
         )
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_activity_timestamp ON threat_actor_activities(timestamp)"
+        )
+
+        # Exploits table (Exploit-DB)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS exploits (
+                id TEXT PRIMARY KEY,
+                edb_id TEXT UNIQUE NOT NULL,
+                file TEXT,
+                description TEXT,
+                date_added TEXT,
+                date_updated TEXT,
+                author TEXT,
+                platform TEXT,
+                exploit_type TEXT,
+                port TEXT,
+                cve_id TEXT,
+                aliases TEXT,
+                application_url TEXT,
+                source_url TEXT,
+                tags TEXT,
+                verified TEXT,
+                raw_data TEXT
+            )
+        """)
+
+        # Create indexes for exploits
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_exploit_edb_id ON exploits(edb_id)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_exploit_cve ON exploits(cve_id)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_exploit_platform ON exploits(platform)"
+        )
+
+        # Malware IOCs table (linked to Exploit-DB)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS malware_iocs (
+                id TEXT PRIMARY KEY,
+                ioc_type TEXT NOT NULL,
+                value TEXT NOT NULL,
+                source TEXT NOT NULL,
+                confidence REAL DEFAULT 0.5,
+                tags TEXT,
+                linked_edb_id TEXT,
+                linked_cve TEXT,
+                first_seen TEXT NOT NULL,
+                last_seen TEXT NOT NULL,
+                exploit_description TEXT,
+                matched_count INTEGER DEFAULT 0
+            )
+        """)
+
+        # Create indexes for malware_iocs
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_malware_ioc_value ON malware_iocs(value)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_malware_ioc_type ON malware_iocs(ioc_type)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_malware_ioc_edb ON malware_iocs(linked_edb_id)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_malware_ioc_cve ON malware_iocs(linked_cve)"
         )
 
         conn.commit()
@@ -767,3 +880,438 @@ class Database:
         countries = [row[0] for row in cursor.fetchall()]
         conn.close()
         return countries
+
+    def insert_exploit(self, exploit: Exploit) -> None:
+        """Insert or update an exploit"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO exploits
+            (id, edb_id, file, description, date_added, date_updated, author, platform,
+             exploit_type, port, cve_id, aliases, application_url, source_url, tags,
+             verified, raw_data)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                exploit.id,
+                exploit.edb_id,
+                exploit.file,
+                exploit.description,
+                exploit.date_added,
+                exploit.date_updated,
+                exploit.author,
+                exploit.platform,
+                exploit.exploit_type,
+                exploit.port,
+                exploit.cve_id,
+                exploit.aliases,
+                exploit.application_url,
+                exploit.source_url,
+                exploit.tags,
+                exploit.verified,
+                exploit.raw_data,
+            ),
+        )
+        conn.commit()
+        conn.close()
+
+    def bulk_insert_exploits(self, exploits: List[Exploit]) -> None:
+        """Bulk insert exploits"""
+        if not exploits:
+            return
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        data = []
+        for exp in exploits:
+            data.append(
+                (
+                    exp.id,
+                    exp.edb_id,
+                    exp.file,
+                    exp.description,
+                    exp.date_added,
+                    exp.date_updated,
+                    exp.author,
+                    exp.platform,
+                    exp.exploit_type,
+                    exp.port,
+                    exp.cve_id,
+                    exp.aliases,
+                    exp.application_url,
+                    exp.source_url,
+                    exp.tags,
+                    exp.verified,
+                    exp.raw_data,
+                )
+            )
+        cursor.executemany(
+            """
+            INSERT OR REPLACE INTO exploits
+            (id, edb_id, file, description, date_added, date_updated, author, platform,
+             exploit_type, port, cve_id, aliases, application_url, source_url, tags,
+             verified, raw_data)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            data,
+        )
+        conn.commit()
+        conn.close()
+
+    def get_exploits(
+        self,
+        limit: int = 100,
+        offset: int = 0,
+        platform: Optional[str] = None,
+        exploit_type: Optional[str] = None,
+        cve_id: Optional[str] = None,
+    ) -> List[Exploit]:
+        """Get exploits with optional filtering"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM exploits WHERE 1=1"
+        params = []
+
+        if platform:
+            query += " AND platform = ?"
+            params.append(platform)
+        if exploit_type:
+            query += " AND exploit_type = ?"
+            params.append(exploit_type)
+        if cve_id:
+            query += " AND cve_id = ?"
+            params.append(cve_id)
+
+        query += " ORDER BY date_added DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        conn.close()
+
+        return [
+            Exploit(
+                id=row["id"],
+                edb_id=row["edb_id"],
+                file=row["file"],
+                description=row["description"],
+                date_added=row["date_added"],
+                date_updated=row["date_updated"],
+                author=row["author"],
+                platform=row["platform"],
+                exploit_type=row["exploit_type"],
+                port=row["port"],
+                cve_id=row["cve_id"],
+                aliases=row["aliases"],
+                application_url=row["application_url"],
+                source_url=row["source_url"],
+                tags=row["tags"],
+                verified=row["verified"],
+                raw_data=row["raw_data"],
+            )
+            for row in rows
+        ]
+
+    def get_exploit_by_edb_id(self, edb_id: str) -> Optional[Exploit]:
+        """Get a specific exploit by EDB-ID"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM exploits WHERE edb_id = ?", (edb_id,))
+        row = cursor.fetchone()
+        conn.close()
+
+        if not row:
+            return None
+
+        return Exploit(
+            id=row["id"],
+            edb_id=row["edb_id"],
+            file=row["file"],
+            description=row["description"],
+            date_added=row["date_added"],
+            date_updated=row["date_updated"],
+            author=row["author"],
+            platform=row["platform"],
+            exploit_type=row["exploit_type"],
+            port=row["port"],
+            cve_id=row["cve_id"],
+            aliases=row["aliases"],
+            application_url=row["application_url"],
+            source_url=row["source_url"],
+            tags=row["tags"],
+            verified=row["verified"],
+            raw_data=row["raw_data"],
+        )
+
+    def get_exploits_by_cve(self, cve_id: str) -> List[Exploit]:
+        """Get all exploits associated with a CVE (handles semicolon-separated CVE lists)"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        # CVE field may contain semicolon-separated values like "CVE-2009-3699;OSVDB-58726"
+        cursor.execute(
+            "SELECT * FROM exploits WHERE cve_id LIKE ? ORDER BY date_added DESC",
+            (f"%{cve_id}%",),
+        )
+        rows = cursor.fetchall()
+        conn.close()
+
+        return [
+            Exploit(
+                id=row["id"],
+                edb_id=row["edb_id"],
+                file=row["file"],
+                description=row["description"],
+                date_added=row["date_added"],
+                date_updated=row["date_updated"],
+                author=row["author"],
+                platform=row["platform"],
+                exploit_type=row["exploit_type"],
+                port=row["port"],
+                cve_id=row["cve_id"],
+                aliases=row["aliases"],
+                application_url=row["application_url"],
+                source_url=row["source_url"],
+                tags=row["tags"],
+                verified=row["verified"],
+                raw_data=row["raw_data"],
+            )
+            for row in rows
+        ]
+
+    def get_exploit_stats(self) -> Dict[str, Any]:
+        """Get exploit statistics"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT COUNT(*) as total FROM exploits")
+        total = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT platform, COUNT(*) as count FROM exploits GROUP BY platform ORDER BY count DESC"
+        )
+        by_platform = {row[0]: row[1] for row in cursor.fetchall() if row[0]}
+
+        cursor.execute(
+            "SELECT exploit_type, COUNT(*) as count FROM exploits GROUP BY exploit_type ORDER BY count DESC"
+        )
+        by_type = {row[0]: row[1] for row in cursor.fetchall() if row[0]}
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM exploits WHERE cve_id IS NOT NULL AND cve_id != ''"
+        )
+        with_cve = cursor.fetchone()[0]
+
+        conn.close()
+
+        return {
+            "total": total,
+            "by_platform": by_platform,
+            "by_type": by_type,
+            "with_cve": with_cve,
+        }
+
+    def insert_malware_ioc(self, ioc: "MalwareIOC") -> None:
+        """Insert or update a malware IOC"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO malware_iocs
+            (id, ioc_type, value, source, confidence, tags, linked_edb_id, linked_cve,
+             first_seen, last_seen, exploit_description, matched_count)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                ioc.id,
+                ioc.ioc_type,
+                ioc.value,
+                ioc.source,
+                ioc.confidence,
+                ioc.tags,
+                ioc.linked_edb_id,
+                ioc.linked_cve,
+                ioc.first_seen,
+                ioc.last_seen,
+                ioc.exploit_description,
+                ioc.matched_count,
+            ),
+        )
+        conn.commit()
+        conn.close()
+
+    def bulk_insert_malware_iocs(self, iocs: List["MalwareIOC"]) -> None:
+        """Bulk insert malware IOCs"""
+        if not iocs:
+            return
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        data = []
+        for ioc in iocs:
+            data.append(
+                (
+                    ioc.id,
+                    ioc.ioc_type,
+                    ioc.value,
+                    ioc.source,
+                    ioc.confidence,
+                    ioc.tags,
+                    ioc.linked_edb_id,
+                    ioc.linked_cve,
+                    ioc.first_seen,
+                    ioc.last_seen,
+                    ioc.exploit_description,
+                    ioc.matched_count,
+                )
+            )
+        cursor.executemany(
+            """
+            INSERT OR REPLACE INTO malware_iocs
+            (id, ioc_type, value, source, confidence, tags, linked_edb_id, linked_cve,
+             first_seen, last_seen, exploit_description, matched_count)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            data,
+        )
+        conn.commit()
+        conn.close()
+
+    def get_malware_iocs(
+        self,
+        limit: int = 100,
+        offset: int = 0,
+        ioc_type: Optional[str] = None,
+        source: Optional[str] = None,
+        linked_edb_id: Optional[str] = None,
+        linked_cve: Optional[str] = None,
+    ) -> List["MalwareIOC"]:
+        """Get malware IOCs with optional filtering"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM malware_iocs WHERE 1=1"
+        params = []
+
+        if ioc_type:
+            query += " AND ioc_type = ?"
+            params.append(ioc_type)
+        if source:
+            query += " AND source = ?"
+            params.append(source)
+        if linked_edb_id:
+            query += " AND linked_edb_id = ?"
+            params.append(linked_edb_id)
+        if linked_cve:
+            query += " AND linked_cve = ?"
+            params.append(linked_cve)
+
+        query += " ORDER BY matched_count DESC, last_seen DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        conn.close()
+
+        return [self._row_to_malware_ioc(row) for row in rows]
+
+    def _row_to_malware_ioc(self, row: sqlite3.Row) -> "MalwareIOC":
+        """Convert a database row to MalwareIOC"""
+        return MalwareIOC(
+            id=row["id"],
+            ioc_type=row["ioc_type"],
+            value=row["value"],
+            source=row["source"],
+            confidence=row["confidence"],
+            tags=row["tags"] or "",
+            linked_edb_id=row["linked_edb_id"] or "",
+            linked_cve=row["linked_cve"] or "",
+            first_seen=row["first_seen"],
+            last_seen=row["last_seen"],
+            exploit_description=row["exploit_description"] or "",
+            matched_count=row["matched_count"],
+        )
+
+    def get_malware_ioc_by_value(self, value: str, ioc_type: str) -> Optional["MalwareIOC"]:
+        """Get a specific malware IOC by value and type"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM malware_iocs WHERE value = ? AND ioc_type = ?",
+            (value, ioc_type),
+        )
+        row = cursor.fetchone()
+        conn.close()
+
+        if not row:
+            return None
+        return self._row_to_malware_ioc(row)
+
+    def check_malware_ioc(self, value: str, ioc_type: str) -> Optional["MalwareIOC"]:
+        """Check if a malware IOC exists"""
+        return self.get_malware_ioc_by_value(value, ioc_type)
+
+    def increment_ioc_match_count(self, ioc_id: str) -> None:
+        """Increment the match count for an IOC"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE malware_iocs SET matched_count = matched_count + 1, last_seen = ? WHERE id = ?",
+            (datetime.utcnow().isoformat(), ioc_id),
+        )
+        conn.commit()
+        conn.close()
+
+    def get_malware_ioc_stats(self) -> Dict[str, Any]:
+        """Get malware IOC statistics"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT COUNT(*) as total FROM malware_iocs")
+        total = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT ioc_type, COUNT(*) as count FROM malware_iocs GROUP BY ioc_type ORDER BY count DESC"
+        )
+        by_type = {row[0]: row[1] for row in cursor.fetchall() if row[0]}
+
+        cursor.execute(
+            "SELECT source, COUNT(*) as count FROM malware_iocs GROUP BY source ORDER BY count DESC"
+        )
+        by_source = {row[0]: row[1] for row in cursor.fetchall() if row[0]}
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM malware_iocs WHERE linked_edb_id IS NOT NULL AND linked_edb_id != ''"
+        )
+        with_edb = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM malware_iocs WHERE linked_cve IS NOT NULL AND linked_cve != ''"
+        )
+        with_cve = cursor.fetchone()[0]
+
+        cursor.execute("SELECT SUM(matched_count) FROM malware_iocs")
+        total_matches = cursor.fetchone()[0] or 0
+
+        conn.close()
+
+        return {
+            "total": total,
+            "by_type": by_type,
+            "by_source": by_source,
+            "with_edb_link": with_edb,
+            "with_cve_link": with_cve,
+            "total_matches": total_matches,
+        }
+
+    def get_malware_iocs_by_edb(self, edb_id: str) -> List["MalwareIOC"]:
+        """Get all malware IOCs linked to an EDB-ID"""
+        return self.get_malware_iocs(limit=1000, linked_edb_id=edb_id)
+
+    def get_malware_iocs_by_cve(self, cve_id: str) -> List["MalwareIOC"]:
+        """Get all malware IOCs linked to a CVE"""
+        return self.get_malware_iocs(limit=1000, linked_cve=cve_id)
